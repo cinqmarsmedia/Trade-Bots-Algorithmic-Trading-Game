@@ -1,0 +1,176 @@
+<!--<ion-icon style="position:absolute;left:50px;top:20px;z-index:999" class="backBtn" name="ios-arrow-back" (click)="back()"></ion-icon>-->
+
+
+
+<div [hidden]="!testCanvasChart" style="height:200px;width:400px !important;position:absolute;bottom:90px;left:20px;z-index:9999;pointer-events:none">
+<canvas #testCanvas></canvas> 
+</div>
+
+<div *ngIf="traceInfo" style="position:absolute;right:50px;top:20px;z-index:999;font-size:18px;color:white;opacity:.5;float:right">
+<span style="font-size:22px">
+  <i>{{traceInfo.botName=='$SIMPLEBOT'?'Simple Bot':traceInfo.botName}}</i>
+</span>
+<br>
+
+{{traceInfo.timestamp | date:'H:mm:ss'}} | {{traceInfo.date | date:'M/d/yy'}}
+
+</div>
+        <div class="dropdown" (mouseenter)="checkSameness()" style="position:absolute;left:50px;top:20px;z-index:999">
+  <ion-icon (click)="backBtn()" class="backDrop backBtn" name="ios-arrow-back"></ion-icon>
+
+  <div *ngIf="this.editor.nodes.length>0 && !sameness" class="dropdown-content bckDrop">
+  <a (click)="back()">Save</a>
+  <a (click)="back(true)">Discard</a>
+  <a *ngIf="botDefinition.data" (click)="revert()">Revert</a>
+</div>
+
+</div>
+
+<!---->
+<div class="bakInfo" *ngIf="currPrice && botDefinition.gains">
+  Price: <span style="cursor:pointer" [style.color]="currPrice[1]>=0?'rgba(25, 255, 25, .7)':'red'"><b>$<span>{{obfuscatePrice?"?????":(currPrice[0] | number: '1.2-2')}}</span> ({{currPrice[1]}}%)</b></span>&nbsp;&nbsp; Cash: <span (click)="cashVsInvested[0]>1000?(cashHoldingsPrecision[0]=!cashHoldingsPrecision[0]):''" style="cursor:pointer" [style.color]="portfolio[2]?'rgba(25, 255, 25, .7)':'red'"><b>${{cashHoldingsPrecision[0]?(cashVsInvested[0] | number: '1.2-2'):(cashVsInvested[0] | thousands: 2)}} ({{cashVsInvested[0]/(cashVsInvested[0]+cashVsInvested[1])*100 | number: '1.0-0'}}%)</b></span>&nbsp;&nbsp;
+Holdings: <div style="display:inline-block" class="pulse" [ngClass]="{'animated infinite':(portfolio[0]*(portfolio[1])-limDeduction[0])==0 && tutorial==-1}"><span (click)="cashVsInvested[1]>1000?(cashHoldingsPrecision[1]=!cashHoldingsPrecision[1]):''" style="cursor:pointer" [style.color]="(cashVsInvested[1]>0?longVsShort:!longVsShort)?'rgba(25, 255, 25, .7)':'red'"><b>${{cashHoldingsPrecision[1]?(cashVsInvested[1] | number: '1.2-2'):(cashVsInvested[1] | thousands:2)}}</b></span>&nbsp;<div (click)="tutClick(152)" *ngIf="!longVsShort" class="pulse" [ngClass]="{'animated infinite':tutorialState && tutorialState[0]==152}" style="cursor:pointer;display:inline-block" ><i> [short]</i></div><ion-icon class="animated infinite pulse" [hidden]="cashVsInvested[1]>0" style="margin-left:4px;font-size:15px" name="md-alert"></ion-icon></div></div>
+
+
+<div style="position:absolute;z-index:999;left:130px;top:35px;color:white">
+
+<div style="opacity:.3" *ngIf="botDefinition.mode==0">Paper Mode Simulates Behavior <i> (Days Are Lost)</i> </div>
+</div>
+<div [hidden]="traceInfo" style="position:absolute;left:50px;bottom:20px;z-index:999;font-size:18px;color:white"><span style="opacity:.5">{{botDefinition.name=='$SIMPLEBOT'?'Simple Bot':botDefinition.name}} &nbsp;&nbsp;
+
+<div *ngIf="stateMachine.paused" style="display:inline-block"><ion-icon  class="animated pulse infinite" style="color:yellow" [name]="'md-warning'"></ion-icon> &nbsp;<span style="font-size:13px">Awaiting data for the period of one or more indicators</span></div>
+
+
+  <span *ngIf="botDefinition.logs.length>0 && !stateMachine.paused" style="font-size:12px"><i>Last Run: </i><span [hidden]="currentTime-botDefinition.logs[0].timestamp>64800000">{{botDefinition.logs[0].timestamp  | date:'h:mm a'}}</span><span [hidden]="currentTime-botDefinition.logs[0].timestamp<=64800000">{{botDefinition.logs[0].timestamp  | date:'shortDate'}}</span></span>
+
+
+</span> <br>
+
+
+<!--
+  <button (click)="validateBot()">debug logs</button><button (click)="logObj()" style="margin-left:20px">export</button>
+-->
+<div [ngClass]="{'animated infinite fullopac':false}" class="opachov pulse hov" style="display:inline-block"><!--'halfopac':botDefinition.logs.length==0,-->
+
+<button class="cstm" ion-button style="height:25px;margin-left:0px;margin-top:0px;width:100px" (click)="openLog()"><ion-icon name="md-bug"></ion-icon>&nbsp;Logs</button>
+<ion-badge class="animated pulse" *ngIf="botDefinition.logs.length-(botDefinition.read?botDefinition.read:0)>0" [style.background]="botDefinition.logs[botDefinition.logs.length-1].type==2?'red':'gray'" style="position:absolute;margin-left:-10px;margin-top:0px;padding:2px 4px">{{botDefinition.logs.length-(botDefinition.read?botDefinition.read:0) | thousands}}</ion-badge>
+</div>
+<!---->
+<button *ngIf="gainShow" [ngClass]="{'toggleOn':botDefinition.gains}" class="opachov cstm" ion-button style="height:25px;margin-left:0px;margin-left:15px;margin-top:0px;width:100px" (click)="gainsButton()"><ion-icon name="md-trending-up"></ion-icon>&nbsp;Gains</button>
+<button *ngIf="unlockState>3" class="opachov cstm" ion-button style="height:25px;margin-left:0px;margin-left:15px;margin-top:0px;width:100px" (click)="train()"><!--<ion-icon name="md-bulb"></ion-icon>--><img style="width:13px" src="assets/icon/brain.png">&nbsp;Neural</button>
+<ion-badge *ngIf="untrainedPoints>0"style="position:absolute;margin-left:-23px;margin-top:-5px;padding:2px 4px;font-size:9px;background:#077ccc">{{untrainedPoints | thousands : 0}}</ion-badge>
+<button *ngIf="portState[0] || portState[1]" class="opachov cstm" ion-button style="height:25px;margin-left:0px;margin-left:15px;margin-top:0px;width:100px" (click)="port()"><ion-icon name="md-code"></ion-icon>&nbsp;Port</button>
+
+
+
+</div>
+
+<div style="position:absolute;right:50px;top:15px;z-index:999;font-weight:bold" [hidden]="traceInfo">
+        <div class="dropdown">
+  <button class="dropbtn valDrop"><b>Values</b></button>
+  <div class="dropdown-content valDrop" style="margin-left:-55px;">
+  <a (click)="addNode('ValNode')">Basic Indicator</a>
+  <a (click)="addNode('AdvValNode')">Adv. Indicator</a>
+  <a (click)="addNode('LeadValNode')">Leading Indicator</a>
+ <a (click)="addNode('ConstantNode')">Constant</a>
+<a *ngIf="unlockState>2" (click)="addNode('MetaNode')">Metadata</a>
+ <a *ngIf="unlockState>2" (click)="addNode('GetVarNode')">Variable</a>
+   <!--<a (click)="addNode('variable')">Variable</a>-->
+  </div>
+</div>
+
+
+    <div class="dropdown">
+  <button class="dropbtn opDrop"><b>Operations</b></button>
+  <div class="dropdown-content opDrop" style="margin-left:-26px;">
+  <a (click)="addNode('ConditionalNode')">IF</a>
+   <a (click)="addNode('LogicNode')">Logic</a>
+  <a (click)="addNode('MathNode')">Math</a>
+  <a *ngIf="unlockState>0" (click)="addNode('RangeNode')">Range</a>
+   <a *ngIf="unlockState>3" (click)="addNode('NetworkNode')">Network</a>
+  <!--<a (click)="addNode('debug')">Math (adv)</a>-->
+  </div>
+</div>
+    <div class="dropdown">
+  <button class="dropbtn actDrop"><b>Actions</b></button>
+  <div class="dropdown-content actDrop" style="margin-left:-49px;">
+  <a (click)="addNode('TradeNode')">Market Trade</a>
+  <!--
+    <a *ngIf="unlockState>1" (click)="addNode('LimitNode')">Limit / Stop</a>
+  -->
+    <a *ngIf="unlockState>2" (click)="addNode('SetVarNode')">Set Variable</a>
+  <a *ngIf="unlockState>2" (click)="addNode('SwitchNode')">Switch Bot</a>
+    <a *ngIf="unlockState>3" (click)="addNode('TrainNode')">Train Network</a>
+    <!--
+  <a *ngIf="unlockState>0" (click)="addNode('SetLoan')">Change Loan</a>
+-->
+ <!-- <a (click)="addNode('debug')">Log</a>-->
+  <a (click)="addNode('StopNode')">Stop</a>
+  </div>
+</div>
+    <div *ngIf="unlockState>1" class="dropdown">
+  <button class="dropbtn" *ngIf="unlockState>1"><b>Custom</b></button>
+  <div class="dropdown-content" style="margin-left:-49px;">
+    <a (click)="addNode('CommentNode')">Add Comment</a>
+    <a (click)="customNode()">Save As PreFab</a>
+
+    <!--ngFor-->
+    <!--
+<a (click)="addNode('TradeNode')">Cash/Invested Ratio&nbsp;&nbsp;<ion-icon name="md-construct"></ion-icon>&nbsp;<ion-icon name="md-trash"></ion-icon></a>
+-->
+<!---->
+  </div>
+</div>
+<!--
+    <div class="dropdown">
+  <ion-icon class="dropbtn2" name="md-help-circle"></ion-icon>
+  <div class="dropdown-content helpDrop" style="margin-top:18px">
+ <a (click)="openLink('https://www.cinqmarsmedia.com/tradebots/guide/#nodeBots')">Docs<ion-icon style="float:right" name="md-document"></ion-icon></a>
+  <a (click)="openLink('https://www.cinqmarsmedia.com/tradebots/guide/#nodeBots')">Videos<ion-icon style="float:right" name="logo-youtube"></ion-icon></a>
+  </div>
+</div>
+-->
+
+<ion-icon (click)="openLink('https://www.cinqmarsmedia.com/tradebots/docs/#/nodebots')" class="dropbtn2" name="md-help-circle"></ion-icon>
+
+
+
+
+</div>
+<div [hidden]="traceInfo" style="position:absolute;right:30px;bottom:20px;z-index:99999">
+<div [ngClass]="{'halfopac':this.editor.nodes.length==0}" class="dropdown">
+  <button class="dropbtn runDrop"><b>Options</b></button>
+  <div class="dropdown-content upadjust runDrop">
+    <!--
+<div class="menuLabel">Execute Button</div>
+  <a (click)="addNode('ValNode')">Test</a>
+  <a (click)="addNode('AdvValNode')">Step</a>
+  <a (click)="addNode('AdvValNode')">Real</a>
+<div class="menuLabel">Speed</div>
+<div class="menuLabel">Debug</div>
+ <a (click)="addNode('ConstantNode')">Open Logs</a>
+ <a (click)="addNode('ConstantNode')">Export Bot</a>-->
+  <!--checkmarks this sets to the run button?-->
+  <a (click)="backtesting()">
+<select disabled (ngModelChange)="modeChng($event)" [ngModel]="botDefinition.mode"><option [hidden]="unlockState==0" value="2">Backtest</option><option [hidden]="unlockState==0" value="0">Paper Mode</option><option value="1">Deployed</option></select></a>
+  <a>
+<select [(ngModel)]="botDefinition.sim"><!--<option value="5">10k Day/s</option>--><option value="5">{{nFormat(maxSim)}} (max)</option>
+  <option [hidden]="botDefinition.mode==0 || maxSim<1000" value="4">1k Day/s</option><option [hidden]="botDefinition.mode==0 || maxSim<100" value="3">100 Day/s</option><option [hidden]="maxSim<10" value="2">10 Day/s</option><option value="1">1 Day/s</option><option value="0">Step Ahead</option></select></a>
+
+
+  </div>
+</div>
+
+  <div class="bakTik"><span class="opact" *ngIf="ticker && stockInfo" style="font-size:18px">{{ticker[0]}}</span> <br><i><div *ngIf="date && year==-1" class="animated opact" [ngClass]="{'whte':nextDay}">{{date | date: "MMMM dd, y"}}</div><div *ngIf="year>-1" class="animated op act" [ngClass]="{'whte':nextDay}">{{date | date: "MMMM dd"}} Year {{year}}</div></i></div>
+<button class="opachov" [ngClass]="{'quartopac':this.editor.nodes.length==0}" ion-button style="margin-left:15px;margin-top:-7px;width:80px" (click)="sim()" color="light"><ion-icon [name]="botDefinition.sim==0?'md-skip-forward':!running?'md-play':'md-pause'">&nbsp;</ion-icon>  {{botDefinition.sim==0?'step':botDefinition.mode==0?'test':'sim'}}</button>
+
+    <!--<div style="color:white;width:40%;position:absolute;right:95px;margin-top:-5px">
+  <ion-range color="dark" >
+  </ion-range>
+</div>-->
+<!--(ngModelChange)="realtimeSim($event)" [max]="simSpeed[2]" [min]="10" [(ngModel)]="simSpeed[0]"-->
+<!--[tooltip]="simSpeed[0]==0?'ⓘ &nbsp;Move Forward in Time to Simulate Earnings':'ⓘ &nbsp;Pause Simulation to Put in Trades'" [event]="showTips.sim?'hover':'press'" duration="0" positionV="top" positionH="right"-->
+
+</div>
+
+<div #baklava></div>

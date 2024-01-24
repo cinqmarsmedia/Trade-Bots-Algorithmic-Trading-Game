@@ -1,0 +1,12 @@
+<ion-content class="dark">
+<ion-list-header> Import Custom Data<ion-icon (click)="viewCtrl.dismiss();" class="closeBtn" style="float:right" name="md-close"></ion-icon></ion-list-header>
+
+<br>
+You can select a path on your computer with csv files in a very particular format. (details on that format)
+<br><br>
+here you can download a sample file: 
+<br><br>
+
+ <input type="folder" (change)="handlePath($event)" id="myFolder" name="foldername">
+
+	</ion-content>

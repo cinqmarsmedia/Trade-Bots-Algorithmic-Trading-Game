@@ -1,0 +1,31 @@
+<ion-content class="dark">
+<ion-list-header> Idle Jump<ion-icon (click)="viewCtrl.dismiss();events.publish('sfx','close')" class="closeBtn" style="float:right" name="md-close"></ion-icon></ion-list-header>
+
+<div style="padding:25px">
+
+  <img style="width:30px;float:right" src="assets/imgs/3719420.png"><div style="width:90%">
+
+
+You have been gone for <b>{{hrs | number: '1.'}} hours</b>. 
+
+You can jump ahead <b>{{totalInterval  | number: '1.'}} days</b>, the <b>square root</b> of the maximum interval you could have simulated while gone. This cannot go beyond the data for the current investment. This feature can be useful before speeds of 100 days/sec and higher are unlocked.
+</div>
+ <ion-range color="dark" [max]="totalInterval" [min]="2" [(ngModel)]="skipDays"><!---->
+  </ion-range>
+</div>
+
+
+
+
+
+
+<div style="margin-left:auto;margin-right:auto;left:0;right:0;position:absolute;bottom:35px;text-align:center">
+<button (click)="close()" color="light" style=";width:150px;font-weight:bold;margin-right:30px" ion-button>&nbsp;No Thanks</button>
+
+<button (click)="confirm()" style="background-color:#077ccc;width:150px;font-weight:bold" ion-button><ion-icon name="md-play"></ion-icon> &nbsp;<b>{{skipDays  | number: '1.'}}</b> &nbsp;days</button>
+</div>
+
+
+
+
+	</ion-content>

@@ -1,0 +1,20 @@
+
+<ion-list-header class="modalHeader"> Upgrades <ion-badge *ngIf="avail>0" style="position:absolute;margin-left:5px;opacity:.9" color="danger">{{avail}}</ion-badge><ion-badge *ngIf="avail==0 && progress>0" style="position:absolute;margin-left:5px;opacity:.9;background:#077ccc">{{progress | number : '1.0-0'}}%</ion-badge><div [hidden]="!bulkbuy || bulk[0]<3"><div class="bulkTxt">Bulk Buy Next <b>{{bulk[0]}}</b></div> <button class="bulkBtn" (click)="buyBulk();events.publish('sfx','generic')" ion-button><b>${{bulk[1] | thousands : 0}}</b></button></div> <ion-icon [ngClass]="{'halfopac':tutState==7 || tutState==2}" (click)="viewCtrl.dismiss();events.publish('sfx','close')" class="closeBtn" style="float:right" name="md-close"></ion-icon></ion-list-header>
+<ion-content #content class="dark">
+<div class="headerPad"></div>
+	<div style="color:white;width:100%;height:calc(100% - 50px)">
+<div *ngIf="purchased.length<4 && earned.length<3" style="text-align:left;padding:20px"><img style="width:30px;float:right" src="assets/imgs/3719420.png"><div style="width:90%"><i>
+	Spend to upgrade abilities and add features. Some upgrades unlock <ion-badge style="background:rgba(25, 255, 25, .7)"><b>Learn & Earn</b></ion-badge> opportunities.</i></div>
+</div>
+
+<ion-item class="itm" style="cursor:auto !important" *ngFor="let upgrade of upgrades | slice:0:avail+2; let i = index" [ngClass]="{'halfopac':portfolio[0]<upgrade.cost || (tutState==2 && i>0),'roboBtn':upgradePersist.includes(upgrade.id)}">
+
+	<ion-label>{{upgrade.name}} <div style="display:inline-block;position:absolute;margin-left:10px;margin-top:-1px"><ion-badge *ngIf="upgrade.reward && !earned.includes(upgrade.id)" [tooltip]="tutState==7?'Buying Will Unlock a $10 Learning Opportunity':'Earn by completing quiz after upgrade purchase'" [alwaysShow]="tutState==7 && i==0" [event]="tutState==7?'press':'hover'" arrow="true" duration="0" positionV="top" positionH="center" [topOffset]="tutState==7?'-40':0" style="background:rgba(25, 255, 25, .7);font-size:12px;margin-right:10px;cursor:pointer">${{upgrade.reward | thousands:0}}</ion-badge><ion-badge [hidden]="portfolio[0]<upgrade.cost || upgrade.cost<max || upgrade.cost==0 || upgradePersist.includes(upgrade.id)" class="animated pulse infinite" style="background:#077ccc;font-size:12px">NEW</ion-badge><ion-badge [hidden]="!upgradePersist.includes(upgrade.id)" class="animated pulse infinite" style="background:red;font-size:12px">Permanent</ion-badge>
+	</div>
+
+<button [tooltip]="'ⓘ &nbsp;Purchase Your First Upgrade'"  duration="0" arrow="true" [event]="'press'" [alwaysShow]="purchased.length==0 && i==0" positionV="top" topOffset="-40" positionH="center" [ngClass]="{'animated pulse infinite':(purchased.length==0 || tutState==7) && i==0}" (click)="buy(upgrade);events.publish('sfx','generic')" style="float:right;background-color:#077ccc;width:70px;cursor:pointer" ion-button><b><span [hidden]="upgrade.cost==0">${{upgrade.cost | thousands : 0}}</span><span [hidden]="upgrade.cost!==0">FREE</span></b></button> <div style="color:#aaa;white-space: initial;margin-right:90px"><i>{{upgrade.description}}</i></div></ion-label></ion-item>
+	<!--
+<button style="float:right;background-color:#077ccc;width:150px" ion-button><b>Buy With 50%</b></button>
+-->
+</div>
+	</ion-content>

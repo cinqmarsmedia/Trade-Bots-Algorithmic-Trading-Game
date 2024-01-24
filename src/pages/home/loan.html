@@ -1,0 +1,51 @@
+<ion-content class="dark">
+<ion-list-header> Margin Loans <span [hidden]="loanData.cycle==0" style="font-size:10px"><i>Interest Cycle in {{31 - loanData.cycle}} day<span [hidden]="loanData.cycle==30">s</span></i></span><ion-icon [ngClass]="{'halfopac':tutState==10}" (click)="viewCtrl.dismiss();events.publish('sfx','close')" class="closeBtn" style="float:right" name="md-close"></ion-icon></ion-list-header>
+<div *ngIf="true" style="text-align:left;padding:20px"><img style="width:30px;float:right" src="assets/imgs/3719420.png"><div style="width:90%"><i>
+	You can take out a loan to invest in a<span [hidden]="type!=='ETF'">n</span> <span [hidden]="!mystery">Mystery</span> <i>{{type}}</i>. This is <b>extremely risky</b>, as you must cover your interest payments with profit simply to break even. The larger your portfolio, the lower the interest rate offered since you can borrow against existing assets.</i></div>
+</div>
+<div style="margin:20px;margin-top:0px;font-size:13px">
+<span style="font-size:20px">Interest Rate: <span style="font-size:25px"> <b>{{loanData.rate | number: '1.0-2'}}%</b></span></span><span [hidden]="!leverage || leverage>30" style="font-size:17px;float:right;padding-right:10px">Leverage: <span style="font-size:22px"> <b>{{(leverage*100) | number: '1.0-2'}}%</b></span></span>  <br><i>
+Your interest rate lowers as your portfolio grows. You can also unlock upgrades to lower the rate. It is recalculated each month when your interest is debited. <span [hidden]="!leverage || leverage>30">Leverage is the ratio of what is borrowed against your assets.</span></i> 
+<br><br>
+
+<span style="font-size:20px">Principal Loan: <span style="font-size:25px"><b>${{loanProposed | number: '1.0-2'}}</b></span></span><br><i>
+  <span *ngIf="loanData.min!==0 && loanProposed==loanData.min" style="color:red">Account Balance Insufficient to Pay Off Loan Entirely<br></span>
+Unlock upgrades to increase your max loan amount. Move the slider below to change the value of your loan. Any change after time has passed will initiate a debit of any accrued daily interest.</i> 
+  <!--
+  Duration <ion-range [max]="1" [min]="10">
+  </ion-range>-->
+<div style="text-align:center;position:absolute;width:0px;right:230px;margin-top:-20px" tooltip="ⓘ &nbsp;Customize Your Loan" [event]="'press'" [alwaysShow]="tutState==10" arrow="true" tooltipClass="rightArrow" positionV="top" positionH="center" duration="0">
+</div>
+
+<ion-range color="dark" (ngModelChange)="calcLeverage($event)" [(ngModel)]="loanProposed" [max]="loanData.max" [min]="loanData.min">
+  </ion-range> 
+
+<span style="font-size:20px">Interest: <span style="font-size:25px"><b>${{loanProposed*loanData.rate/1200 | number: '1.2-2'}}</b></span>/month <ion-badge [hidden]="31 - loanData.cycle>4" class="loancycl" color="danger">Debited in {{31 - loanData.cycle}} day<span [hidden]="loanData.cycle==30">s</span></ion-badge></span><br><i>
+
+
+Interest payments are automatically debited from your account each month. You can change your loan at any time without penalty, although when you do, you must pay any accrued daily interest. Slide left to reduce your loan, all the way to zero to pay it off entirely.</i> <br><br>
+<i>Calculations are based on 360 day/yr and 30 day/mo as is typical in finance.</i> 
+</div>
+<button (click)="confirm()" class="pulse" [ngClass]="{'halfopac':loanProposed==loanData.amt,'animated infinite':tutState==10}" style="background-color:#077ccc;margin-left:auto;margin-right:auto;left:0;right:0;position:absolute;bottom:35px;width:180px;font-weight:bold" ion-button>Confirm&nbsp;<span [hidden]="loanData.amt!==0">Loan</span><span [hidden]="loanData.amt==0">Changes</span></button>
+
+
+
+<!--
+
+
+<div style="text-align:center">
+<button ion-button (click)="debugLoan(5)">Debug: Interest Free Loan $5</button></div>
+<br>
+<div style="text-align:center">
+<button ion-button (click)="debugLoan(100)">Debug: Interest Free Loan $100</button></div><br>
+<div style="padding:15px">
+the following is just notes, none of this is ready yet. the idea is that you can borrow money, more money + longer duration means higher price. 
+<br><br>
+more money + longer duration is higher price - do we shift for what the 'forecast' for the following year is? (the flat appreciation from this moment to the end of the borrowing term)?  
+<button>Pay Off Early (Now) (3% discount)</button>
+
+<button>Re-negotiate?</button>
+</div>
+-->
+
+	</ion-content>

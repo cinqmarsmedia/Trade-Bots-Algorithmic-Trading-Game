@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <title>Trade Bots</title>
+  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <link rel="icon" type="image/x-icon" href="assets/icon/favicon.ico">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4e8ef7">
+  <script>
+    window["setT"] = setTimeout;
+  </script>
+  <style>
+    body,
+    ion-app,
+    ng-component {
+      background: #33332D
+    }
+
+
+.histTrades{
+  border-bottom:1px solid white;
+  padding:13px;
+  padding-left:30px;
+}
+
+.dateHistTrade{
+opacity:.5;
+  position:absolute;
+}
+
+
+.ma-1{
+  fill:yellow;
+}
+#\:1\.container{
+visibility:hidden !important;
+}
+
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf{
+  display:none !important;
+}
+
+.VIpgJd-ZVi9od-l4eHX-hSRGPd{
+  pointer-events:none !important;
+}
+
+
+.coords{
+      font-family: 'RobotoReg', monospace;
+  font-style: italic;
+}
+path.tradearrow{
+  stroke:#fff !important;
+}
+.tradearrow .buy path{
+  stroke-width: 10;
+}
+.tradearrow{
+stroke-width: 1.5;
+}
+
+.tradearrow:hover{
+cursor:pointer
+}
+
+
+text{
+fill:#fff !important;
+}
+
+.domain{
+    stroke:#fff;
+}
+
+
+
+.tick line{
+    stroke:#fff !important;
+}
+
+.tick text{
+    fill:#fff !important;
+}
+
+path.volume{
+    fill:#333 !important;
+}
+.limitInput{
+    background:rgb(39,40,34);
+    border-color:white;
+    width:74px;
+    height:20px;
+}
+
+
+
+	 body {
+        font: 10px sans-serif;
+    }
+
+    text {
+        fill: #000;
+    }
+
+    path.candle {
+        stroke: #000000;
+    }
+
+    path.candle.body {
+        stroke-width: 0;
+    }
+
+    path.candle.up {
+        fill: #00AA00;
+        stroke: #00AA00;
+    }
+
+    path.candle.down {
+        fill: #FF0000;
+        stroke: #FF0000;
+    }
+
+    path.ohlc {
+        stroke: #000000;
+        stroke-width: 1;
+    }
+
+    path.ohlc.up {
+        stroke: #00AA00;
+    }
+
+    path.ohlc.down {
+        stroke: #FF0000;
+    }
+
+    path.volume {
+        fill: #EEEEEE;
+    }
+
+    path.line {
+        fill: none;
+        stroke: #aaa;
+        stroke-width: 1;
+    }
+
+    .extent {
+        stroke: #fff;
+        fill-opacity: .125;
+        shape-rendering: crispEdges;
+    }
+
+    .crosshair {
+        cursor: crosshair;
+    }
+
+    .crosshair path.wire {
+        stroke: #DDDDDD;
+        stroke-dasharray: 1, 1;
+    }
+
+    .crosshair .axisannotation path {
+        fill: #DDDDDD;
+    }
+
+    
+  </style>
+
+<style>
+  #d3el {
+    contain: layout paint style;
+  }
+
+  ion-app.app-root {
+    z-index: unset !important;
+  }
+
+  ion-app.app-root,
+  ng-component.app-root,
+  ion-nav,
+  page-home {
+    contain: unset !important;
+    z-index: unset !important;
+  }
+</style>
+  <!-- add to homescreen for ios -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <!-- cordova.js required for cordova apps (remove if not needed) -->
+  <script src="cordova.js"></script>
+<!--
+<script async src="assets/twitter.js" charset="utf-8"></script>
+
+  <link rel="stylesheet" type="text/css" href="assets/js/huebee.min.css">
+-->
+<link rel="stylesheet" href="assets/js/iziToast.min.css">
+<script src="assets/js/iziToast.min.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="assets/js/crypto-js/crypto-js.js"></script>
+
+
+<!--
+    <script src="https://cdn.jsdelivr.net/npm/rete@1.4.3-rc.1/build/rete.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/rete-connection-plugin@0.8.3-rc.1/build/connection-plugin.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alight@0.14.1/alight.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js"></script>
+  -->
+<script src="assets/js/d3.v4.min.js"></script>
+<script src="assets/js/techan.min.js"></script>
+
+<script src="assets/js/regression.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@widgetbot/html-embed"></script>
+
+
+<script type="text/javascript" src="assets/js/ta.min.js"></script>
+  <!--
+<script type="text/javascript" src="assets/js/huebee.pkgd.min.js"></script>
+
+ un-comment this code to enable service worker
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('service worker installed'))
+        .catch(err => console.error('Error', err));
+    }
+  </script>-->
+
+  <link href="build/main.css" rel="stylesheet">
+
+</div>
+
+</head>
+<body>
+
+  <!-- Ionic's root component and where the app will load -->
+  <ion-app></ion-app>
+
+  <!-- The polyfills js is generated during the build process -->
+  <script src="build/polyfills.js"></script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js"></script>
+  <!-- The vendor js is generated during the build process
+       It contains all of the dependencies in node_modules -->
+  <script src="build/vendor.js"></script>
+
+  <!-- The main bundle js is generated during the build process -->
+  <script src="build/main.js"></script>
+  <script src="assets/js/brain.js"></script>
+
+  <div id="d3el" style="position: absolute; top:30px; left: 0px; ">
+    <script>
+      document.getElementById("d3el").addEventListener("wheel", home.onMouseWheel);
+    </script>
+  <script>
+    document.addEventListener("fullscreenchange", function (e) {
+      if (e.srcElement.className == "youtube" && !document.fullscreen) {
+        electron.fullscreen();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,651 @@
+/* Candlestick chart: SMA and EMA, Bollinger bands, ATR Trailing stop, Ichimoku */
+.candlestick {
+
+  .sma.ma-0 path.line {
+    stroke: #1f77b4;
+  }
+
+  .sma.ma-1 path.line {
+    stroke: aquamarine;
+  }
+
+  .ema.ma-0 path.line {
+    stroke: #786790;
+  }
+
+  .ema.ma-1 path.line {
+    stroke: #345628;
+  }
+
+  .bollinger.boll-0 {
+    path.upper {
+      stroke: steelblue;
+    }
+    path.middle {
+      stroke: seashell;
+      opacity: 0.1;
+    }
+    path.lower {
+      stroke: maroon;
+    }
+  }
+
+  .atrtrailingstop.atrts-0 {
+    path {
+      fill: none;
+      stroke-width: 0.8;
+      stroke: #000000;
+    }
+
+    path.down {
+      stroke: #aa0000;
+    }
+
+    path.up {
+      stroke: #007700;
+    }
+  }
+
+  .ichimoku {
+    path.candle.body {
+      stroke-width: 0;
+    }
+
+    path.candle.up {
+      fill: #00aa00;
+      stroke: #00aa00;
+    }
+
+    path.candle.down {
+      fill: #ff0000;
+      stroke: #ff0000;
+    }
+
+    .path {
+      fill: none;
+      stroke-width: 0.8;
+    }
+
+    .path {
+      stroke: #000000;
+    }
+
+    .path.chikouspan {
+      stroke: #bf5fff;
+    }
+
+    .path.tenkansen {
+      stroke: #0033ff;
+    }
+
+    .path.kijunsen {
+      stroke: #fbb117;
+    }
+
+    .path.kumo {
+      opacity: 0.1;
+    }
+
+    .path.kumo.up {
+      fill: #00aa00;
+    }
+
+    .path.kumo.down {
+      fill: #ff0000;
+    }
+
+    .path.senkouspana {
+      stroke: #006600;
+    }
+
+    .path.senkouspanb {
+      stroke: #ff0000;
+    }
+  }
+}
+
+/**/
+
+/* TRADEARROW */
+
+path.tradearrow {
+  stroke: none;
+}
+
+path.tradearrow.buy {
+  fill: #0000ff;
+}
+
+path.tradearrow.buy-pending {
+  fill-opacity: 0.2;
+  stroke: #0000ff;
+  stroke-width: 1.5;
+}
+
+path.tradearrow.sell {
+  fill: #9900ff;
+}
+
+.tradearrow path.highlight {
+  fill: none;
+  stroke-width: 2;
+}
+
+.tradearrow path.highlight.buy,
+.tradearrow path.highlight.buy-pending {
+  stroke: #0000ff;
+}
+
+.tradearrow path.highlight.buy-pending {
+  fill: #0000ff;
+  fill-opacity: 0.3;
+}
+
+.tradearrow path.highlight.sell {
+  stroke: #9900ff;
+}
+
+/* */
+
+/* Volume */
+path.volume {
+  fill: #eee;
+  stroke: #eee;
+  opacity: 0.2;
+}
+
+/**/
+
+/* CROSSHAIR */
+.crosshair {
+  cursor: crosshair;
+}
+
+.crosshair path.wire {
+  stroke: #dddddd;
+  stroke-dasharray: 1, 1;
+}
+
+.crosshair .axisannotation .scope-composed-annotation path {
+  fill: #555;
+}
+
+.crosshair .axisannotation .scope-composed-annotation text {
+  font-size: 10px;
+}
+
+/**/
+
+/* PORTFOLIO CHART */
+
+.portfolio .portfolio-chart path.line {
+  stroke: #bbb;
+}
+
+.portfolio .portfolio-chart path.line.highlighted {
+  stroke: #fff;
+}
+
+.portfolio .adj-close-chart path.line {
+  stroke: rgb(50, 150, 120);
+}
+
+.portfolio .adj-close-chart path.line.highlighted {
+  stroke: rgb(100, 200, 120);
+}
+
+.portfolio .close-chart path.line {
+  stroke: rgb(202, 79, 79);
+}
+
+.portfolio .close-chart path.line.highlighted {
+  stroke: rgb(240, 157, 157);
+}
+
+div.dynamic-label-portfolio {
+  position: absolute;
+  text-align: center;
+  width: 60px;
+  height: 18px;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+div.dynamic-label-leading {
+  position: absolute;
+  text-align: center;
+  width: 60px;
+  height: 18px;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+div.dynamic-label-leading.dynamic-label-DXY{
+  background: var(--dxy);
+}
+
+div.dynamic-label-leading.dynamic-label-Unemployment{
+  background: var(--unemployment);
+}
+
+div.dynamic-label-leading.dynamic-label-Housing{
+  background: var(--housing);
+}
+
+div.dynamic-label-leading.dynamic-label-Yield{
+  background: var(--yields);
+}
+
+div.dynamic-label-leading.dynamic-label-Snp{
+  background: var(--sp);
+}
+
+div.dynamic-label-leading.dynamic-label-Industry{
+  background: var(--industry);
+}
+
+div.dynamic-label-leading.dynamic-label-VIX{
+  background: var(--vix);
+}
+
+
+
+
+/**/
+
+/* INDICATORS */
+
+/* ADX  */
+.adx {
+  stroke: #000000;
+
+  path {
+    fill: none;
+    stroke-width: 1;
+  }
+
+  path.adx {
+    stroke: #000000;
+  }
+
+  path.plusDi {
+    stroke: #00ff00;
+  }
+
+  path.minusDi {
+    stroke: #ff0000;
+  }
+}
+
+/* AROON */
+.aroon {
+  stroke: #000000;
+
+  path {
+    fill: none;
+    stroke-width: 1;
+  }
+
+  .up {
+    stroke: #00aa00;
+    stroke-width: 1.5;
+  }
+
+  .down {
+    stroke: #ff0000;
+    stroke-width: 1.5;
+  }
+
+  .oscillator {
+    stroke: #009BFF;
+    stroke-width: 0.5;
+  }
+  .oscillatorArea {
+    fill: #009BFF;
+    opacity: 0.025;
+  }
+
+  path.overbought,
+  path.oversold {
+    stroke: #ff9999;
+    stroke-width: 1;
+    stroke-dasharray: 2, 2;
+  }
+
+  path.middle,
+  path.zero {
+    stroke: #bbbbbb;
+    stroke-dasharray: 5, 5;
+  }
+}
+
+/* ATR TRAILING STOP */
+.atrtrailingstop {
+  path.candle.body {
+    stroke-width: 0;
+  }
+
+  path.candle.up {
+    fill: #00aa00;
+    stroke: #00aa00;
+  }
+
+  path.candle.down {
+    fill: #ff0000;
+    stroke: #ff0000;
+  }
+
+  path {
+    fill: none;
+    stroke-width: 0.8;
+    stroke: #000000;
+  }
+
+  path.down {
+    stroke: #aa0000;
+  }
+
+  path.up {
+    stroke: #007700;
+  }
+}
+
+/* WILLIAMS */
+.williams {
+  path {
+    fill: none;
+    stroke-width: 1;
+  }
+
+  .up {
+    stroke: #006600;
+    stroke-width: 1.5;
+  }
+}
+
+/* STOCHASTIC */
+
+.stochastic {
+  path {
+    fill: none;
+    stroke-width: 1;
+  }
+
+  .up {
+    stroke: #00aa00;
+  }
+
+  .down {
+    stroke: #ff0000;
+  }
+
+  path.overbought,
+  path.oversold {
+    stroke: #ff9999;
+    stroke-dasharray: 5, 5;
+  }
+}
+
+/* RSI */
+.rsi {
+  stroke: #bbb;
+
+  path {
+    fill: none;
+    stroke-width: 1;
+  }
+
+  path.overbought,
+  path.oversold {
+    stroke: #ff9999;
+    stroke-dasharray: 5, 5;
+  }
+
+  path.middle,
+  path.zero {
+    stroke: #bbbbbb;
+    stroke-dasharray: 5, 5;
+  }
+}
+
+/* MACD */
+
+.macd {
+  path {
+    fill: none;
+    stroke-width: 1;
+  }
+
+  path.macd {
+    stroke: #009BFF;
+  }
+
+  path.signal {
+    stroke: #ff9999;
+  }
+
+  path.zero {
+    stroke: #bbbbbb;
+    stroke-dasharray: 0;
+    stroke-opacity: 0.5;
+  }
+
+  path.difference {
+    fill: #bbbbbb;
+    opacity: 0.5;
+  }
+}
+
+/* ICHIMOKU */
+
+.ichimoku {
+  path.candle.body {
+    stroke-width: 0;
+  }
+
+  path.candle.up {
+    fill: #00aa00;
+    stroke: #00aa00;
+  }
+
+  path.candle.down {
+    fill: #ff0000;
+    stroke: #ff0000;
+  }
+
+  path {
+    fill: none;
+    stroke-width: 0.8;
+  }
+
+  path {
+    stroke: #000000;
+  }
+
+  path.chikouspan {
+    stroke: #bf5fff;
+  }
+
+  path.tenkansen {
+    stroke: #FFEA00;
+  }
+
+  path.kijunsen {
+    stroke: #fbb117;
+  }
+
+  path.kumo {
+    opacity: 0.1;
+  }
+
+  path.kumo.up {
+    fill: #00aa00;
+  }
+
+  path.kumo.down {
+    fill: #ff0000;
+  }
+
+  path.senkouspana {
+    stroke: #006600;
+  }
+
+  path.senkouspanb {
+    stroke: #ff0000;
+  }
+}
+
+/* HEIKIN ASHI */
+
+.heikinashi {
+  path.candle {
+    stroke: #000000;
+  }
+
+  path.candle.body {
+    stroke-width: 0;
+  }
+
+  path.candle.up {
+    fill: #00aa00;
+    stroke: #00aa00;
+  }
+
+  path.candle.down {
+    fill: #ff0000;
+    stroke: #ff0000;
+  }
+}
+
+/* BOLLINGER */
+.bollinger {
+  .ohlc path.up {
+    stroke: #00aa00;
+  }
+
+  .ohlc path.down {
+    stroke: #ff0000;
+  }
+
+  path {
+    fill: none;
+    stroke-width: 1;
+  }
+
+  path.upper {
+    stroke: #009BFF;
+  }
+
+  path.lower {
+    stroke: #BF40BF;
+  }
+
+  path.middle {
+    stroke: #bbbbbb;
+  }
+}
+
+
+
+
+
+// /* SROC */
+// .sroc {
+
+// }
+
+// /* VWAP */
+
+// .vwap {
+  
+// }
+
+
+
+/* SUPSTANCE */
+.supstance path {
+  stroke: white;
+  stroke-width: 1.5px;
+  stroke-dasharray: 2, 2;
+}
+
+.supstance path:hover {
+    stroke-width: 4px;
+}
+
+.supstance~.axisannotation path {
+  fill: blue;
+}
+
+.supstance~.axisannotation text {
+  fill: #fff;
+}
+
+
+div.dynamic-label-supstance {
+  position: absolute;
+  text-align: center;
+  min-width: 60px;
+  height: 18px;
+  padding: 2px;
+  padding-left:10px;
+  padding-right: 10px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+
+
+/*
+
+LEADING INDICATORS
+
+*/
+
+.leading-indicator.DXY path.line {
+   stroke: var(--dxy) !important;
+}
+
+.leading-indicator.Unemployment path.line {
+  stroke: var(--unemployment) !important;
+}
+
+.leading-indicator.Housing path.line {
+  stroke: var(--housing) !important;
+}
+
+.leading-indicator.Yield path.line {
+  stroke: var(--yields) !important;
+}
+
+.leading-indicator.Recessions path.line {
+  stroke: var(--recess) !important;
+}
+
+.leading-indicator.VIX path.line {
+  stroke: var(--vix) !important;
+}
+
+.leading-indicator.Industry path.line {
+  stroke: var(--industry) !important;
+}
+
+.leading-indicator.SnP path.line {
+  stroke: var(--sp) !important;
+}
+
+.Recessions {
+  fill: var(--recess);
+  opacity: 0.3;
+}

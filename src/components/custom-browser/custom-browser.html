@@ -1,0 +1,20 @@
+<div class="browser">
+      <!--
+  <div class="navbar">
+
+    <input type="text" disabled [value]="webView&&webView.nativeElement&&webView.nativeElement.src||''">
+    <ion-icon name="refresh" (click)="webView&&webView.nativeElement&&webView.nativeElement.reload()"></ion-icon>
+    <span class="spinner" [hidden]="!showSpinner">
+      Loading...
+    </span>
+     <span class="closeBrowser" (click)="browserControl.hide()">
+      Close
+    </span>
+  </div>
+-->
+
+<img src="assets/icons/previous.svg" (click)="browserControl.hide()" class="grow" style="position:absolute;left:4vh;top:2vh;color:white;z-index:9999999;width:7vh !important">
+
+   
+  <webview enableremotemodule="false" src="about:blank" partition="persist:inAppBrowser" webpreferences="allowRunningInsecureContent" #webview></webview>
+</div>

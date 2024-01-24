@@ -1,0 +1,32 @@
+	<ion-content class="dark">
+<ion-list-header> Moving Averages<ion-icon (click)="viewCtrl.dismiss();events.publish('sfx','close')" class="closeBtn" style="float:right" name="md-close"></ion-icon></ion-list-header>
+<!---->
+<div *ngFor="let avg of ma; let i=index" class="maList">
+	{{i+1}}. <select [ngClass]="{'halfopac':state<2}" style="margin-left:-6px;margin-right:10px;background:#444;width:115px;font-size:15px" [(ngModel)]="avg.type"> Type: 
+	<option value="sma">SMA (simp)</option>
+    <option value="ema">EMA (exp)</option>
+  </select><input (ngModelChange)="onChange()" style="margin-right:10px;" type="color" class="colorInput" [(ngModel)]="avg.color"/>  <input (ngModelChange)="onChange()" class="rangeSlide" type="range" style="width:160px;margin-right:5px;display:inline-block;margin-top:1px"  min="2" [max]="math.min(365,dateIndex)" step="1" [(ngModel)]="avg.duration">
+   {{avg.duration}}<span style="font-size:12px;opacity:.5;margin-left:2px">days</span>
+
+<ion-icon *ngIf="ma.length>1 && state==2" style="float:right;font-size:25px;opacity:.4"  class="hov" (click)="rmMA(i)" name="md-trash"></ion-icon>
+</div>
+  <button *ngIf="state==2" color="light" style="float:right;margin-right:15px;margin-top:10px" ion-button (click)="
+addMA()"><ion-icon name="md-add-circle"></ion-icon>&nbsp;New Moving Average</button>
+
+<button (click)="openLink('https://www.investopedia.com/terms/m/movingaverage.asp')" color="light" style="width:150px;background-color:#077ccc;color:white;font-weight:bold;margin-left:30px;margin-top:10px" ion-button><ion-icon name="md-information-circle"></ion-icon> &nbsp;Investopedia</button>
+<!-- *ngIf="ma.length<5" style="position:absolute;bottom:0"-->
+<div class="desc" style="margin-top:10px">
+
+	<img style="width:30px;float:right" src="assets/imgs/3719420.png"><div style="width:90%">
+
+
+Simple Moving Average is the average stock price plotted over a given period. Exponential Moving Average gives more weight to recent prices. A price above EMA is more likely to rise and below EMA is more likely to fall. Use the slider to change periods.
+</div></div>
+
+
+	<div *ngIf="false" style="color:white;width:100%;height:100%;padding-top:100px;text-align:center" class="desc">
+<div [hidden]="state!==2">Unlimited</div>
+<div [hidden]="state!==1">Exponential Moving Averages</div>
+<div [hidden]="state!==0">Simple Moving Averages</div>
+</div>
+	</ion-content>

@@ -1,0 +1,49 @@
+<ion-content class="dark">
+<ion-list-header>{{indicator | uppercase}}<ion-icon (click)="viewCtrl.dismiss();events.publish('sfx','close')" class="closeBtn" style="float:right" name="md-close"></ion-icon></ion-list-header>
+<div *ngIf="indicator=='pivot'" class="desc" style="padding:20px">Algorithm Type
+	<select class="portDrop2" [(ngModel)]="data.vals.type" (ngModelChange)="onChange($event,type)"><!--  -->
+	<option value="floor">Floor</option>
+    <option value="woodie">Woodies</option>
+     <option value="camarilla">Camarilla</option>
+      <option value="fibonacci">Fibonacci</option>
+  </select>
+</div>
+<div *ngIf="indicator!=='pivot'">
+<div *ngFor="let prm of data.params" class="maList">
+<span style="margin-left:10px">{{prm}}</span>
+
+	<input type="range" style="position:absolute;right:80px;width:200px;margin-top:5px;cursor:grab" (ngModelChange)="onChange($event,prm)" [(ngModel)]="data.vals[prm]"> <span style="opacity:.6;position:absolute;right:20px">{{data.vals[prm]}}</span>
+
+
+
+</div>
+</div>
+
+<div class="desc">
+
+	<img style="width:30px;float:right" src="assets/imgs/3719420.png"><div style="width:90%">
+
+
+{{data.desc}}
+</div></div>
+
+
+<div style="margin-left:auto;margin-right:auto;left:0;right:0;position:absolute;bottom:35px;text-align:center">
+<button (click)="openLink(data.link)" style="background-color:#077ccc;width:150px;font-weight:bold;margin-right:30px" ion-button><ion-icon name="md-information-circle"></ion-icon> &nbsp;Investopedia</button>
+
+<button (click)="setDefaults()" color="light" style="width:150px;font-weight:bold" ion-button><ion-icon name="md-settings"></ion-icon> &nbsp;Set Defaults</button>
+</div>
+<!--
+<div style="position:absolute;padding:10px;bottom:10px;right:0;font-size:16px">
+	<span class="txtbtn" style="padding-right:30px" (click)="
+back(false)">CANCEL</span>
+  <span class="txtbtn" style="padding-right:30px" (click)="
+back(true)">SAVE</span>
+</div>
+
+
+<div *ngFor="let indi of inds; let i=index" class="maList">
+	 <input type="checkbox" (ngModelChange)="onChange($event,indi.name)" [(ngModel)]="indi.visible"> {{indi.name}} <span style="opacity:.6">{{descriptions[indi.name]}}</span>
+</div>
+-->
+	</ion-content>

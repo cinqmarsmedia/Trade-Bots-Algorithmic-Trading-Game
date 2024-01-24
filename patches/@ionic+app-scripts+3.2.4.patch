@@ -1,0 +1,36 @@
+diff --git a/node_modules/@ionic/app-scripts/config/webpack.config.js b/node_modules/@ionic/app-scripts/config/webpack.config.js
+index d152b2b..65a4813 100644
+--- a/node_modules/@ionic/app-scripts/config/webpack.config.js
++++ b/node_modules/@ionic/app-scripts/config/webpack.config.js
+@@ -15,6 +15,7 @@ const Dotenv = require('dotenv-webpack');
+ var ModuleConcatPlugin = require('webpack/lib/optimize/ModuleConcatenationPlugin');
+ var PurifyPlugin = require('@angular-devkit/build-optimizer').PurifyPlugin;
+ 
++
+ var optimizedProdLoaders = [
+   {
+     test: /\.json$/,
+@@ -98,7 +99,10 @@ var devConfig = {
+       silent: true // hide any errors
+     }),
+     ionicWebpackFactory.getIonicEnvironmentPlugin(),
+-    ionicWebpackFactory.getCommonChunksPlugin()
++    ionicWebpackFactory.getCommonChunksPlugin(),
++    new webpack.DefinePlugin({
++      'process.env.NODE_ENV': JSON.stringify('production')
++    })
+   ],
+ 
+   // Some libraries import Node modules but don't use them in the browser.
+@@ -138,7 +142,10 @@ var prodConfig = {
+     ionicWebpackFactory.getIonicEnvironmentPlugin(),
+     ionicWebpackFactory.getCommonChunksPlugin(),
+     new ModuleConcatPlugin(),
+-    new PurifyPlugin()
++    new PurifyPlugin(),
++    new webpack.DefinePlugin({
++      'process.env.NODE_ENV': JSON.stringify('production')
++    })
+   ],
+ 
+   // Some libraries import Node modules but don't use them in the browser.

@@ -1,0 +1,18 @@
+<div class="dark" style="height:100%">
+<ion-list-header> Legal Disclaimer </ion-list-header>
+<div style="padding:30px;padding-top:5px;overflow:scroll;height:280px"><i>Trade Bots is designed to inspire academic interest in Technical Analysis, and none of its content is intended as professional or financial advice. No resources we reference or link to constitute a solicitation, recommendation, or endorsement. You assume full risk and responsibility associated with the use of any information or techniques presented. No warranty or guarantee is provided as to the accuracy, completeness, or suitability of the material for purposes other than entertainment. In order to continue, you agree not to hold Cinq-Mars Media, its affiliates, or any third party service provider liable for any damages arising from decisions you make based on information or content within the Trade Bots game or linked external sources. Cinq-Mars Media is not a trading advisor or platform.</i>
+
+
+</div>
+
+<div *ngIf="mandate" style="text-align:center;position:absolute;bottom:10px;left:0;right:0;margin:auto">
+   <ion-checkbox style="vertical-align:middle" slot="end" [(ngModel)]="agree"></ion-checkbox><ion-label style="display:inline-block;vertical-align:middle;margin-left:10px">I Agree</ion-label>
+<button (click)="confirm();events.publish('sfx','close')" [ngClass]="{'halfopac':!agree}" style="margin-left:50px;vertical-align:middle;background-color:#077ccc;font-weight:bold" ion-button><b>continue</b>&nbsp;<ion-icon name="ios-arrow-forward"></ion-icon></button>
+</div>
+
+<div *ngIf="!mandate" style="text-align:center;position:absolute;bottom:10px;left:0;right:0;margin:auto">
+<button (click)="confirm();events.publish('sfx','close')"style="vertical-align:middle;background-color:#077ccc;font-weight:bold" ion-button><b>Continue</b>&nbsp;<ion-icon name="ios-arrow-forward"></ion-icon></button>
+</div>
+
+
+</div>

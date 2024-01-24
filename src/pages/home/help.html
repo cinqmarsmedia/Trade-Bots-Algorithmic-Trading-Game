@@ -1,0 +1,21 @@
+<ion-list-header class="modalHeader"> Extra Opportunities <ion-badge style="position:absolute;margin-left:10px;margin-top:0px;opacity:.9" color="secondary">${{rewards | thousands : 0}}</ion-badge><ion-icon (click)="viewCtrl.dismiss();events.publish('sfx','close')" class="closeBtn" style="float:right" name="md-close"></ion-icon></ion-list-header>
+	<ion-content class="dark">
+
+<div class="headerPad"></div>
+
+<div *ngIf="!detail" style="color:white;width:100%;height:calc(100% - 50px)">
+<div style="text-align:left;padding:20px"><img style="width:30px;float:right" src="assets/imgs/3719420.png"><div style="width:90%"><i>
+	You can earn in-game money by playing demos of other games from our non-profit or by signing up for our newsletter. These rewards persist through restarts and are redeemed automatically after playing the demo for at least 5 minutes. Funds are permenetly added across each Trade Bots game restart.</i></div>
+</div>
+
+<ion-item class="itm" *ngFor="let extra of extras" (click)="detail=extra">
+	<ion-label>{{extra.name}} <!--<span style="color:green;font-size:10px;position:absolute;margin-left:7px;margin-top:4px">{{earn.difficulty}}</span>--><span style="float:right;font-size:20px;margin-top:6px"><span style="opacity:.5;font-size:12px !important">earn</span> <!--${{earn.reward | thousands:0}}--><ion-badge style="font-size:16px;margin-left:5px" color="secondary">${{extra.reward | thousands:0}}</ion-badge></span> <div style="color:#aaa;white-space: initial"><i>{{extra.intro}}</i></div></ion-label></ion-item>
+</div>
+
+<div *ngIf="detail">
+	fjdklajfk {{detail.name}}
+
+	<button (click)="completed(detail)">complete it</button>
+</div>
+
+	</ion-content>

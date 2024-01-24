@@ -1,0 +1,61 @@
+<ion-list-header class="modalHeader"> <span *ngIf="limAds && !detail">More on Our Non-Profit</span><span *ngIf="!detail && !limAds">Extra Opportunities <ion-badge [hidden]="rewards==0" style="position:absolute;margin-left:10px;margin-top:0px;opacity:.9" color="secondary">${{rewards | thousands : 0}}</ion-badge></span><span *ngIf="detail">{{detail.name}} <ion-badge [hidden]="detail.completed || doneArr.includes(detail.key) || limAds" style="position:absolute;margin-left:10px;margin-top:0px;opacity:.9" color="secondary">${{detail.reward | thousands : 0}}</ion-badge></span>
+	<ion-icon [hidden]="detail" (click)="viewCtrl.dismiss();events.publish('sfx','close')" class="closeBtn" style="float:right" name="md-close"></ion-icon>
+<ion-icon [hidden]="!detail" (click)="bck();events.publish('sfx','close')" class="closeBtn" style="float:right" name="md-arrow-back"></ion-icon>
+</ion-list-header>
+	<ion-content class="dark">
+
+<div class="headerPad"></div>
+
+<div *ngIf="!detail" style="color:white;width:100%;height:calc(100% - 50px)">
+<div style="text-align:left;padding:20px"><img style="width:30px;float:right" src="assets/imgs/3719420.png"><div style="width:90%"><i>
+<span *ngIf="!limAds">
+	You can earn in-game money by playing demos or reading about other games from our non-profit, or by signing up for our newsletter. These rewards persist through restarts and are redeemed automatically.
+</span>
+<span *ngIf="limAds">
+	Play demos or read about other projects from our non-profit. Earn in-game money by watching videos about the game or educational concepts. These rewards persist through restarts and are redeemed automatically.
+</span>
+
+</i></div>
+</div>
+
+<ion-item class="itm" *ngFor="let extra of extras" (click)="oppClick(extra);events.publish('sfx','generic')">
+	<ion-label>{{extra.name}} <!--<span style="color:green;font-size:10px;position:absolute;margin-left:7px;margin-top:4px">{{earn.difficulty}}</span>--><span *ngIf="!limAds || extra.notAd" style="float:right;font-size:20px;margin-top:6px"><span style="opacity:.5;font-size:12px !important">earn</span> <!--${{earn.reward | thousands:0}}--><ion-badge style="font-size:16px;margin-left:5px" color="secondary">${{extra.reward | thousands:0}}</ion-badge></span><span class="arrowForward" *ngIf="limAds && !extra.notAd" style="float:right"><ion-icon name="ios-arrow-forward"></ion-icon></span> <div style="color:#aaa;white-space: initial"><i>{{extra.intro}}</i></div></ion-label></ion-item>
+
+
+
+<div *ngIf="redeemed.length>0">
+	<ion-list-header style="margin-bottom:0px;margin-top:-1px"> Redeemed</ion-list-header>
+	<ion-item class="itm" *ngFor="let itm of redeemed" (click)="oppClick(itm)">
+	<ion-label>{{itm.name}} <!--<span style="color:green;font-size:10px;position:absolute;margin-left:7px;margin-top:4px">{{earn.difficulty}}</span>--><span style="float:right;font-size:20px;margin-top:6px"> <!--${{earn.reward | thousands:0}}--><ion-badge style="font-size:16px;margin-left:5px;opacity:.5" color="primary">${{itm.reward | thousands:0}}</ion-badge> <span style="opacity:.5;font-size:12px !important">earned</span></span> <div style="color:#aaa;white-space: initial"><i>{{itm.intro}}</i></div></ion-label></ion-item>
+</div>
+
+
+
+</div>
+
+<div *ngIf="detail">
+
+<div style="text-align:center;margin-top:40px">
+
+	<iframe  sandbox="allow-same-origin allow-scripts allow-presentation" class="youtube" width="560" height="315" [src]="'https://www.youtube-nocookie.com/embed/'+detail.embed | keepHtml" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" frameborder="0"
+        allowfullscreen
+        webkitallowfullscreen
+        mozallowfullscreen></iframe>
+    </div>
+
+    <div *ngIf="detail.id[0]!=='_'" style="margin-left:auto;margin-right:auto;left:0;right:0;position:absolute;bottom:35px;text-align:center">
+<button (click)="completed(detail)" style="background-color:#077ccc;width:200px;font-weight:bold;margin-right:30px" ion-button><ion-icon name="logo-steam" style="font-size:30px"></ion-icon> &nbsp;<span [hidden]="detail.steam.slice(0,4)=='http'">DOWNLOAD <span [hidden]="detail.name!=='Copy Editor' && detail.name!=='The Devil\\'s Calculator'">DEMO</span><span [hidden]="detail.name=='Copy Editor' || detail.name=='The Devil\\'s Calculator'">FREE</span></span><span [hidden]="detail.steam.slice(0,4)!=='http'">READ ABOUT</span></button><ion-badge [hidden]="detail.completed || doneArr.includes(detail.key) || limAds" style="position:absolute;margin-left:-50px;margin-top:0px;opacity:.9" color="secondary">${{detail.reward | thousands : 0}}</ion-badge>
+
+<button (click)="openLink(detail.info)" color="light" style="width:150px;font-weight:bold" ion-button><ion-icon name="md-information-circle"></ion-icon> &nbsp;More Info</button>
+</div>
+
+    <div *ngIf="detail.id[0]=='_'" style="margin-left:auto;margin-right:auto;left:0;right:0;position:absolute;bottom:50px;text-align:center;width:400px"> {{detail.intro}}<div [hidden]="doneArr.includes(detail.key)"><i>Watch Full Video to Earn</i> &nbsp;<ion-badge [hidden]="detail.completed" style="position:absolute;margin-left:-0px;margin-top:0px;opacity:.9" color="secondary">${{detail.reward | thousands : 0}}</ion-badge></div>
+</div>
+
+
+
+
+</div>	
+
+
+	</ion-content>

@@ -1,0 +1,247 @@
+<ion-content class="dark">
+<ion-list-header>Simple Automation<ion-icon (click)="openLink('https://www.cinqmarsmedia.com/tradebots/docs/#/simplebots')" class="helpSimpBtn" [ngClass]="{'halfopac':tutState!==-1}" name="md-help"></ion-icon><ion-icon (click)="viewCtrl.dismiss();events.publish('sfx','close')" class="closeBtn" [ngClass]="{'halfopac':tutState!==-1}"  style="float:right" name="md-close"></ion-icon></ion-list-header>
+
+<div style="padding:10px;margin-top:-20px;color:white;overflow:scroll;height:560px;margin-bottom:10px">
+<div style="margin:15px">
+<h2>{{entryorexit?'Entry':'Exit'}}</h2>
+If the following conditions are met <select class="debounceDropdn" (click)="tutClick(256)" [tooltip]="'ⓘ &nbsp;Restrict Frequency of Bot (Debounce)'" [event]="'press'" [alwaysShow]="tutState==256" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="0" [disabled]="unlock==0" [(ngModel)]="rules[entryorexit?'entryFreq':'exitFreq']">
+        <option value="0">once</option>
+        <option value="1">at any time</option>
+        <option value="2">once per 2 days</option>
+        <option value="3">once per 3 days</option>
+        <option value="5">once per 5 days</option>
+        <option value="7">once per week</option>
+        <option value="14">once per 2 weeks</option>
+        <option value="30">once per month</option>
+        <option value="60">once per 2 months</option>
+        <option value="180">once per 6 months</option>
+        </select>, the stock will be <select [hidden]="!entryorexit" [disabled]="unlock==0" (click)="tutClick(257)" [tooltip]="'ⓘ &nbsp;You Can Now Secure a Short Position'" [event]="'press'" [alwaysShow]="tutState==257" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="0" [(ngModel)]="rules.short">
+        <option [ngValue]="false">bought</option>
+        <option [ngValue]="true">shorted</option>
+        </select>
+        <span [hidden]="entryorexit">sold or covered </span>
+         automatically with <select [(ngModel)]="rules[entryorexit?'entryAmt':'exitAmt']">
+        <option value="5">5%</option>
+        <option value="10">10%</option>
+        <option value="25">25%</option>
+        <option value="50">50%</option>
+        <option value="75">75%</option>
+        <option value="100">100%</option>
+        </select> of <span [hidden]="entryorexit">your investments</span><span [hidden]="!entryorexit">available cash</span>. Each transaction will incur a fee of <b>{{fee*100 | number : '1.0-0'}}%</b>; purchase upgrades to reduce this cost. If data is ever undefined, <select (click)="tutClick(305)" [tooltip]="'ⓘ &nbsp;Advanced Options If Data Is Undefined'" [event]="'press'" [alwaysShow]="tutState==305" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="0" style="max-width:300px !important" [disabled]="unlock<2" [(ngModel)]="rules[entryorexit?'entryUndef':'exitUndef']">
+        <option value="1">pause simulation</option>
+        <option value="0">return closest value</option>
+        <option value="-1">return -1</option>
+        </select>. 
+</div>
+<div class="noDrag"
+      id="dragula-rules-container"
+      dragula="RULES"
+      [(dragulaModel)]="rules[entryorexit?'entry':'exit']">
+<div style="margin:10px;margin-left:3px" *ngFor="let rule of rules[entryorexit?'entry':'exit']; let i=index" [ngClass]="{'no-drag':rule[0]=='_'}">
+<ion-icon (mousedown)="tutClick(254);tutClick(304)" [tooltip]="tutState==254?'ⓘ &nbsp;Drag to Re-order Rules; They Always Resolve Top to Bottom':'ⓘ &nbsp;Drag rules together (up in this case) to remove groups'" [event]="'press'" [alwaysShow]="(tutState==254 && i==0) || (tutState==304 && i==2)" duration="0" arrow="true" positionV="top" tooltipClass="superleftArrow" positionH="center" leftOffset="0" class="grow" *ngIf="rule[0]!=='_'" style="cursor:move;opacity:.5;padding-right:5px" name="ios-reorder"></ion-icon>
+<div *ngIf="rule[0]=='_'" style="text-align:center">) <select (click)="tutClick(303)" [tooltip]="'ⓘ &nbsp;Expressions Above And Below Will Resolve Independently'" [event]="'press'" [alwaysShow]="tutState==303" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="0" style="width:50px"  
+          [(ngModel)]="rule[1]"
+        ><option value="and" selected>and</option>
+        <option value="or">or</option>
+        </select> (</div>
+
+<div style="display:inline-block" *ngIf="rule[0]!=='_'"> 
+<span *ngIf="i>0 && rule[0]!=='_' && (i>0 && rules[entryorexit?'entry':'exit'][i-1][0]!=='_')"><select (click)="tutClick(253)" [tooltip]="'ⓘ &nbsp;Choose Logical Operator AND|OR '" [event]="'press'" [alwaysShow]="tutState==253" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="0" style="width:45px"  
+          [(ngModel)]="rule[6]"
+        ><option value="and" selected>and</option>
+        <option value="or">or</option>
+        </select>
+</span>
+<span style="font-size:17px;margin-left:8px;margin-right:5px" *ngIf="i==0 || (i>0 && rules[entryorexit?'entry':'exit'][i-1][0]=='_')"><span class="subTitle">if</span>...</span>
+<select (click)="tutClick(203);tutClick(251)" [tooltip]="tutState==251?'ⓘ &nbsp;More Indicators Now Available':'ⓘ &nbsp;Select Indicator You Wish to Compare'" [event]="'press'" [alwaysShow]="(tutState==203 || tutState==251) && i==0" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="0" topOffset="-40" [(ngModel)]="rule[0]" (ngModelChange)="changeInd(0)"
+        ><option value="Open">Open</option>
+        <option value="Close">Close</option>
+        <option [hidden]="unlock==0" value="High">High</option>
+        <option [hidden]="unlock==0" value="Low">Low</option>
+        <option [hidden]="unlock==0" value="Volume">Volume</option>
+        <option value="10SMA">10 SMA</option>
+        <option value="30SMA">30 SMA</option>
+        <option [hidden]="unlock==0" value="10EMA">10 EMA</option>
+        <option [hidden]="unlock==0" value="30EMA">30 EMA</option>
+        <option [hidden]="unlock==0" value="20BOLLup">20 BOLL↑</option>
+        <option [hidden]="unlock==0" value="20BOLLmid">20 BOLL→</option>
+        <option [hidden]="unlock==0" value="20BOLLdn">20 BOLL↓</option>
+        <option value="DXY">DXY</option>
+        <option [hidden]="unlock<2" value="Housing">Housing</option>
+        <option [hidden]="unlock<2" value="Industry">Industrials</option>
+        <option [hidden]="unlock==0" value="S&P">S&P 500</option>
+        <option [hidden]="unlock<2" value="Unemployment">Unemployment</option>
+        <option [hidden]="unlock<2" value="VIX">VIX</option>
+        <option [hidden]="unlock==0" value="yield">10Y2Y Spread</option>
+        <option [hidden]="unlock==0" value="R1">Res 1</option>
+        <option [hidden]="unlock==0" value="R2">Res 2</option>
+        <option [hidden]="unlock==0" value="R3">Res 3</option>
+        <option [hidden]="unlock==0" value="S1">Sup 1</option>
+        <option [hidden]="unlock==0" value="S2">Sup 2</option>
+        <option [hidden]="unlock==0" value="S3">Sup 3</option>
+        <option [hidden]="unlock==0" value="PivotPoint">Pivot Point</option>
+        <option [hidden]="unlock==0" value="RSI">RSI</option>
+        <option [hidden]="unlock<2" value="ADX">ADX</option>
+        <option [hidden]="unlock<2" value="ATR">ATR</option>
+        <option [hidden]="unlock<2" value="AROONup">AROON↑</option>
+        <option [hidden]="unlock<2" value="AROONdn">AROON↓</option>
+        <option [hidden]="unlock<2" value="Williams%">Williams%</option>
+        <option [hidden]="unlock==0" value="Stochastic">Stochastic</option>
+        <option [hidden]="unlock<2" value="StochSlow">Stoch Slow</option>
+        <option [hidden]="unlock==0" value="MACDLine">MACD Line</option>
+        <option [hidden]="unlock<2" value="MACDSignal">MACD Signal</option>
+        <option [hidden]="unlock<2" value="tenkan">Ichi Tenkan-Sen</option>
+        <option [hidden]="unlock<2" value="kijun">Ichi Kijun-sen</option>
+        
+        
+<!--
+
+  this.addOption("Pivot Alg", "SelectOption", "floor", undefined, { items: ["floor", "woodie", "fibonacci"] })
+        this.addOption("Pivot Line", "SelectOption", "S1", undefined, { items: ["S1", "S2", "S3", "PV","R1", "R2", "R3"] })
+        this.addOption("Stochastic Type", "SelectOption", "Fast Stochastic", undefined, { items: ["Fast (1 day)", "Slow (3 day)"] })
+        this.addOption("Aroon Type", "SelectOption", "Up Minus Down", undefined, { items: ["Up Minus Down","Up", "Down"] })
+        this.addOption("Bollinger Multiplier", "SelectOption", "Upper", undefined, { items: ["Upper", "Middle", "Lower"] })
+        this.addOption("Bollinger Bound", "SelectOption", "Upper", undefined, { items: ["Upper", "Middle", "Lower"] })
+        // williams is good
+        // adx is good
+        // RSI is good
+-->
+        </select>
+
+<select [(ngModel)]="rule[1]" [disabled]="tutState>200 && tutState<209"
+        ><option value="Today">Today</option>
+        <option value="Yesterday">Yesterday</option>
+        <option value="3 Days Ago">3 Days Ago</option>
+        <option value="5 Days Ago">5 Days Ago</option>
+        <option value="1 Week Ago">1 Wk Ago</option>
+        <option value="2 Weeks Ago">2 Wks Ago</option>
+        <option value="1 Month Ago">1 Mth Ago</option>
+        <option value="3 Months Ago">3 Mths Ago</option>
+        <option value="6 Months Ago">6 Mths Ago</option>
+        <option value="1 Year Ago">1 Yr Ago</option>
+        <option value="2 Years Ago">2 Yrs Ago</option>
+        <option [hidden]="unlock==0" value="BOTSTART">Bot Start</option>
+        </select>
+
+        <select [disabled]="tutState>200 && tutState<215"     
+          [(ngModel)]="rule[3]"
+        ><option value=">">></option>
+        <option value="<"><</option>
+        <option value="==">is</option>
+        <option value="!==">isn't</option>
+        </select>
+
+<select [(ngModel)]="tutState>200 && tutState<215?rule[0]:rule[4]" [disabled]="tutState>200 && tutState<215"
+        ><option value="Open">Open</option>
+        <option value="Close">Close</option>
+        <option [hidden]="unlock==0" value="High">High</option>
+        <option [hidden]="unlock==0" value="Low">Low</option>
+        <option [hidden]="unlock==0" value="Volume">Volume</option>
+        <option value="10SMA">10 SMA</option>
+        <option value="30SMA">30 SMA</option>
+        <option [hidden]="unlock==0" value="10EMA">10 EMA</option>
+        <option [hidden]="unlock==0" value="30EMA">30 EMA</option>
+        <option [hidden]="unlock==0" value="20BOLLup">20 BOLL↑</option>
+        <option [hidden]="unlock==0" value="20BOLLmid">20 BOLL→</option>
+        <option [hidden]="unlock==0" value="20BOLLdn">20 BOLL↓</option>
+        <option value="DXY">DXY</option>
+        <option [hidden]="unlock<2" value="Housing">Housing</option>
+        <option [hidden]="unlock<2" value="Industry">Industrials</option>
+        <option [hidden]="unlock==0" value="S&P">S&P 500</option>
+        <option [hidden]="unlock<2" value="Unemployment">Unemployment</option>
+        <option [hidden]="unlock<2" value="VIX">VIX</option>
+        <option [hidden]="unlock==0" value="yield">10Y2Y Spread</option>
+        <option [hidden]="unlock==0" value="R1">Res 1</option>
+        <option [hidden]="unlock==0" value="R2">Res 2</option>
+        <option [hidden]="unlock==0" value="R3">Res 3</option>
+        <option [hidden]="unlock==0" value="S1">Sup 1</option>
+        <option [hidden]="unlock==0" value="S2">Sup 2</option>
+        <option [hidden]="unlock==0" value="S3">Sup 3</option>
+        <option [hidden]="unlock==0" value="PivotPoint">Pivot Point</option>
+        <option [hidden]="unlock==0" value="RSI">RSI</option>
+        <option [hidden]="unlock<2" value="ADX">ADX</option>
+        <option [hidden]="unlock<2" value="ATR">ATR</option>
+        <option [hidden]="unlock<2" value="AROONup">AROON↑</option>
+        <option [hidden]="unlock<2" value="AROONdn">AROON↓</option>
+        <option [hidden]="unlock<2" value="Williams%">Williams%</option>
+        <option [hidden]="unlock==0" value="Stochastic">Stochastic</option>
+        <option [hidden]="unlock<2" value="StochSlow">Stoch Slow</option>
+        <option [hidden]="unlock==0" value="MACDLine">MACD Line</option>
+        <option [hidden]="unlock<2" value="MACDSignal">MACD Signal</option>
+        <option [hidden]="unlock<2" value="tenkan">Ichi Tenkan-Sen</option>
+        <option [hidden]="unlock<2" value="kijun">Ichi Kijun-sen</option>
+        </select>
+
+<select [(ngModel)]="rule[5]" (click)="tutClick(205)" [tooltip]="'ⓘ &nbsp;Choose When to Compare Growth'" [event]="'press'" [alwaysShow]="tutState==205 && i==0" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="0" [disabled]="tutState==209"
+        ><option value="Today">Today</option>
+        <option value="Yesterday">Yesterday</option>
+        <option value="3 Days Ago">3 Days Ago</option>
+        <option value="5 Days Ago">5 Days Ago</option>
+        <option value="1 Week Ago">1 Wk Ago</option>
+        <option value="2 Weeks Ago">2 Wks Ago</option>
+        <option value="1 Month Ago">1 Mth Ago</option>
+        <option value="3 Months Ago">3 Mths Ago</option>
+        <option value="6 Months Ago">6 Mths Ago</option>
+        <option value="1 Year Ago">1 Yr Ago</option>
+        <option value="2 Years Ago">2 Yrs Ago</option>
+        <option [hidden]="unlock==0" value="BOTSTART">Bot Start</option>
+        </select>
+
+        <select [hidden]="unlock>=2" (click)="tutClick(204)" [tooltip]="'ⓘ &nbsp;Select How Much the Indicator Must Grow (i.e. 2% is 1.02x) Relatively'" tooltipClass="rightArrow" [event]="'press'" [alwaysShow]="tutState==204 && i==0" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="-400" [(ngModel)]="rule[2]"
+        ><option value="0">+0%</option>
+        <option value="1">+1%</option>
+        <option value="2">+2%</option>
+        <option value="3">+3%</option>
+        <option value="5">+5%</option>
+        <option value="8">+7%</option>
+        <option value="10">+10%</option>
+        <option value="15">+15%</option>
+        <option value="20">+20%</option>
+        <option value="30">+30%</option>
+        <option value="50">+50%</option>
+        <option value="75">+70%</option>
+        <option value="90">+90%</option> 
+        </select>
+<span [hidden]="unlock<2" (click)="tutClick(301)" [tooltip]="'ⓘ &nbsp;Customize Growth Multiplier With Support for Negative Numbers'" [event]="'press'" [alwaysShow]="tutState==301 && i==0" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="0" topOffset="-40">+<input (blur)="onBlur(rule[2],i)" class="numadj" type="number" [(ngModel)]="rule[2]" min="-1000" max="1000"><b>%</b></span>
+</div>
+
+<ion-icon *ngIf="i>0 && rule[0]!=='_'" [tooltip]="'ⓘ &nbsp;Click Trashcan to Delete'" [event]="'press'" [alwaysShow]="tutState==255" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="0" (click)="rmSimpleRule(entryorexit,i);tutClick(255)" class="hov" style="cursor:pointer;padding-left:5px" name="md-trash"></ion-icon>
+</div>
+</div>
+
+
+  <button [hidden]="unlock==0" [tooltip]="'ⓘ &nbsp;Click to Add a Condition'" [event]="'press'" [alwaysShow]="tutState==252" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="0" [ngClass]="{'halfopac':!(unlock>0?(unlock==1?rules[entryorexit?'entry':'exit'].length<=3:true):false) || (tutState!==-1 && tutState!==252 && tutState!==306 && tutState!==258),'pulse':tutState==252}" ion-button (click)="
+addCondition(entryorexit?'entry':'exit')" class="animated infinite" style="background:#077ccc;float:right;margin-right:20px;margin-top:10px"><ion-icon name="md-add-circle"></ion-icon>&nbsp;Add Condition</button><button ion-button color="light" (click)="tutClick(302)" class="animated infinite" [tooltip]="'ⓘ &nbsp;Click to Add A New Group'" [event]="'press'" [alwaysShow]="tutState==302" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="0" [ngClass]="{'halfopac':unlock!==2 || (tutState!==-1 && tutState!==302 && tutState!==306),'pulse':tutState==302}" (click)="
+addGroup(entryorexit?'entry':'exit')" style="float:right;margin-right:20px;margin-top:10px"><b>)(</b>&nbsp;Add Group</button><br>
+<br><br>
+</div>
+
+
+<div *ngIf="unlock==0">
+<div class="desc" [hidden]="!entryorexit" style="position:absolute;margin-top:10px;bottom:120px">
+
+        <img style="width:30px;float:right" src="assets/imgs/3719420.png"><div style="width:90%">
+
+As it is sometimes the case that buying with an upward trend can be advantageous, an extremely simplified example of a trading algorithm is: <br><br>&nbsp;&nbsp;&nbsp;<b>
+<i>if 10SMA Today > 10SMA 5 Days Ago +3%</i></b><br><br>This means that if the current 10-day Simple Moving Average is ever 3% greater than the 10-day Simple Moving Average 1 week prior, a buy will be put in with a percentage of your available cash. 
+</div></div>
+
+<div class="desc" [hidden]="entryorexit" style="position:absolute;margin-top:10px;bottom:120px">
+
+        <img style="width:30px;float:right" src="assets/imgs/3719420.png"><div style="width:90%">
+
+As it is sometimes the case that selling with a downward trend can be advantageous, an extremely simplified example of a trading algorithm is: <br><br>&nbsp;&nbsp;&nbsp;<b>
+<i>if 10SMA 5 Days Ago +3% > 10SMA Today</i></b><br><br>This means that if the current 10-day Simple Moving Average is ever 3% less than the 10-day simple Moving Average 1 week prior, a percentage of your investment in the current asset will be sold. 
+</div></div>
+
+</div>
+
+
+
+<div style="position:absolute;padding:10px;bottom:10px;right:0;font-size:16px">
+	<span [ngClass]="{'halfopac':tutState!==-1}" class="txtbtn" style="padding-right:30px" (click)="
+back(false)">CANCEL</span>
+  <span [ngClass]="{'halfopac':tutState!==-1 && tutState!==206 && tutState!==209 && tutState!==258 && tutState!==306}" [tooltip]="'ⓘ &nbsp;Save Your Rules When Done'" [event]="'press'" [alwaysShow]="tutState==206 || tutState==209 || tutState==258 || tutState==306" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="0" [topOffset]="tutState==209?-40:0" class="txtbtn" style="padding-right:30px" (click)="
+back(true)">SAVE</span>
+</div>
+	</ion-content>

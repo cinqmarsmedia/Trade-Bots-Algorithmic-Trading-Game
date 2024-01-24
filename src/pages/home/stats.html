@@ -1,0 +1,60 @@
+<ion-content class="dark">
+
+<ion-list-header>Portfolio Breakdown <select style="cursor:pointer" (click)="tutClick(53)" [tooltip]="'ⓘ &nbsp;Toggle Between Margin Status & Portfolio Data Here'" event="press" [alwaysShow]="tutState==53" arrow="true" duration="0" positionV="top" positionH="center" class="portDrop" [hidden]="stats.finished==0 && !marginInfo[0] || (tutState!==-1 && tutState!==53 && tutState!==54)" [(ngModel)]="AllTime" (ngModelChange)="drawChart($event)">
+	<option *ngIf="(tutState>51) || (marginInfo[0] && marginInfo[3].amt>0)" value="-1">Margin Status</option>
+	<option value="0">Current {{asset}}</option>
+    <option *ngIf="stats.finished>0" value="1">All Time</option>
+  </select><span [hidden]="stats.finished==0 || AllTime==1 || (stats.netWorth-stats.netWorthBefore)==0" style="padding-left:10px">${{stats.netWorth-stats.netWorthBefore | thousands: 2}} on Current {{asset}}</span><span style="padding-left:10px" [hidden]="stats.finished==0 || AllTime==0">{{stats.finished}} {{asset}}<span [hidden]="stats.finished==1">s</span></span><span style="padding-left:100px" [hidden]="stats.restarts==0">{{stats.restarts}} Restart<span [hidden]="stats.restarts==1">s</span></span><span class="socialBtns"><!--<ion-icon (click)="fbook()" name="logo-facebook"></ion-icon>--><ion-icon [hidden]="(AllTime==1?stats.globalGain:stats.stockGain)==0 || tutState>-1" (click)="twit()" name="logo-twitter"></ion-icon><!--<ion-icon name="logo-reddit"></ion-icon>--></span><ion-icon [tooltip]="'ⓘ &nbsp;Click to Return'" event="press" [alwaysShow]="tutState==54" arrow="true" duration="0" positionV="top" positionH="center" topOffset="8" leftOffset="-11" [ngClass]="{'halfopac':tutState==51 || tutState==52 || tutState==53,'pulse':tutState==54 || tutState==31}" (click)="viewCtrl.dismiss();events.publish('sfx','close')" class="closeBtn animated infinite" style="float:right" name="md-close"></ion-icon></ion-list-header>
+
+  <div style="text-align:center;position:absolute;width:0px;left:50px;bottom:34vh;margin-top:-20px" tooltip="ⓘ &nbsp;Review Your Net Worth: Total Portfolio Minus Debts If Sold. Click  ✕  to Go Back." [event]="'press'" [alwaysShow]="tutState==14" arrow="true" tooltipClass="middleArrow" positionV="bottom" positionH="center" duration="0">
+<!--tutState==14-->
+</div>
+<div style="position:absolute;bottom:10px;left:25px">
+<button [hidden]="AllTime==-1 || precision || true" ion-button  (click)="leaderboard()" color="light" [ngClass]="{'halfOpacwHover':!stats.leaderUnlock}"><ion-icon name="md-ribbon">&nbsp;</ion-icon> Leaderboard</button>
+</div><div *ngIf="AllTime!==-1" (click)="precision=!precision" style="font-size:11px;position:absolute;right:25px;bottom:15px;font-style:italic;cursor:pointer">Net Worth:&nbsp;<span class="stat" [style.color]="((true?stats.netWorth:stats.netWorth-stats.netWorthBefore)==0)?'gray':((true?stats.netWorth:stats.netWorth-stats.netWorthBefore)>0)?'rgba(25, 255, 25, .6)':'rgba(255, 25, 25, .7)'">${{precision?(stats.netWorth | number: '1.2-2'):(stats.netWorth | thousands: 2)}}</span> &nbsp;&nbsp;&nbsp;Gains: &nbsp;<span class="stat" [style.color]="((AllTime==1?stats.globalGain:stats.stockGain)==0)?'gray':((AllTime==0?stats.globalGain:stats.stockGain)>0)?'rgba(25, 255, 25, .6)':'rgba(255, 25, 25, .7)'">{{precision?((AllTime==1?stats.globalGain:stats.stockGain) | number: '1.2-2'):((AllTime==1?stats.globalGain:stats.stockGain) | thousands: 2)}}%</span>
+&nbsp;&nbsp;&nbsp;Trades: &nbsp;<span class="stat">{{precision?((AllTime==1?stats.totalTrades:stats.stockTrades) | number: '1.0-0'):((AllTime==1?stats.totalTrades:stats.stockTrades) | thousands:0)}}</span>
+&nbsp;&nbsp;&nbsp;Days Traded: &nbsp;<span class="stat">{{precision?((AllTime==1?stats.globalRecords-(30*(stats.finished+1)):stats.stockRecords-30) | number:'1.0-0'):((AllTime==1?stats.globalRecords-(30*(stats.finished+1)):stats.stockRecords-30) | thousands:0)}}</span>
+&nbsp;&nbsp;&nbsp;Fees: &nbsp;<span class="stat" [style.color]="(((AllTime==1?stats.totalFeeAmt:stats.stockFeeAmt))>0)?'rgba(255, 25, 25, .7)':'gray'">${{precision?((AllTime==1?stats.totalFeeAmt:stats.stockFeeAmt)  | number: '1.2-2'):((AllTime==1?stats.totalFeeAmt:stats.stockFeeAmt)  | thousands: 2)}}</span>&nbsp;&nbsp;&nbsp;Interest: &nbsp;<span class="stat" [style.color]="(((AllTime==1?stats.totalInterestAmt:stats.stockInterestAmt))>0)?'rgba(255, 25, 25, .7)':'gray'">${{precision?((AllTime==1?stats.totalInterestAmt:stats.stockInterestAmt)  | number: '1.2-2'):((AllTime==1?stats.totalInterestAmt:stats.stockInterestAmt)  | thousands: 2)}}</span><div (click)="bankClck()" class="pulse" [ngClass]="{'animated infinite brightWhite':tutState==31}" tooltip="ⓘ &nbsp;Bank More Funds Through Learn & Earn, Upgrades" [event]="'press'" [alwaysShow]="tutState==31" topOffset="-50" leftOffset="-232" arrow="true" tooltipClass="rightArrow" positionV="top" positionH="center" duration="0" style="display:inline-block">&nbsp;&nbsp;&nbsp;Bank: &nbsp;<span class="stat" [style.color]="(((AllTime==1?stats.totalInterestAmt:stats.stockInterestAmt))>0)?'rgba(255, 25, 25, .7)':'gray'">${{precision?(bank | number: '1.2-2'):(bank | thousands: 2)}}</span></div></div>
+	<div style="color:white;width:100%;height:75%">
+
+<div [hidden]="AllTime==-1 || stats.totalTrades>0" class="portfolioPrompt">Place a Trade to See Movement in Your Portfolio. The line represents your % gains in net worth minus margin debt</div>
+
+<div *ngIf="marginInfo && AllTime==-1" class="portfolioPrompt" style="height:60vh">
+
+<span *ngIf="marginInfo[2]<0" style="font-size:3vmin;line-height:5vmin">
+	You have lost <b>{{marginData[0] | number: '1.0-1'}}%</b> of your margin loan. If you lose <b>{{marginData[1]}}%</b>: <b>${{marginData[2] | thousands:0}}</b> more, you will be margin called and <u>forced to restart</u>. Consider <button (click)="openExt('learn')" ion-button style="background-color:#077ccc;vertical-align:middle">Learn & Earn</button><ion-badge [hidden]="perks[0]==0" class="pulse" [ngClass]="{'animated infinite':perks[0]>0}" style="position:absolute;margin-left:-20px;margin-top:-2px" color="secondary">${{perks[0] | thousands : 0}}</ion-badge>, upgrading your {{marginData[1]}}% threshold and/or banking funds in anticipation of restarting.
+</span>
+
+<span *ngIf="!marginInfo[1] && marginInfo[2]>=0">Your net worth is positive and your Margin Loan is currently in good standing.</span>
+<!--
+<span *ngIf="!marginInfo[1] && marginInfo[2]<0">Your net worth is currently negative. You have lost <b>{{marginData[0] | number: '1.0-1'}}%</b> of your margin loan. If you lose <b>{{marginInfo[6]*100}}%</b>, you will be <u>margin called</u> and need to restart. <span style="opacity:.9">Adjust the threshold for when you are warned about being margin called below.</span></span>
+-->
+<div style="position:absolute;bottom:100px;left:0;right:0;margin:auto">
+<select style="cursor:pointer" (click)="tutClick(52)" [tooltip]="'ⓘ &nbsp;Define Warning Threshold'" event="press" [alwaysShow]="tutState==52" arrow="true" duration="0" positionV="top" positionH="center" class="portDrop2" [(ngModel)]="warnThresh" [ngClass]="{'halfopac':!marginWarn}"><!--  -->
+	<option value="0.02">2%</option>
+	<option value="0.05">5%</option>
+	<option [hidden]="marginInfo[6]<=.1" value="0.1">10%</option>
+	<option [hidden]="marginInfo[6]<=.2" value="0.2">20%</option>
+	<option [hidden]="marginInfo[6]<=.3" value="0.3">30%</option>
+</select>
+
+<ion-checkbox (ngModelChange)="checkboxChng()" [tooltip]="'ⓘ &nbsp;Toggle On To Get Margin Call Warnings'" event="press" [alwaysShow]="tutState==51" arrow="true" duration="0" positionV="top" positionH="center" topOffset="-40" leftOffset="-10" [ngClass]="{'animated pulse infinite':tutState==51}" style="vertical-align:middle" slot="end" [(ngModel)]="marginWarn"></ion-checkbox><ion-label style="display:inline-block;vertical-align:middle;margin-left:10px">Pause Sim & Warn</ion-label>
+
+<div style="font-size:12px">
+<i>	<span style="color:red" *ngIf="!marginWarn">
+	Leaving this off may result in suddenly being margin called and forced to restart.
+</span>
+<span *ngIf="marginWarn">
+	Any simulation will be halted and you will be notified if {{warnThresh*100}}% of your loan is lost.
+</span>
+</i>
+</div>
+</div>
+</div>
+
+<canvas class="chart" [hidden]="stats.totalTrades==0 || AllTime==-1" [height]="chartHeight" #testCanvas ></canvas> 
+
+</div>
+
+
+	</ion-content>

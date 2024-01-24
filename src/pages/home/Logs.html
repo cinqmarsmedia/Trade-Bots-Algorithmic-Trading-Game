@@ -1,0 +1,36 @@
+
+
+<ion-content class="dark">
+<ion-list-header> {{name}} Logs &nbsp;&nbsp;&nbsp;&nbsp;<select style="cursor:pointer;background:white" [disabled]="log.length==0" [(ngModel)]="filter" (ngModelChange)="filterLog()">
+
+<option value="all">Show All</option>
+<option value="0">Info</option>
+<option value="1">Warnings</option>
+<option value="2">Errors</option>
+<option value="3">Finished</option>
+
+</select>
+
+<div class="categories" *ngIf="false"> <ion-icon (click)="infoHide=!infoHide" [ngClass]="{'halfOpacwHover':infoHide}" style="color:gray" name="md-information-circle"></ion-icon> <ion-icon (click)="warnHide=!warnHide" [ngClass]="{'halfOpacwHover':warnHide}" style="color:#ffbf00" name="md-warning"></ion-icon><ion-icon (click)="alertHide=!alertHide" [ngClass]="{'halfOpacwHover':alertHide}" style="color:red" name="md-alert"></ion-icon></div><span (click)="clearLog()" *ngIf="filter=='all' && log.length>0" class="closeBtn" style="float:right;margin-right:40px;font-size:15px;margin-top:8px">CLEAR</span><ion-icon (click)="viewCtrl.dismiss();events.publish('sfx','close')" class="closeBtn" [ngClass]="{'animated infinite':tutState==212}" style="float:right" name="md-close"></ion-icon></ion-list-header>
+<div style="padding:15px;padding-top:5px;border-bottom:1px solid white" *ngFor="let lg of filteredLog; let i=index"
+	[ngClass]="{'halfOpacwHover':filter=='all' && i>log.length-read-1 && read!==log.length && !lg.expand}">
+<b><ion-icon *ngIf="lg.detail" (click)="lg.expand=!lg.expand" style="position:absolute;cursor:pointer;font-size:20px;opacity:.6" [name]="lg.expand?'md-arrow-dropdown':'md-arrow-dropright'"></ion-icon></b><div style="margin-left:15px;width:90%">
+	<div style="padding-bottom:5px"><span style="opacity:.6"><i>{{lg.timestamp | date:'H:mm:ss'}} | <span *ngIf="year>-1">{{lg.date | date:'M d'}} Yr {{year}}</span><span *ngIf="year==-1">{{lg.date | date:'M/d/yy'}}</span></i></span><ion-badge *ngIf="lg.counter" style="margin-left:10px;background:gray">{{lg.counter}}</ion-badge></div><ion-icon [style.color]="lg.type==3?'rgb(29, 190, 28)':(lg.type==0?'gray':(lg.type==1?'#ffbf00':'red'))" [name]="lg.type==3?'md-checkmark-circle':(lg.type==0?'md-information-circle':(lg.type==1?'md-warning':'md-alert'))" style="vertical-align:middle"></ion-icon>&nbsp;&nbsp;<span style="vertical-align:middle"><span [innerHTML]="lg.message"></span></span><!--<ion-icon (click)="deleteLogIndex(i)" class="opachov" style="cursor:pointer;position:absolute;right:39px;vertical-align:middle;font-size:20px;margin-top:-5px" name="md-remove-circle"></ion-icon>--><ion-icon [hidden]="lg.hideTrace" (click)="openStackTrace(lg)" class="opachov" style="cursor:pointer;position:absolute;right:20px;vertical-align:middle;font-size:22px;margin-top:-5px" name="logo-buffer"></ion-icon>
+	<div *ngIf="lg.expand" style="padding-top:5px;opacity:.6"><i><span [innerHTML]="lg.detail"></span></i></div>
+</div>
+
+</div>
+
+<div *ngIf="filteredLog.length==0 && log.length!==0" style="text-align:center;font-size:30px;opacity:.5;margin-top:150px">
+	No Current {{filter==0?'Info':(filter==1?'Warning':'Error')}} Logs<br><span style="font-size:12px"><i>Change Filter Above To See Other Types of Logs</i></span>
+</div>
+
+<div *ngIf="log.length==0" style="text-align:center;font-size:30px;opacity:.5;margin-top:150px">
+	Debug Log is Empty<br><span style="font-size:12px"><i>Significant Information About Your Bot's Actions Will Be Logged Here</i></span>
+</div>
+
+<div *ngIf="log.length!==0 && log.length>0" style="text-align:center;padding-top:20px">
+<button *ngIf="filter=='all'" (click)="clearLog()" ion-button>Clear Log</button>
+</div>
+<br><br>
+	</ion-content>

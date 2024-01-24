@@ -1,0 +1,27 @@
+<ion-list-header class="modalHeader">Missions
+
+	<ion-icon (click)="viewCtrl.dismiss();events.publish('sfx','close')" class="closeBtn" style="float:right" name="md-close"></ion-icon>
+
+</ion-list-header>
+	<ion-content class="dark">
+
+<div class="headerPad"></div>
+
+<div style="color:white;width:100%;height:calc(100% - 50px)">
+<div style="text-align:left;padding:20px"><img style="width:30px;float:right" src="assets/imgs/3719420.png"><div style="width:90%"><i>
+	You can listen to various trading podcasts while you play - click on one of the shows below to open a moveable widget. These programs are made available for your convenience in order to inspire interest - Cinq-Mars Media is not affiliated with any of these and we encourage you to research a variety of perspectives.</i></div>
+</div>
+<!--
+<ion-item class="itm" *ngFor="let podcast of podcasts" (click)="open(podcast);events.publish('sfx','generic')">
+	<ion-label style="margin-left:10px"><b>{{podcast.name}}</b> <span class="host">{{podcast.host}}</span><div style="float:right">
+		<ion-icon name="ios-arrow-forward"></ion-icon></div></ion-label></ion-item>
+
+-->
+
+
+
+</div>
+
+
+
+	</ion-content>

@@ -1,0 +1,29 @@
+<ion-list-header class="modalHeader">Podcasts 
+	 <input [hidden]="cust!==3" placeholder="iHeart URL" class="iheartURL" [(ngModel)]="iheart">
+
+	 <ion-icon [hidden]="iheart.length==0 || cust!==3" (click)="custom()" class="closeBtn" style="float:right" name="md-arrow-round-forward"></ion-icon>
+	<ion-icon [hidden]="iheart.length!==0" (click)="viewCtrl.dismiss();events.publish('sfx','close')" class="closeBtn" style="float:right" name="md-close"></ion-icon>
+
+</ion-list-header>
+	<ion-content class="dark">
+
+<div class="headerPad"></div>
+
+<div style="color:white;width:100%;height:calc(100% - 50px)">
+<div style="text-align:left;padding:20px"><img style="width:30px;float:right" src="assets/imgs/3719420.png"><div style="width:90%"><i>
+	You can listen to various trading podcasts while you play - click on one of the shows below to open a moveable widget. These programs are made available for your convenience in order to inspire interest - Cinq-Mars Media is not affiliated with any and we encourage you to research a variety of perspectives.</i></div>
+</div>
+
+<ion-item class="itm" *ngFor="let podcast of podcasts" (click)="open(podcast);events.publish('sfx','generic')">
+	<ion-label style="margin-left:10px"><b>{{podcast.name}}</b> <span class="host">{{podcast.host}}</span> <!--<span style="color:green;font-size:10px;position:absolute;margin-left:7px;margin-top:4px">{{earn.difficulty}}</span>--><!--<span style="float:right;font-size:20px;margin-top:6px"><span style="opacity:.5;font-size:12px !important">earn</span> <ion-badge style="font-size:16px;margin-left:5px" color="secondary">${{extra.reward | thousands:0}}</ion-badge></span> <div style="color:#aaa;white-space: initial"><i>{{extra.intro}}</i></div>--><div style="float:right">
+		<!--<div style="background:purple" (click)="podcast.fav=!podcast.fav"><ion-icon [ngClass]="{'fav':podcast.fav}" class="heart" style="padding-right:20px" name="ios-heart"></ion-icon></div>--><ion-icon name="ios-arrow-forward"></ion-icon></div></ion-label></ion-item>
+
+
+
+
+
+</div>
+
+
+
+	</ion-content>

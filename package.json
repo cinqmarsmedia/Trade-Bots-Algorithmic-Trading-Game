@@ -1,0 +1,134 @@
+{
+  "name": "trade-bots",
+  "main": "main.js",
+  "version": "1.3.4",
+  "author": "Cinq-Mars Media",
+  "homepage": "https://cinqmarsmedia.com/",
+  "email": "info@cinqmarsmedia.com",
+  "private": true,
+  "config": {
+    "ionic_generate_source_map": false
+  },
+  "scripts": {
+    "start": "ionic-app-scripts serve --nolivereload --external",
+    "clean": "ionic-app-scripts clean",
+    "build": "ionic-app-scripts build --environment prod --minifyjs==true --minifycss=true --sourcemaps false",
+    "lint": "ionic-app-scripts lint",
+    "build-mac": "env CSC_LINK='./direct.p12' npx electron-builder -m",
+    "build-wl": "fnm exec 16 npx electron-builder -wl",
+    "postinstall": "patch-package && rm -rf node_modules/rete/types || true && rm -rf node_modules/@types/node || true && rm -rf node_modules/rete-connection-plugin/types || true && rm -rf node_modules/rete-dock-plugin/types || true  && rm node_modules/litegraph.js/src/litegraph.d.ts || true && rm node_modules/@baklavajs/plugin-renderer-vue/dist/baklavajs-plugin-renderer-vue/src/components/Editor.vue.d.ts || true && find -E . -type f -regex '.*vue-.*.d.ts' -delete && rm -rf node_modules/@types/yargs && rm node_modules/fast-sort/dist/sort.d.ts"
+  },
+  "build": {
+    "files": [
+      "!node_modules",
+      "www/**/*",
+      "main.js",
+      "preload.js",
+      "hidden-audio-player"
+    ],
+    "npmRebuild": false,
+    "appId": "com.cinqmarsmedia.tradebots",
+    "productName": "Trade Bots",
+    "copyright": "Copyright © 2023 Cinq-Mars Media",
+    "asar": true,
+    "win": {
+      "target": [
+        "zip"
+      ],
+      "icon": "src/assets/app-icon/1024x1024.png"
+    },
+    "appx": {
+      "applicationId": "com.cinqmarsmedia.tradebots",
+      "backgroundColor": "#00909D",
+      "displayName": "Trade Bots",
+      "publisher": "CN=3C4EAD44-31E0-426D-87D9-11C445F2CBF1",
+      "publisherDisplayName": "Cinq-Mars Media",
+      "identityName": "Cinq-MarsMedia.TradeBots"
+    },
+    "mac": {
+      "icon": "src/assets/app-icon/1024x1024.png",
+      "category": "public.app-category.games",
+      "hardenedRuntime": true,
+      "entitlements": "./build/entitlements.mac.inherit.plist",
+      "target": [
+        {
+          "target": "dir",
+          "arch": "universal"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "zip",
+        "AppImage",
+        "deb"
+      ],
+      "icon": "src/assets/app-icon",
+      "maintainer": "Cinq-Mars Media, info@cinqmarsmedia.com"
+    }
+  },
+  "dependencies": {
+    "@angular/animations": "5.2.11",
+    "@angular/common": "5.2.11",
+    "@angular/compiler": "5.2.11",
+    "@angular/compiler-cli": "5.2.11",
+    "@angular/core": "5.2.11",
+    "@angular/forms": "5.2.11",
+    "@angular/platform-browser": "5.2.11",
+    "@angular/platform-browser-dynamic": "5.2.11",
+    "@ionic-native/core": "4.20.0",
+    "@ionic-native/splash-screen": "4.20.0",
+    "@ionic-native/status-bar": "4.20.0",
+    "@ionic/app-scripts": "^3.2.4",
+    "@ionic/storage": "2.2.0",
+    "@types/history": "^5.0.0",
+    "@types/node": "^17.0.26",
+    "ace-builds": "^1.4.12",
+    "angular2-color-picker": "^1.3.1",
+    "apexcharts": "^3.28.1",
+    "baklavajs": "^1.9.2",
+    "brain.js": "^2.0.0-beta.15",
+    "chart.js": "^2.9.4",
+    "d3": "4.13",
+    "dragula": "^3.7.2",
+    "fast-sort": "^3.4.0",
+    "fflate": "^0.7.3",
+    "howler": "^2.2.3",
+    "ionic-angular": "3.9.9",
+    "ionic-tooltips": "^3.1.0",
+    "ionicons": "3.0.0",
+    "is-electron": "^2.2.1",
+    "litegraph.js": "^0.7.10",
+    "livereload-js": "^2.4.0",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.debounce": "^4.0.8",
+    "lodash.isequal": "^4.5.0",
+    "lodash.throttle": "^4.1.1",
+    "ng-apexcharts": "^1.5.12",
+    "ng2-dragula": "^1.5.0",
+    "ng2-izitoast": "^2.0.0",
+    "noty": "^3.2.0-beta-deprecated",
+    "rete-minimap-plugin": "^0.3.1",
+    "rete-task-plugin": "^0.3.0",
+    "rxjs": "^6.0.0",
+    "rxjs-compat": "6.2.2",
+    "sw-toolbox": "3.6.0",
+    "ta.js": "^1.4.5",
+    "trendyways": "^0.8.0",
+    "v-click-outside": "^3.1.2",
+    "vue-class-component": "^7.2.6",
+    "vue-property-decorator": "^9.1.2",
+    "vue-template-compiler": "^2.6.14",
+    "zone.js": "0.8.29"
+  },
+  "devDependencies": {
+    "@ionic/app-scripts": "3.2.4",
+    "@types/d3": "4.13",
+    "patch-package": "^6.4.7",
+    "typescript": "2.6.2"
+  },
+  "description": "Trade Bots",
+  "volta": {
+    "node": "10.24.0"
+  }
+}

@@ -1,0 +1,52 @@
+
+
+<ion-content class="dark">
+<img style="width:30px;float:right;margin-right:20px;margin-top:20px;margin-left:10px;margin-bottom:10px" src="assets/imgs/3719420.png">
+	<div style="margin:20px;margin-top:50px;font-size:1.6vmax;margin-right:10px">
+	<!--
+	<img style="width:100px;float:left;margin:20px;margin-top:100px;filter:drop-shadow(0px 0px 2px #777);vertical-align:middle" src="assets/icon.png">-->
+<div style="vertical-align:middle;font-size:20px">
+Welcome to <span [hidden]="!demo">the demo for </span><b>Trade Bots</b>, a non-profit, educational simulation game featuring technical analysis and algorithmic trading. Decide when to buy or sell an <u>unknown stock</u> based solely on patterns and technical indicators. As your profit increases, you can unlock various upgrades that help expedite and automate your trading. 
+
+<!--You begin without any funds. Get started by earning capital from learning about technical concepts and/or unlocking the first upgrade which allows for margin loans.
+-->
+
+ <!--There are also opportunities to earn extra funds by demoing other games from our non-profit and/or signing up for our newsletter.-->
+
+<div style="text-align:center;padding-top:0px">
+		<!--<button style="margin-right:25px" ion-button (click)="
+upgrades()" color="light">Opportunities</button><ion-badge class="pulse animated infinite" [hidden]="newUpgrades<1" style="position:absolute;margin-left:-35px" color="danger">5</ion-badge>
+
+<button ion-button (click)="
+slideshow()" style="margin-right:25px;background:#333;color:white"><ion-icon name="md-play">&nbsp;</ion-icon>Intro</button>
+-->
+
+<button ion-button large style="background-color:#077ccc" (click)="
+open('upgrades');events.publish('sfx','close')">Get Started</button>
+
+
+<!--
+	<button ion-button (click)="
+open('upgrades')" color="light">Upgrades</button><ion-badge class="pulse animated infinite" [hidden]="newUpgrades<1" style="position:absolute;margin-left:-15px" color="danger">1</ion-badge>
+<button ion-button style="margin-left:25px;background-color:#077ccc" (click)="
+open('learn')">Learn & Earn</button><ion-badge [hidden]="availEarn==0 || mode=='sandbox'" class="pulse animated infinite" style="position:absolute;margin-left:-17px;margin-top:-2px" color="secondary">$20</ion-badge>
+-->
+
+
+</div>
+
+
+
+
+
+
+
+</div><!--<br><br><br> By testing your bots' performance repeatedly, over thousands of stocks' historical data, Eventually, we even hope to support exporting these bots for use in the real world. You can access this at any time by selecting help in the menu to the upper rightYou are provided with a random, unknkown stock at an arbitray time. Your objective is to invest in this stock based soely on patterns and indicators learned about over the course of the campaign. You begin without any funds. By  The premise of the game is simple: .-->
+
+</div>
+<!--
+<div style="left:0;right:0;position:absolute;margin-left:auto;margin-right:auto;bottom:6vh;text-align:center">
+<button large ion-button style="background-color:#077ccc;margin-right:3vw" (click)="dismiss(true)"><ion-icon name="md-play">&nbsp;</ion-icon>View Intro</button>
+<button large ion-button style="background-color:rgb(33, 190, 28)" (click)="guide()"><ion-icon name="md-info">&nbsp;</ion-icon>Online Guide</button></div>
+-->
+	</ion-content>

@@ -1,0 +1,25 @@
+diff --git a/node_modules/@baklavajs/core/dist/baklavajs-core/src/editor.d.ts b/node_modules/@baklavajs/core/dist/baklavajs-core/src/editor.d.ts
+index 5a605fb..537a2d2 100644
+--- a/node_modules/@baklavajs/core/dist/baklavajs-core/src/editor.d.ts
++++ b/node_modules/@baklavajs/core/dist/baklavajs-core/src/editor.d.ts
+@@ -31,15 +31,15 @@ export declare class Editor implements IEditor {
+         load: SequentialHook<IState>;
+     };
+     /** List of all nodes */
+-    get nodes(): readonly Node[];
++    get nodes():  Node[];
+     /** List of all connections */
+-    get connections(): readonly Connection[];
++    get connections():  Connection[];
+     /** List of all registered node types */
+-    get nodeTypes(): ReadonlyMap<string, NodeConstructor>;
++    get nodeTypes(): Map<string, NodeConstructor>;
+     /** Mapping of nodes to node categories */
+-    get nodeCategories(): ReadonlyMap<string, string[]>;
++    get nodeCategories(): Map<string, string[]>;
+     /** List of all plugins in this editor */
+-    get plugins(): ReadonlySet<IPlugin>;
++    get plugins(): Set<IPlugin>;
+     /**
+      * Register a new node type
+      * @param typeName Name of the node (must be equal to the node's `type` field)

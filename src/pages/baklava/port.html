@@ -1,0 +1,35 @@
+
+<ion-content class="dark">
+<ion-list-header>{{name}} &nbsp;<select style="background:transparent;cursor:pointer" [(ngModel)]="mode" [disabled]="state==1">
+    <option [hidden]="!state[0]" value="0">Import</option>
+    <option [hidden]="!state[1]" value="1">Export</option>
+    <!--<option [hidden]="state<3" value="2">Real World</option>-->
+  </select><ion-icon (click)="viewCtrl.dismiss();" class="closeBtn" style="float:right" name="md-close"></ion-icon></ion-list-header>
+<div style="padding:3%">
+
+<div *ngIf="mode==0">
+
+  <b>*This feature is currently in beta, please excuse bugs and lack of polish* Let us know in email and through social media what features you might like here, i.e. social media integration, an upvote system, a shortcut to email the file, etc...*</b>
+
+<br><br>
+ <input accept=".tradebot" type="file" (change)="importFile($event)" id="myFile" name="filename">
+ <br><br>
+<i>Note that the selected file will overwrite your current bot</i>
+</div>
+
+<div *ngIf="mode==1">
+ <b>*This feature is currently in beta, please excuse bugs and lack of polish. Let us know in email and through social media what features you might like here, i.e. social media integration, an upvote system, a shortcut to email the file, etc...*</b>
+<br><br>
+
+  <button  ion-button color="light" style="height:25px;margin-left:0px;margin-top:0px;width:200px" (click)="downloadBot()"><ion-icon name="md-download"></ion-icon>&nbsp;Download File</button>
+
+</div>
+
+
+  
+<div *ngIf="mode==2">
+  We hope that the bot can be converted to working with the following financial institutions blah blah blah
+</div>
+
+</div>
+	</ion-content>

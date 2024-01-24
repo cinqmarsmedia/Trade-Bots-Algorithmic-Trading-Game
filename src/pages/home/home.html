@@ -1,0 +1,689 @@
+
+
+<div class="home-container">
+<div [hidden]="!translateOpen" id="translateFrame">
+  <div class="translateCtrls">
+<ion-icon style="cursor:move;font-size:23px" id="translateFrameheader" name="md-move"></ion-icon>
+<ion-icon class="hov" style="cursor:pointer;font-size:23px;margin-left:3px" (click)="closeTranslate()" name="md-close-circle"></ion-icon>
+</div>
+<div id="google_translate_element"></div>
+</div>
+
+
+
+<div *ngIf="!loaded" class="loading"></div>
+
+
+<div [ngClass]="{'dragIT':!fullscreen}" class="menubar">
+</div>
+
+
+
+<div *ngIf="mainMenu" [ngClass]="{'fadeOutDown animated':!mainMenu}" style="position:absolute;margin-left:auto;margin-right:auto;left:0;right:0;bottom:0;top:0;z-index:9999">
+
+<div (click)="extraMenu(currAd);playSFX('generic')" *ngIf="showAd[0]" class="hov fadeIn animated" style="z-index:9999;position:absolute;right:2vw;bottom:6vh;width:25vw" >
+<ion-badge *ngIf="!limitedAds" style="position:absolute;margin-top:-25px;right:0;background:rgb(29, 190, 28)"><span *ngIf="currAd=='chameleon' || currAd=='anagraphs'">Download Free</span><span *ngIf="currAd=='devil' || currAd=='copy'">Demo</span><span *ngIf="currAd=='chess' || currAd=='synonymy'">Read About</span> to Earn <b>${{opportunities[currAd].reward}} In-Game</b></ion-badge>
+<ion-badge *ngIf="limitedAds" style="position:absolute;margin-top:-25px;right:0;background:rgb(29, 190, 28)">Check Out Our Other Projects!</ion-badge>
+ <img [src]="'assets/imgs/ads/steam'+opportunities[currAd].adNum+'.png'">
+</div>
+
+   <div style="font-size:3.5vh;z-index:9999 !important;position:absolute;right:3vw;margin-top:3.5vh !important;color:white">
+     <div class="dropdown" style="font-size:1.4rem">
+  <img class="dropbtn menuIcon" src="assets/imgs/menu/1636053.png">
+  <div class="dropdown-content">
+
+<a (click)="openLink('https://www.cinqmarsmedia.com/tradebots/guide/',false)">Game Guide<ion-icon style="float:right" name="md-help-circle"></ion-icon></a>
+<!--
+<a (click)="extraMenu('breakdown')">Breakdown<ion-icon style="float:right" name="logo-youtube"></ion-icon></a>
+-->
+<a (click)="disclaimer(false)">Legal<ion-icon style="float:right" name="md-list-box"></ion-icon></a>
+
+  <a>Sound FX <ion-toggle style="float:right;margin-top:-10px;margin-right:-15px" color="primary" (ngModelChange)="toggleMute($event)" [ngModel]="!muteSFX"></ion-toggle>
+</a>
+<a (click)="translate()">Translate<ion-icon style="float:right" name="logo-google"></ion-icon></a>
+<a (click)="restitution()">Restitution<ion-icon style="float:right" name="md-cash"></ion-icon></a>
+
+<a (click)="toggleFullScreen()"><span [hidden]="!fullscreenState">Full Screen</span><span [hidden]="fullscreenState">Windowed</span><ion-icon style="float:right" [name]="fullscreenState?'md-expand':'md-contract'"></ion-icon></a>
+<a (click)="resetStorage()">Reset Defaults<ion-icon style="float:right" name="md-trash"></ion-icon></a>
+<a (click)="quitGame()">Exit App<ion-icon style="float:right" name="md-exit"></ion-icon></a>
+
+  </div>
+</div>
+<!--
+<ion-icon (click)="toggleFullScreen()" style="opacity:.3" class="hov" name="md-expand"></ion-icon><ion-icon (click)="quitGame()" class="hov" style="margin-left:1vw;opacity:.3" name="md-exit"></ion-icon>
+--><!--
+<div *ngIf="demo" (click)="fullVersion()" class="hov" style="color:white;opacity:.3;font-size:1.5rem;margin-top:-10px"><b>demo</b>&nbsp;<ion-icon style="font-size:20px;vertical-align:middle" name="logo-steam"></ion-icon></div>-->
+<div (click)="gitHub();playSFX('generic')" class="hov" style="color:white;opacity:.3;font-size:1.5rem;margin-top:-10px"><b>v{{version}}&nbsp;</b><ion-icon name="logo-github"></ion-icon></div>
+
+</div>
+        <div (click)="cmm();playSFX('generic')" class="cmm hov" style="text-align:center">
+        <img style="width:10vh;vertical-align:middle;margin-right:10px;margin-top:-20px" src="assets/imgs/cmm2.png"><span
+          style="font-size:2.5vh">Cinq-Mars Media</span>
+        <div style="font-size:1.5vh">CMM is an educational and tech non-profit <img style="width:1.5vh"
+            src="assets/imgs/link.png"></div>
+      </div>
+<!--
+      <div style="pointer-events:none" id="anim" class="anim"></div>
+-->
+<video class="mainMenu" autoplay muted loop id="bckVid">
+  <source src="assets/background.mp4">
+</video>
+
+  <div style="text-align:center;color:white;margin-top:25vh">
+
+<div class="bigTitle" style="font-size:13vw">Trade Bots</div>
+<div *ngIf="demo" class="subTitle" style="position:absolute;opacity:.5;font-size:2vw;margin-top:-3vw;right:10vw">Demo Version</div>
+<div class="subTitle" style="font-size:2.5vw">A <span [hidden]="purchasedUpgrades.includes('vizBots')">Technical</span><span [hidden]="!purchasedUpgrades.includes('vizBots')">Quantitative</span> Analysis Simulation & Learning Game</div>
+<img style="position:absolute;width:12vw;z-index:99;margin-left:auto;margin-right:auto;left:0;right:0;top:10vh;filter:drop-shadow(0px 0px 2px #777)" src="assets/icon.png">
+
+<ion-badge *ngIf="showAd[0]" class="fadeIn animated" style="position:absolute;left:80px;bottom:40px;z-index:9;background:#077ccc">Send Us Bug Reports!</ion-badge>
+<button class="opachov" style="position:absolute;left:50px;bottom:50px" [tooltip]="'Give us Suggestions & Bug Reports'" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="top" positionH="center" ion-button (mousedown)="feedbackBtn(true)" (mouseup)="feedbackBtn(false)" color="light"><ion-icon name="md-bug">&nbsp;</ion-icon>Feedback</button>
+
+
+<div class="titleScreen" style="margin-top:5vh">
+
+  <button tooltip="ⓘ &nbsp;The Main Campaign" duration="0" [event]="warnings.tooltips?'hover':'press'" arrow="true" positionV="top" positionH="center" ion-button style="margin-left:15px" (click)="mainMenuButton('stock')" color="light" large class="pulse" [ngClass]="{'animated infinite':purchasedUpgrades.length==0 && earnedLearnings.length==0}" ><ion-icon name="md-trending-up">&nbsp;</ion-icon>Stocks</button><ion-badge [hidden]="unlockModeState.stock.progress==0 || unlockModeState.stock.progress>=1 || tutHold==-1" style="position:absolute;margin-left:-30px;background:#077ccc">{{(unlockModeState.stock.progress*50 + unlockModeState.stock.tickerProgress*20 + (earnedLearnings.length/EarnLearnCount)*30) / !demo?1:11 | number : '1.0-0'}}%</ion-badge><ion-badge [hidden]="unlockModeState.stock.progress<1" [style.background]="unlockModeState.stock.worth>0?'rgb(29, 190, 28)':'red'" style="position:absolute;margin-left:-35px">${{unlockModeState.stock.worth | thousands:0}}</ion-badge>
+  <button [tooltip]="'ⓘ &nbsp;Play Campaign With Exchange-Traded Funds'" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="top" positionH="center" ion-button style="margin-left:15px;padding-left:27px;padding-right:27px" (click)="mainMenuButton('etf')" [ngClass]="{'halfOpacwHover':unlockModeState && !unlockModeState.etf || !features.includes('etf'),'noOpac':unlockModeState && unlockModeState.etf && unlockModeState.etf.progress==0 && unlockModeState.etf.worth<1 && features.includes('etf')}" color="light" large><ion-icon name="md-cash">&nbsp;</ion-icon>ETFs</button><span *ngIf="unlockModeState && unlockModeState.etf && features.includes('etf')"><ion-badge [hidden]="unlockModeState.etf.progress>=1 || unlockModeState.etf.progress==0" style="position:absolute;margin-left:-28px;background:#077ccc">{{unlockModeState.etf.progress*60 + unlockModeState.etf.tickerProgress*40 | number : '1.0-0'}}%</ion-badge><ion-badge [hidden]="unlockModeState.etf.progress<1" [style.background]="unlockModeState.etf.worth>0?'rgb(29, 190, 28)':'red'" style="position:absolute;margin-left:-35px">${{unlockModeState.etf.worth | thousands:0}}</ion-badge></span><ion-badge [hidden]="features.includes('etf')" style="position:absolute;margin-left:-86px;background:#077ccc">Coming Soon</ion-badge>
+
+    <button [tooltip]="'ⓘ &nbsp;Play Campaign With Crypto Trading'" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="top" positionH="center" ion-button style="margin-left:15px" (click)="mainMenuButton('crypto')" [ngClass]="{'halfOpacwHover':unlockModeState && !unlockModeState.crypto || !features.includes('crypto'),'noOpac':unlockModeState && unlockModeState.crypto && unlockModeState.crypto.progress==0 && unlockModeState.crypto.worth<1 && features.includes('crypto')}" color="light" large><ion-icon name="logo-bitcoin">&nbsp;</ion-icon>Crypto</button><span *ngIf="unlockModeState && unlockModeState.crypto && features.includes('crypto')"><ion-badge [hidden]="unlockModeState.crypto.progress==0 || unlockModeState.etf.progress>=1" style="position:absolute;margin-left:-28px;background:#077ccc">{{unlockModeState.crypto.progress*60 + unlockModeState.crypto.tickerProgress*40 | number : '1.0-0'}}%</ion-badge><ion-badge [hidden]="unlockModeState.crypto.progress<1" [style.background]="unlockModeState.stock.worth>0?'rgb(29, 190, 28)':'red'" style="position:absolute;margin-left:-35px">${{unlockModeState.crypto.worth | thousands:0}}</ion-badge></span><ion-badge [hidden]="features.includes('crypto')" style="position:absolute;margin-left:-86px;background:#077ccc">Coming Soon</ion-badge>
+
+        <button [tooltip]="'ⓘ &nbsp;Sandbox Environment for Testing'" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="top" positionH="center" ion-button (click)="mainMenuButton('sandbox')" [ngClass]="{'halfOpacwHover':!sandbox,'noOpac':sandbox && sandbox.new}" style="margin-left:15px" color="light" large><ion-icon name="md-construct">&nbsp;</ion-icon>Sandbox</button>
+
+
+</div>
+</div>
+
+</div>
+
+<div (contextmenu)="onRightClick($event)"
+  [hidden]="mainMenu" class="fadeIn animated">
+
+  <div class="dropdown sandboxBtn" *ngIf="mode=='sandbox' && simSpeed[0]==0" style="position:absolute;margin-top:-5px;right:150px">
+  <button [ngClass]="{'animated infinite':portfolio[0]<=0}" class="pulse opachov" ion-button color="light"><ion-icon name="md-construct"></ion-icon>&nbsp;Sandbox</button>
+  <div class="dropdown-content sandUpAdjust runDrop">
+    <!--
+<div class="menuLabel">Execute Button</div>
+  <a (click)="addNode('ValNode')">Test</a>
+  <a (click)="addNode('AdvValNode')">Step</a>
+  <a (click)="addNode('AdvValNode')">Real</a>
+<div class="menuLabel">Speed</div>
+<div class="menuLabel">Debug</div>
+ <a (click)="addNode('ConstantNode')">Open Logs</a>
+ <a (click)="addNode('ConstantNode')">Export Bot</a>-->
+  <!--checkmarks this sets to the run button? min="2018-01-01" max="2018-12-31"-->
+  <a>Data<select style="cursor:pointer;float:right;background:transparent;width:80px;margin-top:-2px;margin-right:-10px" [ngModel]="shownType" (ngModelChange)="changeDataType($event)">
+    <!--<option value="all">All</option>-->
+    <option value="stock">Stocks</option>
+    <option value="etf">ETFs</option>
+    <option value="crypto">Crypto</option>
+    <option value="rand">Random</option>
+    <option value="custom" hidden>Custom</option>
+    <option value="upload">CSV Upload</option>
+  </select></a>
+  <a><input style="cursor:pointer;color:gray;width:125px;margin-top:-5px" type="date" [value]="sandbox.date" [min]="sandbox.min" [max]="sandbox.max"></a>
+
+  <a>Cash: <input [ngModel]="cashVsInvested[0]" (ngModelChange)="updateCash($event)" style="cursor:pointer;color:gray;float:right;width:80px;margin-top:-3px" type="number" min="0"> </a>
+  <a>Ticker: <input [(ngModel)]="currentTicker[5]" style="cursor:pointer;color:gray;width:70px;float:right;margin-top:-3px" type="text" placeholder="Search"></a>
+
+    <!--<a>Sector<select style="cursor:pointer;float:right;background:transparent;width:80px;margin-top:-2px;margin-right:-10px" [(ngModel)]="sandbox.sector">
+    <option value="all">All</option>
+     <option value="tech">Tech</option>
+  </select></a>--> <!--binary-->
+  <a>Fees <ion-toggle style="float:right;margin-top:-10px;margin-right:-18px" color="primary" [(ngModel)]="sandbox.fees"></ion-toggle></a> <!--binary-->
+   <a>Data Crop <ion-toggle style="float:right;margin-top:-10px;margin-right:-18px" color="primary" [(ngModel)]="sandbox.crop"></ion-toggle></a> 
+  <a>Repeat <ion-toggle style="float:right;margin-top:-10px;margin-right:-18px" color="primary" [(ngModel)]="sandbox.repeat"></ion-toggle></a> <!--binary-->
+  <a>Bailouts <ion-toggle style="float:right;margin-top:-10px;margin-right:-18px" color="primary" [(ngModel)]="sandbox.bailouts"></ion-toggle></a> <!--binary-->
+  </div>
+</div>
+<!--
+  <div style="position:absolute;top:45px;right:52px;color:white;opacity:.3"><b>v{{version}}</b></div>-->
+ <!-- <div style="color:white;bottom:150px;left:72px;z-index:9999;position:absolute" *ngIf="config && config.portfolio && config.portfolio.showAdjClose"><span [style.color]="indicatorColors.adj">1.0 <b>β</b></span></div>-->
+<div style="color:white;bottom:130px;right:40px;z-index:9999;position:absolute" *ngIf="displayInfo>0 && !userHideInfo">
+
+
+  <div *ngIf="displayInfo>2 && currentTicker" (click)="news()" class="mono hov" style="font-size:17px;display:inline-block"><ion-icon style="color:white" name="md-paper"></ion-icon>&nbsp;<b>{{currentTicker[0]}}</b>&nbsp;</div><span *ngIf="displayInfo>1" >{{currentTicker[1]}}</span><span style="font-size:12px">&nbsp;<i>{{currentTicker[3]}}</i></span></div>
+
+<div *ngIf="displayInfo>0" class="hideInfo mono" (click)="userHideInfo=!userHideInfo"><span [hidden]="!userHideInfo">{{getActive('type').toLowerCase()}} info</span>
+  <ion-icon style="font-size:19px;vertical-align:middle" [name]="userHideInfo?'md-eye':'md-eye-off'"></ion-icon></div>
+
+<div [hidden]="!noDataWarning" style="position:absolute;text-align:center;margin-top:25vh;font-size:10vh;color:white;left:20px;right:0">NO DATA AVAILABLE<div style="font-size:3vh">No Data is available for the time period</div></div>
+
+
+
+<div *ngIf="simSpeed[0]>40" style="width:100%;height:100%;background:transparent;position:absolute"></div>
+
+
+
+<div *ngIf="config && config.candlestick" style="float:right;padding-right:20px;margin-top:-40px">
+  <!--.candlestick
+<div style="color:gray;position:absolute;left:20px;bottom:20px">seed:2432432434</div>
+-->
+
+
+
+
+<div style="position:absolute;right:40px;bottom:10px;z-index:99" *ngIf="simSpeed[0]==0">
+  <!---->
+
+
+<button [hidden]="horizonUpgrades.length!==0 || mode=='sandbox'" tooltip="ⓘ &nbsp;Back to Title Screen" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="top" positionH="center" ion-button (click)="mainMenuGo();playSFX('close')" class="opachov" color="light"><ion-icon name="md-arrow-dropleft-circle"></ion-icon>&nbsp;Back</button>
+
+
+
+<!--
+
+
+<button [hidden]="horizonUpgrades.length!==0 || mode=='sandbox'" tooltip="ⓘ &nbsp;Back To Main Menu" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="top" positionH="center" ion-button (click)="
+back()" color="light">Main Menu</button>
+-->
+
+<button class="pulse" [ngClass]="{'animated infinite':tutorialState[0]==1 || tutorialState[0]==6 || tutorialState[0]==32,'halfopac':tutorialState[0]!==6 && tutorialState[0]!==1 && tutorialState[0]!==-1 && tutorialState[0]!==32}" [hidden]="horizonUpgrades.length==0 || mode=='sandbox'" [tooltip]="tutorialState[0]==32?'ⓘ &nbsp; Upgrades Must Be Re-Purchased':(tutorialState[0]==6?'ⓘ &nbsp; Unlock the Free Margin Loan Upgrade':(tutorialState[0]==1?'ⓘ &nbsp;Bring up the Upgrades Menu':'ⓘ &nbsp;Various Upgrades for Purchase'))" [event]="warnings.tooltips && tutorialState[0]!==1 && tutorialState[0]!==6?'hover':'press'" [alwaysShow]="tutorialState[0]==1 || tutorialState[0]==6 || tutorialState[0]==32" duration="0" arrow="true" positionV="top" positionH="center" ion-button (click)="
+upgrades();playSFX('generic')" color="light">Upgrades</button><ion-badge class="pulse" [ngClass]="{'animated infinite':newUpgrades>0 && tutorialState[0]==-1}" [hidden]="newUpgrades<1 || tutorialState[0]!==6 && tutorialState[0]!==1 && tutorialState[0]!==-1" style="position:absolute;margin-left:-15px" color="danger">{{newUpgrades}}</ion-badge>
+<button class="pulse" [ngClass]="{'animated infinite':tutorialState[0]==4,'halfopac':tutorialState[0]!==4 && tutorialState[0]!==-1,'opachov':earnedLearnings.length==EarnLearnCount || availEarn==0}" [tooltip]="tutorialState[0]==4?'ⓘ &nbsp;Earn Trading Money by Learning Concepts':'ⓘ &nbsp;Learn Concepts to Earn In-Game Funds'" [event]="warnings.tooltips?'hover':'press'" tooltipClass="rightArrow" [alwaysShow]="tutorialState[0]==4" duration="0" arrow="true" positionV="top" positionH="center" ion-button style="margin-left:25px;background-color:#077ccc" (click)="
+learnEarn();playSFX('generic')">Learn & Earn</button><ion-badge [hidden]="availEarn==0 || mode=='sandbox' || (tutorialState[0]!==4 && tutorialState[0]!==-1)" class="pulse" [ngClass]="{'animated infinite':portfolio[0]<=0 && tutorialState[0]==-1}" style="position:absolute;margin-left:-17px;margin-top:-2px" color="secondary">${{availEarn | thousands : 0}}</ion-badge>
+
+</div>
+
+<ion-badge (click)="skipTutorial()" class="pulse animated skipTut" *ngIf="tutorialState[0]!==-1">Skip Tutorial</ion-badge>
+
+  <div style="position:absolute;top:1vh;right:45px">
+    <div style="display:inline-block">
+<!--
+<img *ngIf="purchasedUpgrades.includes('brushing')" (click)="toggleExtIndicator('candlestick')" class="menuIcon" [ngClass]="{'menuIconOn':config.candlestick.hide}" src="assets/imgs/menu/2207179.png">
+-->
+<!--
+<img *ngIf="purchasedUpgrades.includes('brushing')" (click)="toggleExtIndicator('portfolio')" class="menuIcon" [ngClass]="{'menuIconOn':config.portfolio.hide}" src="assets/imgs/menu/2071503.png">
+
+<img (click)="toggleMA()" (press)="openMA()" *ngIf="movingAverageState>0" class="menuIcon" [ngClass]="{'menuIconOn':!(config.candlestick.sma.length>0 || config.candlestick.ema.length>0)}" src="assets/imgs/menu/5289250.png">
+ 
+
+  <img *ngIf="purchasedUpgrades.includes('resistance')" class="menuIcon" [ngClass]="{'menuIconOn':false}" src="assets/imgs/menu/414927.png">
+
+    <img *ngIf="purchasedUpgrades.includes('atr')" (click)="selectIndicators()" class="menuIcon" [ngClass]="{'menuIconOn':config.atr.hide}" src="assets/imgs/menu/2108159.png">
+
+<img *ngIf="purchasedUpgrades.includes('brushing')" (click)="toggleExtIndicator('portfolio')" class="menuIcon" [ngClass]="{'menuIconOn':config.portfolio.hide}" src="assets/imgs/menu/2071503.png">
+
+</div>
+-->
+
+
+
+<div class="dropdown" (mouseenter)="warnings.new.brush=false" *ngIf="(purchasedUpgrades.includes('brushing') || purchasedUpgrades.includes('gains')) && !this.balanceOptions.suppress">
+  <ion-badge *ngIf="warnings.new.brush && tutorialState[0]==-1" class="animated pulse infinite" style="background:#077ccc;font-size:12px;position:absolute;margin-top:33px;margin-left:-3px">NEW</ion-badge>
+  <img class="dropbtn menuIcon" src="assets/imgs/menu/2071503.png">
+  <div class="dropdown-content hoverFix" id="color-dropdown-parent1" *ngIf="config">
+    <a style="opacity:1"> <span (click)="brushToggle('close')"><ion-icon [ngClass]="{'invis':!config.portfolio.showClose}" name="md-checkmark"></ion-icon>&nbsp; {{mode=='sandbox'?getActive('type'):mode | titlecase}} Price </span>
+      <input (focus)="onColorFocus(1)" (focusout)="onColorFocusOut(1)" class="colorInputBrush" (ngModelChange)="setColor('--close',$event)" style="float:right;margin-right:-5px" type="color" [(ngModel)]="indicatorColors.close"></a>
+<!---->
+    <a style="opacity:1" [hidden]="!purchasedUpgrades.includes('marketIndex')"><span (click)="brushToggle('adj')"><ion-icon [ngClass]="{'invis':!config.portfolio.showAdjClose}" name="md-checkmark"></ion-icon>&nbsp;S&P 500</span><input (focus)="onColorFocus(1)" (focusout)="onColorFocusOut(1)" (ngModelChange)="setColor('--adj',$event)" class="colorInputBrush" style="float:right;margin-right:-5px" type="color" [(ngModel)]="indicatorColors.adj"></a>
+
+    <a style="opacity:1" [hidden]="!purchasedUpgrades.includes('gains')"> <span (click)="brushToggle('gains')"><ion-icon [ngClass]="{'invis':!config.portfolio.showPortfolio}" name="md-checkmark"></ion-icon>&nbsp; Your Gains</span><input (focus)="onColorFocus(1)" (focusout)="onColorFocusOut(1)" (ngModelChange)="setColor('--gains',$event)" class="colorInputBrush" style="float:right;margin-right:-5px" type="color" [(ngModel)]="indicatorColors.gains"></a>
+
+    <a class="modPadding" style="opacity:1"> <span> Max Period <span style="float:right"><span [hidden]="brushThreshold[1]!==3692"><b>OFF</b></span><span [hidden]="brushThreshold[1]==3692 || brushThreshold[1]>90 "><b>{{brushThreshold[1]}}</b> days</span><span [hidden]="brushThreshold[1]==3692 || brushThreshold[1]<360"><b>{{brushThreshold[1]/360 | number: '1.0-1'}}</b> yr<span [hidden]="brushThreshold[1]/360<1.05">s</span></span><span [hidden]="brushThreshold[1]==3692 || brushThreshold[1]>360 || brushThreshold[1]<=90"><b>{{brushThreshold[1]/30 | number: '1.0-0'}}</b> mth<span [hidden]="brushThreshold[1]/30<1.05">s</span></span></span></span> <div style="font-size:12px;opacity:.7;text-align:right;margin-bottom:-8px"><i>Default Brush Period Slide Right to Disable</i></div><ion-range (ngModelChange)="brushThreshLog($event)" style="padding:0px !important;margin-bottom:-10px" [max]="333" [min]="42" [ngModel]="brushThreshold[0]"><!---->
+  </ion-range></a>
+
+
+<!--
+  <a style="opacity:1" *ngIf="purchasedUpgrades.includes('performanceHide')"> <span> Hide GUI <span style="float:right"><span [hidden]="performanceThresh<99"><b>NEVER</b></span><span [hidden]="performanceThresh>=99"><b>{{performanceThresh}}</b> days/s</span></span></span> <div style="font-size:12px;opacity:.7;text-align:right;margin-bottom:-8px"><i>Sim Speed That Optimizes GUI</i></div><ion-range (ngModelChange)="performanceSet($event)" style="padding:0px !important;margin-bottom:-10px" [max]="100" [min]="2" [ngModel]="performanceThresh">
+  </ion-range></a>
+-->
+<!--
+  <a style="opacity:1"> <span> Period <span style="float:right"><span [hidden]="brushThreshold[1]!==3692"><b>OFF</b></span><span [hidden]="brushThreshold[1]==3692 || brushThreshold[1]>359 "><b>{{brushThreshold[1]}}</b> days</span><span [hidden]="brushThreshold[1]==3692 || brushThreshold[1]<360 "><b>{{brushThreshold[1]/360 | number: '1.0-1'}}</b> year<span [hidden]="brushThreshold[1]/360<1.05">s</span></span></span></span> <div style="font-size:12px;opacity:.7;text-align:right;margin-bottom:-8px"><i>Default Brush Threshold Slide Right to Disable</i></div><ion-range (ngModelChange)="brushThreshLog($event)" style="padding:0px !important;margin-bottom:-10px" [max]="333" [min]="42" [ngModel]="brushThreshold[0]">
+  </ion-range></a>
+-->
+  </div>
+</div>
+<!--
+<div class="dropdown">
+  <img class="dropbtn menuIcon" src="assets/imgs/menu/2207179.png">
+  <div class="dropdown-content">
+  <a (click)="addNode('value')">Candlestick</a>
+ <a (click)="addNode('constants')">OHLC</a>
+  <a (click)="addNode('interval')">heikinashi</a>
+  </div>
+</div>
+
+-->
+
+
+
+<div class="dropdown" (mouseenter)="warnings.new.ovr=false" *ngIf="(purchasedUpgrades.includes('bollinger') || purchasedUpgrades.includes('ichiomku') || purchasedUpgrades.includes('pivots') || purchasedUpgrades.includes('sma') || purchasedUpgrades.includes('ema') || purchasedUpgrades.includes('atrtrailingstop') || purchasedUpgrades.includes('volume')) && !this.balanceOptions.suppress">
+  <ion-badge *ngIf="warnings.new.ovr && tutorialState[0]==-1" class="animated pulse infinite" style="background:#077ccc;font-size:12px;position:absolute;margin-top:33px;margin-left:-3px">NEW</ion-badge>
+  <img class="dropbtn menuIcon" src="assets/imgs/menu/5289250.png">
+  <div class="dropdown-content">
+   
+     <!---->
+
+<!-- -->
+
+
+  
+
+  <a (click)="toggleOvrIndicator('bollinger')" *ngIf="purchasedUpgrades.includes('bollinger')"><span ><ion-icon [ngClass]="{'invis':!config.candlestick.bollinger || config.candlestick.bollinger.length==0}" name="md-checkmark"></ion-icon>&nbsp; Bollinger </span><ion-icon (click)="indicatorSettings('bollinger');$event.stopPropagation()" class="menuSettings" name="md-settings" style="float:right"></ion-icon></a>
+
+<a (click)="toggleOvrIndicator('ichimoku')" *ngIf="purchasedUpgrades.includes('ichimoku')"><ion-icon [ngClass]="{'invis':!config.candlestick.ichimoku}" name="md-checkmark"></ion-icon>&nbsp; Ichimoku<ion-icon *ngIf="purchasedUpgrades.includes('ichimoku2')" (click)="indicatorSettings('ichimoku');$event.stopPropagation()" class="menuSettings" name="md-settings" style="float:right"></ion-icon><ion-icon *ngIf="!purchasedUpgrades.includes('ichimoku2')" (click)="openLink(indiData['ichimoku'].link);$event.stopPropagation()" class="menuSettings" name="md-information-circle" style="font-size:1.3em;float:right"></ion-icon></a>
+
+<a (click)="toggleOvrIndicator('pivots')" *ngIf="purchasedUpgrades.includes('pivots')"><ion-icon [ngClass]="{'invis':!config.candlestick.supstance.show}" name="md-checkmark"></ion-icon>&nbsp; Pivot Points<ion-icon *ngIf="purchasedUpgrades.includes('pivots2')" (click)="indicatorSettings('pivot');$event.stopPropagation()" class="menuSettings" name="md-settings" style="float:right"></ion-icon><ion-icon *ngIf="!purchasedUpgrades.includes('pivots2')" (click)="openLink(indiData['pivot'].link);$event.stopPropagation()" class="menuSettings" name="md-information-circle" style="font-size:1.3em;float:right"></ion-icon></a>
+  <a (click)="toggleMA()" *ngIf="(purchasedUpgrades.includes('sma') || purchasedUpgrades.includes('ema')) && (config.candlestick.sma || config.candlestick.ema)"><span><ion-icon [ngClass]="{'invis':!(config.candlestick.sma.length>0 || config.candlestick.ema.length>0)}" name="md-checkmark"></ion-icon>&nbsp; SMA<span [hidden]="!purchasedUpgrades.includes('ema')">/EMA</span> </span><ion-icon *ngIf="purchasedUpgrades.includes('customMA')" (click)="openMA()" class="menuSettings" name="md-settings" style="float:right"></ion-icon><ion-icon *ngIf="!purchasedUpgrades.includes('customMA')" (click)="openLink('https://www.investopedia.com/terms/m/movingaverage.asp');$event.stopPropagation()" class="menuSettings" name="md-information-circle" style="font-size:1.3em;float:right"></ion-icon></a>
+
+
+
+<a (click)="toggleOvrIndicator('atrtrailingstop')" *ngIf="purchasedUpgrades.includes('atrtrailingstop')"><span><ion-icon [ngClass]="{'invis':config.candlestick.atrTrailingStop.length==0}" name="md-checkmark"></ion-icon>&nbsp; Trailing ATR </span><ion-icon (click)="indicatorSettings('atrtrailingstop');$event.stopPropagation()" class="menuSettings" name="md-settings" style="float:right"></ion-icon></a>
+
+  <a (click)="toggleVol()" *ngIf="purchasedUpgrades.includes('volume')"><ion-icon [ngClass]="{'invis':!config.candlestick.showVolume}" name="md-checkmark"></ion-icon>&nbsp; Volume<!--<input id="vol" style="float:right;margin-right:-5px" class="color-input colorInput" [(ngModel)]="indicatorColors.vol" (ngModelChange)="colorChange('vol')"/>-->
+  <ion-icon (click)="openLink('https://www.investopedia.com/terms/v/volume.asp');$event.stopPropagation()" class="menuSettings" name="md-information-circle" style="font-size:1.3em;float:right"></ion-icon>
+</a>
+
+   
+  </div>
+</div>
+<!--"atr","adx","aroon","macd","rsi","stochastic","williams"-->
+<div class="dropdown" (mouseenter)="warnings.new.ext=false" *ngIf="(purchasedUpgrades.includes('atr') || purchasedUpgrades.includes('rsi') || purchasedUpgrades.includes('macd') || purchasedUpgrades.includes('adx') || purchasedUpgrades.includes('aroon') || purchasedUpgrades.includes('stochastic') || purchasedUpgrades.includes('williams')) && !this.balanceOptions.suppress">
+  <ion-badge *ngIf="warnings.new.ext && tutorialState[0]==-1" class="animated pulse infinite" style="background:#077ccc;font-size:12px;position:absolute;margin-top:33px;margin-left:-3px">NEW</ion-badge>
+  <img class="dropbtn menuIcon" src="assets/imgs/menu/3723458.png">
+  <div class="dropdown-content">
+
+    <a *ngIf="purchasedUpgrades.includes('atr')" (click)="toggleExtIndicator('atr')"><ion-icon [ngClass]="{'invis':config.atr.hide}" name="md-checkmark"></ion-icon>&nbsp; ATR<!--<input id="atr" style="float:right;margin-right:-5px" class="color-input colorInput" [(ngModel)]="indicatorColors.atr" (ngModelChange)="colorChange('atr')"/>-->
+   <!-- <ion-icon (click)="openLink('https://www.investopedia.com/terms/a/atr.asp');$event.stopPropagation()" class="menuSettings" name="md-information-circle" style="font-size:1.3em;float:right"></ion-icon>-->
+<ion-icon (click)="indicatorSettings('atr');$event.stopPropagation()" class="menuSettings" name="md-settings" style="float:right"></ion-icon>
+</a>
+
+    <a *ngIf="purchasedUpgrades.includes('adx')" (click)="toggleExtIndicator('adx')"><ion-icon [ngClass]="{'invis':config.adx.hide}" name="md-checkmark"></ion-icon>&nbsp; ADX<ion-icon (click)="indicatorSettings('adx');$event.stopPropagation()" class="menuSettings" name="md-settings" style="float:right"></ion-icon></a>
+
+    <a *ngIf="purchasedUpgrades.includes('aroon')" (click)="toggleExtIndicator('aroon')"><ion-icon [ngClass]="{'invis':config.aroon.hide}" name="md-checkmark"></ion-icon>&nbsp; AROON<ion-icon (click)="indicatorSettings('aroon');$event.stopPropagation()" class="menuSettings" name="md-settings" style="float:right"></ion-icon></a>
+
+    <a *ngIf="purchasedUpgrades.includes('macd')" (click)="toggleExtIndicator('macd')"><ion-icon [ngClass]="{'invis':config.macd.hide}" name="md-checkmark"></ion-icon>&nbsp; MACD<ion-icon *ngIf="purchasedUpgrades.includes('macd2')" (click)="indicatorSettings('macd');$event.stopPropagation()" class="menuSettings" name="md-settings" style="float:right"></ion-icon><ion-icon *ngIf="!purchasedUpgrades.includes('macd2')" (click)="openLink(indiData['macd'].link);$event.stopPropagation()" class="menuSettings" name="md-information-circle" style="font-size:1.3em;float:right"></ion-icon></a>
+
+    <a *ngIf="purchasedUpgrades.includes('rsi')" (click)="toggleExtIndicator('rsi')"><ion-icon [ngClass]="{'invis':config.rsi.hide}" name="md-checkmark"></ion-icon>&nbsp; RSI<ion-icon (click)="indicatorSettings('rsi');$event.stopPropagation()" class="menuSettings" name="md-settings" style="float:right"></ion-icon></a>
+
+    <a *ngIf="purchasedUpgrades.includes('stochastic')" (click)="toggleExtIndicator('stochastic')"><ion-icon [ngClass]="{'invis':config.stochastic.hide}" name="md-checkmark"></ion-icon>&nbsp; Stochastic<ion-icon (click)="indicatorSettings('stochastic');$event.stopPropagation()" class="menuSettings" name="md-settings" style="float:right"></ion-icon></a>
+
+    <a *ngIf="purchasedUpgrades.includes('williams')" (click)="toggleExtIndicator('williams')"><ion-icon [ngClass]="{'invis':config.williams.hide}" name="md-checkmark"></ion-icon>&nbsp; Williams%<ion-icon (click)="indicatorSettings('williams');$event.stopPropagation()" class="menuSettings" name="md-settings" style="float:right"></ion-icon></a>
+  </div>
+</div>
+<!--()()()()()-->
+
+<div class="dropdown" (mouseenter)="warnings.new.leading=false" *ngIf="(purchasedUpgrades.includes('marketIndex') || purchasedUpgrades.includes('dxy')) && !this.balanceOptions.suppress">
+  <ion-badge *ngIf="warnings.new.leading && tutorialState[0]==-1" class="animated pulse infinite" style="background:#077ccc;font-size:12px;position:absolute;margin-top:33px;margin-left:-3px">NEW</ion-badge>
+  <img class="dropbtn menuIcon" src="assets/imgs/menu/1502948.png">
+  <div class="dropdown-content hoverFix" id="color-dropdown-parent2" style="width:210px">
+  
+    <a *ngIf="purchasedUpgrades.includes('dxy') || purchasedUpgrades.includes('housing') || purchasedUpgrades.includes('industry') || purchasedUpgrades.includes('recessions') || purchasedUpgrades.includes('marketIndex') || purchasedUpgrades.includes('yield')"><span (click)="toggleLeadingIndicator('DXY')"><ion-icon [ngClass]="{'invis':!config.candlestick.DXY}" name="md-checkmark"></ion-icon>&nbsp; Dollar Index </span><input (focus)="onColorFocus(2)" (focusout)="onColorFocusOut(2)" (ngModelChange)="setColor('--dxy',$event)" class="colorInputBrush" style="float:right;margin-right:-5px" type="color" [(ngModel)]="indicatorColors.dxy"><ion-icon (click)="openLink('https://www.investopedia.com/terms/u/usdx.asp');$event.stopPropagation()" class="menuSettings" name="md-information-circle" style="font-size:1.3em;float:right;margin-right:10px"></ion-icon></a>
+
+      <a *ngIf="purchasedUpgrades.includes('housing')"><span (click)="toggleLeadingIndicator('Housing')"><ion-icon [ngClass]="{'invis':!config.candlestick.Housing}" name="md-checkmark"></ion-icon>&nbsp; Housing Starts</span><input (focus)="onColorFocus(2)" (focusout)="onColorFocusOut(2)" (ngModelChange)="setColor('--housing',$event)" class="colorInputBrush" style="float:right;margin-right:-5px" type="color" [(ngModel)]="indicatorColors.housing"><ion-icon (click)="openLink('https://www.investopedia.com/terms/h/housingstarts.asp');$event.stopPropagation()" class="menuSettings" name="md-information-circle" style="font-size:1.3em;float:right;margin-right:10px"></ion-icon></a>
+
+     <a *ngIf="purchasedUpgrades.includes('industry')"><span (click)="toggleLeadingIndicator('Industry')"><ion-icon [ngClass]="{'invis':!config.candlestick.Industry}" name="md-checkmark"></ion-icon>&nbsp; Industrial Prod</span><input (focus)="onColorFocus(2)" (focusout)="onColorFocusOut(2)" (ngModelChange)="setColor('--industry',$event)" class="colorInputBrush" style="float:right;margin-right:-5px" type="color" [(ngModel)]="indicatorColors.industry"><ion-icon (click)="openLink('https://www.investopedia.com/terms/i/ipi.asp');$event.stopPropagation()" class="menuSettings" name="md-information-circle" style="font-size:1.3em;float:right;margin-right:10px"></ion-icon></a>   
+
+       <a *ngIf="purchasedUpgrades.includes('recessions')"><span (click)="toggleLeadingIndicator('Recessions')"><ion-icon [ngClass]="{'invis':!config.candlestick.Recessions}" name="md-checkmark"></ion-icon>&nbsp; Recessions</span><input (focus)="onColorFocus(2)" (focusout)="onColorFocusOut(2)" (ngModelChange)="setColor('--recess',$event)" class="colorInputBrush" style="float:right;margin-right:-5px" type="color" [(ngModel)]="indicatorColors.recess"><ion-icon (click)="openLink('https://www.investopedia.com/terms/r/recession.asp');$event.stopPropagation()" class="menuSettings" name="md-information-circle" style="font-size:1.3em;float:right;margin-right:10px"></ion-icon></a>
+
+           <a *ngIf="purchasedUpgrades.includes('marketIndex')"><span (click)="toggleLeadingIndicator('SnP')"><ion-icon [ngClass]="{'invis':!config.candlestick.SnP}" name="md-checkmark"></ion-icon>&nbsp; S&P 500 Index</span><input (focus)="onColorFocus(2)" (focusout)="onColorFocusOut(2)" (ngModelChange)="setColor('--sp',$event)" class="colorInputBrush" style="float:right;margin-right:-5px" type="color" [(ngModel)]="indicatorColors.sp"><ion-icon (click)="openLink('https://www.investopedia.com/terms/s/sp500.asp');$event.stopPropagation()" class="menuSettings" name="md-information-circle" style="font-size:1.3em;float:right;margin-right:10px"></ion-icon></a>
+             <a *ngIf="purchasedUpgrades.includes('yield')"><span (click)="toggleLeadingIndicator('Yield')"><ion-icon [ngClass]="{'invis':!config.candlestick.Yield}" name="md-checkmark"></ion-icon>&nbsp; 10Y2Y Spread</span><input (focus)="onColorFocus(2)" (focusout)="onColorFocusOut(2)" (ngModelChange)="setColor('--yields',$event)" class="colorInputBrush" style="float:right;margin-right:-5px" type="color" [(ngModel)]="indicatorColors.yields"><ion-icon (click)="openLink('https://www.investopedia.com/terms/y/yieldcurve.asp');$event.stopPropagation()" class="menuSettings" name="md-information-circle" style="font-size:1.3em;float:right;margin-right:10px"></ion-icon></a>
+
+      <a *ngIf="purchasedUpgrades.includes('unemployment')"><span (click)="toggleLeadingIndicator('Unemployment')"><ion-icon [ngClass]="{'invis':!config.candlestick.Unemployment}" name="md-checkmark"></ion-icon>&nbsp; Unemployment </span><input (focus)="onColorFocus(2)" (focusout)="onColorFocusOut(2)" (ngModelChange)="setColor('--unemployment',$event)" class="colorInputBrush" style="float:right;margin-right:-5px" type="color" [(ngModel)]="indicatorColors.unemployment"><ion-icon (click)="openLink('https://www.investopedia.com/terms/u/unemploymentrate.asp');$event.stopPropagation()" class="menuSettings" name="md-information-circle" style="font-size:1.3em;float:right;margin-right:10px"></ion-icon></a>
+
+      <a *ngIf="purchasedUpgrades.includes('vix')"><span (click)="toggleLeadingIndicator('VIX')"><ion-icon [ngClass]="{'invis':!config.candlestick.VIX}" name="md-checkmark"></ion-icon>&nbsp; VIX Index</span><input (focus)="onColorFocus(2)" (focusout)="onColorFocusOut(2)" (ngModelChange)="setColor('--vix',$event)" class="colorInputBrush" style="float:right;margin-right:-5px" type="color" [(ngModel)]="indicatorColors.vix"><ion-icon (click)="openLink('https://www.investopedia.com/terms/v/vix.asp');$event.stopPropagation()" class="menuSettings" name="md-information-circle" style="font-size:1.3em;float:right;margin-right:10px"></ion-icon></a>
+      
+
+
+  </div>
+</div>
+
+<div [ngClass]="{'halfopac':tutorialState[0]!==100 && tutorialState[0]!==200 && tutorialState[0]!==-1 && tutorialState[0]!==201 && tutorialState[0]!==101}" class="dropdown" (mouseenter)="autoHov(true);warnings.new.auto=false" (mouseleave)="autoHov(false)" *ngIf="purchasedUpgrades.includes('limitstop') || purchasedUpgrades.includes('simpleBots') || purchasedUpgrades.includes('vizBots')"> 
+<ion-badge *ngIf="warnings.new.auto && tutorialState[0]==-1" class="animated pulse infinite" style="background:#077ccc;font-size:12px;position:absolute;margin-top:33px;margin-left:-3px">NEW</ion-badge>
+  <img [tooltip]="tutorialState[0]==100?'ⓘ &nbsp;Choose &ldquo;Limit/Stop&rdquo; Mode':'ⓘ &nbsp;Choose &ldquo;Simple Bot&rdquo; Mode'" [event]="'press'" tooltipClass="superrightArrow" [alwaysShow]="tutorialState[0]==100 || tutorialState[0]==200" duration="0" arrow="true" positionV="bottom" positionH="center" leftOffset="-156" class="dropbtn menuIcon" src="assets/imgs/menu/2661489.png">
+  <div class="dropdown-content">
+  <a (click)="setAutoType(0)"><ion-icon [ngClass]="{'invis':manual!==0}" name="md-checkmark"></ion-icon>&nbsp; Basic<!--<ion-icon (click)="openLink('https://www.youtube.com/watch?v=GNbWApp3VYs&t=282s');$event.stopPropagation()" class="menuSettings" name="logo-youtube" style="font-size:1.3em;float:right"></ion-icon>--></a>
+   <a *ngIf="purchasedUpgrades.includes('limitstop')" (click)="setAutoType(1)"><ion-icon [ngClass]="{'invis':manual!==1}" name="md-checkmark"></ion-icon>&nbsp; Limit/Stop<!--<ion-icon (click)="openLink('https://www.youtube.com/watch?v=GNbWApp3VYs&t=292s');$event.stopPropagation()" class="menuSettings" name="logo-youtube" style="font-size:1.3em;float:right"></ion-icon>--></a>
+   <!---->
+ <a (click)="setAutoType(2)" *ngIf="purchasedUpgrades.includes('simpleBots')"><ion-icon [ngClass]="{'invis':manual!==2}" name="md-checkmark"></ion-icon>&nbsp; Simple Bot<!--<ion-icon (click)="openLink('https://www.youtube.com/watch?v=GNbWApp3VYs&t=325s');$event.stopPropagation()" class="menuSettings" name="logo-youtube" style="font-size:1.3em;float:right"></ion-icon>--></a>
+
+  <a (click)="setAutoType(3)" *ngIf="purchasedUpgrades.includes('vizBots')"><ion-icon [ngClass]="{'invis':manual!==3}" name="md-checkmark"></ion-icon>&nbsp; Node Bots<!--<ion-icon (click)="openLink('https://www.youtube.com/watch?v=GNbWApp3VYs&t=470s');$event.stopPropagation()" class="menuSettings" name="logo-youtube" style="font-size:1.3em;float:right"></ion-icon>--></a>
+  </div>
+</div>
+<!--
+  <img *ngIf="purchasedUpgrades.includes('vizBots')" (click)="botButton()" class="menuIcon" [ngClass]="{'menuIconOn':manual!==2}" src="assets/imgs/menu/2661489.png">
+-->
+
+
+ <!--tutorialState[0]==15-->
+
+<ion-badge *ngIf="newExtra || tutorialState[0]==15" class="animated pulse infinite newExtra" style="background:#077ccc;font-size:12px;position:absolute;margin-top:33px;margin-left:-3px">NEW</ion-badge>
+  <div class="dropdown" (mouseenter)="menuHov(true)" (mouseleave)="menuHov(false)" [tooltip]="'ⓘ &nbsp;Hover to See Various Options and Resources. You Can Restart a Run at Any Time.'" [event]="'press'" tooltipClass="superrightArrow" [alwaysShow]="tutorialState[0]==15" duration="0" arrow="true" positionV="bottom" positionH="center"  [ngClass]="{'halfopac':tutorialState[0]!==-1 && tutorialState[0]!==15 && tutorialState[0]!==16}">
+  <img class="dropbtn menuIcon pulse" [ngClass]="{'animated infinite':tutorialState[0]==15}" src="assets/imgs/menu/1636053.png">
+  <div class="dropdown-content">
+  <a (click)="mainMenuGo();playSFX('close')" *ngIf="mode=='sandbox' || horizonUpgrades.length!==0">Title Screen<ion-icon style="float:right" name="ios-arrow-back"></ion-icon></a>
+   <a (click)="openLink('https://www.cinqmarsmedia.com/tradebots/guide/',false)">Game Guide<ion-icon style="float:right" name="md-help-circle"></ion-icon></a>   <!--
+    <a (click)="openPip('hMWRfnlnHEE')">Breakdown<ion-icon style="float:right" name="logo-youtube"></ion-icon></a>
+-->
+
+     <a (click)="restart(false)" [hidden]="tutorialState[0]!==-1 && tutorialState[0]<13">Restart Run<ion-icon style="float:right" name="md-sync"></ion-icon></a>
+
+   <!--
+ <a>Quit <ion-icon style="float:right" name="md-exit"></ion-icon></a>(click)="warnings.tooltips=!warnings.tooltips"
+ -->
+  <a ><!--<span [hidden]="warnings.tooltips">Show</span><span [hidden]="!warnings.tooltips">Hide</span>&nbsp;-->Tooltips <ion-toggle style="float:right;margin-top:-10px;margin-right:-15px" color="primary" (ngModelChange)="playSFX('toggle')" [(ngModel)]="warnings.tooltips"></ion-toggle>
+</a>
+  <a><!--<span [hidden]="warnings.tooltips">Show</span><span [hidden]="!warnings.tooltips">Hide</span>&nbsp;-->Notifications <ion-toggle style="float:right;margin-top:-10px;margin-right:-15px" color="primary" (ngModelChange)="playSFX('toggle')" [(ngModel)]="warnings.notifications"></ion-toggle>
+</a>
+
+
+  <a>Sound FX <ion-toggle style="float:right;margin-top:-10px;margin-right:-15px" color="primary" (ngModelChange)="toggleMute($event);playSFX('generic')" [ngModel]="!muteSFX"></ion-toggle>
+</a>
+ <a (click)="extraMenu();playSFX('generic')"><span *ngIf="!limitedAds">Earn Extra</span><span *ngIf="limitedAds">More</span> <ion-badge class="pulse animated infinite" [hidden]="extraAvail==0" style="float:right" color="secondary">${{extraAvail | thousands : 0}}</ion-badge><ion-icon [hidden]="extraAvail!==0" style="float:right" class="moreIcon" name="ios-more"></ion-icon></a>
+ <!--
+  <a [hidden]="!purchasedUpgrades.includes('missions')"  (click)="missionMenu();playSFX('generic')">Missions <ion-badge class="pulse animated infinite" [hidden]="missionAvail==0" style="float:right" color="secondary">${{missionAvail | thousands : 0}}</ion-badge><ion-icon [hidden]="missionAvail!==0" style="float:right" name="md-compass"></ion-icon></a>
+-->
+<a [hidden]="!unlockedMilestones.includes('podcasts')" (click)="openPodcasts();playSFX('generic')">Podcasts<ion-icon style="float:right" name="md-microphone"></ion-icon></a>
+ <a [hidden]="!debugTools" (click)="quickCash(500)">$500 Cash <span style="font-size:7px">(debug)</span><ion-icon style="float:right" name="md-bug"></ion-icon></a>
+ <a [hidden]="!debugTools || horizonUpgrades.length==0" (click)="debugUpgrade()">Upgrade All<ion-icon style="float:right" name="md-bug"></ion-icon></a>
+  <a [hidden]="!debugTools" (click)="debugJump()">Jump 3 min <span style="font-size:7px">(debug)</span><ion-icon style="float:right" name="md-bug"></ion-icon></a>
+    <a [hidden]="!debugTools" (click)="this.simSpeed[2]=420">Max Sim Speed<ion-icon style="float:right" name="md-bug"></ion-icon></a>
+   <a [hidden]="true" (click)="balSimOptions()">AI Sim<ion-icon style="float:right" name="md-bug"></ion-icon></a>
+   <a [hidden]="!debug && !debugTools" (click)="quickDebug(false)">qwikDebug<ion-icon style="float:right" name="md-bug"></ion-icon></a>
+ <a [hidden]="!warnings.autoContinue" (click)="warnings.autoContinue=false">Stop Auto<ion-icon style="float:right" name="md-hand"></ion-icon></a>
+<a [hidden]="!unlockedMilestones.includes('discord')" (click)="openPip('discord');playSFX('generic')">Discord<img class="discord" src="assets/imgs/5968898.png"></a>
+<a [hidden]="!unlockedMilestones.includes('bbDiscord')" (click)="openPip('bbDiscord');playSFX('generic')">OpenBB Bot<img class="discord" src="assets/imgs/5968898.png"></a>
+
+<a (click)="toggleFullScreen();playSFX('generic')"><span [hidden]="!fullscreenState">Full Screen</span><span [hidden]="fullscreenState">Windowed</span><ion-icon style="float:right" [name]="fullscreenState?'md-contract':'md-expand'"></ion-icon></a>
+      <a [hidden]="!fullscreenState" (click)="minimize();playSFX('generic')">Minimize<ion-icon style="float:right" name="ios-arrow-down"></ion-icon></a>
+   
+ <a (click)="quitGame();playSFX('generic')">Exit App<ion-icon style="float:right" name="md-exit"></ion-icon></a>
+ <!--
+    <a>Options<ion-icon style="float:right" name="md-options"></ion-icon></a>
+
+   <a>Full Screen<ion-icon style="float:right" name="md-expand"></ion-icon></a>
+  <a (click)="resetStorage()">Clear All Data<ion-icon style="float:right" name="md-trash"></ion-icon></a>
+-->
+  </div>
+</div>
+
+</div></div>
+
+<div style="position:absolute;right:30px;bottom:58px;z-index:99">
+
+
+  <button class="pulse" [ngClass]="{'animated infinite':(portfolio[0]<=0 && marginWarning!==-1 && warnings.marginCallWarn) || tutorialState[0]==13 || tutorialState[0]==50 || tutorialState[0]==30,'halfopac':tutorialState[0]!==-1 && tutorialState[0]!==13 && tutorialState[0]!==50 && tutorialState[0]!==30}" style="cursor:pointer" [tooltip]="tutorialState[0]==30?'When Restarting, You Retain Only “Banked” Funds':(tutorialState[0]==50?'ⓘ &nbsp;Margin Calls Are Now Active':'ⓘ &nbsp;Review Net Worth')" [event]="warnings.tooltips?'hover':'press'" [alwaysShow]="tutorialState[0]==13 || tutorialState[0]==50 || tutorialState[0]==30" duration="0" arrow="true" positionV="top" positionH="center" ion-button (click)="stats();playSFX('generic')" color="light"  style="color:white" [style.background]="portfolioMomentum?'rgba(25, 255, 25, .6)':'rgba(255, 25, 25, .7)'"><ion-icon [name]="totalPortfolio<0?'md-warning':'md-pie'">&nbsp;</ion-icon> <span [style.opacity]="limDeduction>0?'.7':'1'">$<b>{{totalPortfolio | thousands : 2}}</b></span></button>
+    <!--
+    <ion-badge [hidden]="availUpgrades==0" style="position:absolute;margin-left:-15px" color="danger"><ion-icon name="md-warning"></ion-icon></ion-badge>
+
+<ion-icon style="position:absolute;margin-left:-15px;color:red" name="md-warning"></ion-icon>
+-->
+<img *ngIf="this.marginWarning || tutorialState[0]==50" class="animated pulse infinite" src="assets/imgs/4201973.png" style="position:absolute;margin-left:-22px;margin-top:-8px;width:34px">
+
+<ion-badge [ngClass]="{'pulse':31-loanData.cycle==1}" [hidden]="31-loanData.cycle>5 || 31-loanData.cycle<1" class="animated infinite loanBadge" color="danger">{{31-loanData.cycle}}</ion-badge>
+
+<button class="pulse" [ngClass]="{'halfopac':(tutorialState[0]!==-1 && tutorialState[0]!==9) || !purchasedUpgrades.includes('margin'),'animated infinite':(portfolio[0]<=0 && loanData.amt==0 && mode!=='sandbox' && purchasedUpgrades.includes('margin') && tutorialState[0]==-1) || tutorialState[0]==9}" [tooltip]="'ⓘ &nbsp;Take out a Loan to Trade on Margin'" [event]="warnings.tooltips && tutorialState[0]==-1?'hover':'press'" tooltipClass="middleArrow" [alwaysShow]="tutorialState[0]==95" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="-90"ion-button style="margin-left:15px" (click)="
+loan();playSFX('generic')" color="light"><span [hidden]="loanData.amt!==0"><ion-icon name="ios-cash">&nbsp;</ion-icon>Loans</span><span [hidden]="loanData.amt==0"><b>${{loanData.mo | thousands : 2}}</b>/mo.</span></button>
+<div style="color:white;position:absolute;right:0px;margin-top:12px;font-size:20px" *ngIf="simSpeed[0]>0"><!--[style.color]="simsPerSecond<adjustedSimSpeed && simSpeedDelay?'red':'white'"-->
+  <!---->
+<span>{{simSpeedDelay?simsPerSecond:adjustedSimSpeed}} <span style="font-size:15px"> day<span [hidden]="simSpeed[0]==15">s</span>/s</span></span><div *ngIf="adjustedSimSpeed && (simsPerSecond<deconstructSimSpeed()*.8 && simSpeedDelay)" (click)="performanceInfo()" style="color:yellow;cursor:pointer;font-size:.6em;margin-top:-6px;margin-left:-2px;float:right;display:inline-block;position:absolute" ><ion-icon name="md-warning"></ion-icon><span *ngIf="false">-{{(1-simsPerSecond/deconstructSimSpeed())*100 | number: '1.0-0'}}%</span></div>
+
+<!--<ion-spinner></ion-spinner>-->
+</div>
+<div *ngIf="simSpeed[2]>15 && simSpeed[0]>0" style="color:white;width:40%;position:absolute;right:95px;margin-top:-5px">
+  <div *ngIf="purchasedUpgrades.includes('limitstop')" class="asyncLearn">
+  <button tooltip="ⓘ &nbsp;Learn While Simulating" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="-10" ion-button style="margin-left:25px;background-color:#077ccc" (click)="
+learnEarn()" [ngClass]="{'opachov':earnedLearnings.length==EarnLearnCount || availEarn==0}"> <ion-icon style="font-size:1.5em" name="ios-book"></ion-icon></button>
+
+<ion-badge [hidden]="availEarn==0" class="pulse" [ngClass]="{'animated infinite':portfolio[0]<=0}" style="position:absolute;margin-left:-70px;padding:4px;margin-top:-2px;font-size:10px" color="secondary">${{availEarn | thousands : 0}}</ion-badge><!--17;-75-->
+</div>
+  <ion-range color="dark" (ngModelChange)="realtimeSim($event)" [max]="simSpeed[2]" [min]="14" [(ngModel)]="simSpeed[0]"><!---->
+  </ion-range>
+</div>
+
+<button id="simButton" class="pulse" [ngClass]="{'halfopac':(tutorialState[0]!==-1 && tutorialState[0]!==153 && tutorialState[0]!==12 && tutorialState[0]!==3 && tutorialState[0]!==154) || (!purchasedUpgrades.includes('step') && !purchasedUpgrades.includes('sim')),'animated infinite':tutorialState[0]==3 || tutorialState[0]==12 || tutorialState[0]==153}" [tooltip]="tutorialState[0]==153?'ⓘ &nbsp;Notice Profits Are Now Inverted During Sim':(tutorialState[0]==12?'ⓘ &nbsp;Step Forward Several Days to See Investment Progress over Time':(tutorialState[0]==3?'ⓘ &nbsp;Press 3 Times to Step 3 Days':(simSpeed[0]==0?'ⓘ &nbsp;Move Forward in Time to Simulate Earnings':'ⓘ &nbsp;Pause Simulation to Put in Trades')))" tooltipClass="rightArrow" [event]="warnings.tooltips?'hover':'press'" [alwaysShow]="tutorialState[0]==3 || tutorialState[0]==12 || tutorialState[0]==153" duration="0" arrow="true" positionV="top" positionH="center" ion-button style="margin-left:15px" (click)="playButton()" color="light"><ion-icon [name]="!purchasedUpgrades.includes('sim')?'md-skip-forward':(simSpeed[0]==0?'md-play':'md-pause')">&nbsp;</ion-icon>  {{!purchasedUpgrades.includes('sim')?'step':(simSpeed[0]==0?'sim':'stop')}}</button>
+
+</div>
+<!--
+<button ion-button style="margin-left:15px" (click)="
+pushData(simRec,false)">Sim {{simRec}} {{dimension}}{{simRec>1?'s':''}}</button>
+  <ion-range *ngIf="maxSim>1" style="float:right;width:100%;margin-top:-20px" [max]="maxSim" min="1" [(ngModel)]="simRec">
+  </ion-range>
+-->
+</div>
+
+<!--
+<div style="position:absolute;top:2vh;left:6vw;z-index:999">
+<button ion-button (click)="
+buildBot()"><ion-icon name="md-construct"></ion-icon>Bot</button>
+</div>
+-->
+<!---->
+<div style="text-align:right;color:white;vertical-align:center" class="priceBarTop mono"><!-- [ngClass]="{'priceBarTop':manual==3}"-->
+	<span style="cursor:pointer" [tooltip]="obfuscateYear?'ⓘ &nbsp;Unlock Future Upgrade to Reveal Year of Current Stock Date':'ⓘ &nbsp;Date of Current Stock'" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="bottom" positionH="center"><i>{{currentDate | date:"MMM d"+(obfuscateYear?"":", y")}}</i></span><span *ngIf="obfuscateYear"><i> Yr {{YrsElapsed}}</i></span>
+&nbsp;&nbsp;Price: <span style="cursor:pointer" [tooltip]="obfuscatePrice?'ⓘ &nbsp;Unlock Future Upgrade to Reveal Price of Mystery Stock':'ⓘ &nbsp;Current Stock Price'" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="bottom" positionH="center" [style.color]="currPrice[1]>=0?'rgba(25, 255, 25, .7)':'red'"><b>$<span>{{obfuscatePrice?"?????":(currPrice[0] | number: '1.2-2')}}</span> ({{currPrice[1]}}%)</b></span>&nbsp;&nbsp; Cash: <span (click)="cashVsInvested[0]>1000?(cashHoldingsPrecision[0]=!cashHoldingsPrecision[0]):''" style="cursor:pointer" tooltip="ⓘ &nbsp;Avaiable Funds NOT Invested in Current Stock" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="bottom" positionH="center" [style.color]="portfolio[2]?'rgba(25, 255, 25, .7)':'red'"><b>${{cashHoldingsPrecision[0]?(cashVsInvested[0] | number: '1.2-2'):(cashVsInvested[0] | thousands: 2)}} ({{cashVsInvested[0]/(cashVsInvested[0]+cashVsInvested[1])*100 | number: '1.0-0'}}%)</b></span>&nbsp;&nbsp;
+Holdings: <div style="display:inline-block" class="pulse" [ngClass]="{'animated infinite':(portfolio[0]*(portfolio[1])-limDeduction[0])==0 && tutorial==-1}"><span (click)="cashVsInvested[1]>1000?(cashHoldingsPrecision[1]=!cashHoldingsPrecision[1]):''" style="cursor:pointer" tooltip="ⓘ &nbsp;Value of Investments in Current Stock" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="bottom" positionH="center" [style.color]="(cashVsInvested[1]>0?longVsShort:!longVsShort)?'rgba(25, 255, 25, .7)':'red'"><b>${{cashHoldingsPrecision[1]?(cashVsInvested[1] | number: '1.2-2'):(cashVsInvested[1] | thousands:2)}}</b></span>&nbsp;<div (click)="tutClick(152)" *ngIf="!longVsShort" class="pulse" [ngClass]="{'animated infinite':tutorialState[0]==152}" style="cursor:pointer;display:inline-block" [tooltip]="'ⓘ &nbsp;You Now Have a Short Position Instead of a Long Position'" [event]="(warnings.tooltips)?'hover':'press'" tooltipClass="leftArrow" [alwaysShow]="tutorialState[0]==152" duration="0" arrow="true" leftOffset="-60" positionV="bottom" positionH="center"><i> [short]</i></div><ion-icon class="animated infinite pulse" tooltip="ⓘ &nbsp;You Have No Investment in the Current Asset" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="bottom" positionH="center" [hidden]="cashVsInvested[1]>0" style="margin-left:4px;font-size:15px" name="md-alert"></ion-icon></div><div *ngIf="unlockModeState.crypto || unlockModeState.etf || unlockModeState.sandbox" style="position:absolute;right:font-size:12px;opacity:.3;color:white;"><b>{{mode | uppercase}} MODE</b> <span [hidden]="mode!=='sandbox'">({{sandbox.type}})</span></div>
+<!---->
+<div [hidden]="!discordOpen" id="discordFrame">
+  <div class="discordCtrls">
+
+<ion-icon style="cursor:move;font-size:23px" id="pipFrameheader" name="md-move"></ion-icon>
+<ion-icon class="hov" style="cursor:pointer;font-size:23px;margin-left:3px" (click)="discordOpen=false;playSFX('close')" name="md-close-circle"></ion-icon>
+</div>
+<iframe *ngIf="discordOpen" src="" height="600" width="600"></iframe>
+</div>
+
+<div [hidden]="!bbDiscordOpen" id="bbFrame">
+  <div class="discordCtrls">
+
+<ion-icon style="cursor:move;font-size:23px" id="pipFrameheader" name="md-move"></ion-icon>
+<ion-icon class="hov" style="cursor:pointer;font-size:23px;margin-left:3px" (click)="bbDiscordOpen=false;playSFX('close')" name="md-close-circle"></ion-icon>
+</div>
+<iframe *ngIf="bbDiscordOpen" src="" height="600" width="600"></iframe>
+</div>
+
+
+<div [hidden]="!pipVid" id="pipFrame">
+<div style="position:absolute;margin-left:240px;width:100px;margin-top:40px;z-index:9999 !important">
+  <img (click)="pipMinimize=false" *ngIf="pipMinimize" class="audiowav" src="assets/wave.gif">
+    <ion-icon *ngIf="!pipMinimize" class="hov minimize" style="cursor:pointer;font-size:23px" (click)="pipMinimize=true" name="md-remove"></ion-icon>
+<ion-icon style="cursor:move;font-size:23px" id="pipFrameheader" name="md-move"></ion-icon>
+<ion-icon class="hov" style="cursor:pointer;font-size:23px;margin-left:3px" (click)="pipVid=false;playSFX('close')" name="md-close-circle"></ion-icon>
+</div>
+<iframe *ngIf="pipVid && !pipMinimize" sandbox="allow-same-origin allow-scripts allow-presentation" class="pip" width="560" height="315" [src]="'https://www.youtube-nocookie.com/embed/'+pipVid | keepHtml" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" frameborder="0"
+        allowfullscreen
+        webkitallowfullscreen
+        mozallowfullscreen></iframe>
+</div>
+
+<div [hidden]="!radio" id="radioFrame">
+<div style="position:absolute;margin-left:212px;width:100px;margin-top:34px;z-index:9999;color:white">
+  <img (click)="pipMinimize=false" *ngIf="pipMinimize" class="audiowav" src="assets/wave.gif">
+    <ion-icon *ngIf="!pipMinimize" class="hov minimize" style="cursor:pointer;font-size:23px" (click)="pipMinimize=true" name="md-remove"></ion-icon>
+<ion-icon style="cursor:move;font-size:23px" name="md-move"></ion-icon>
+<ion-icon class="hov" style="cursor:pointer;font-size:23px" (click)="radio=false;playSFX('close')" name="md-close-circle"></ion-icon>
+</div>
+
+<input [hidden]="true" accept=".csv" type="file" id="myFile" name="filename">
+
+<div *ngIf="radio">
+
+<iframe [hidden]="pipMinimize" class="pipRadio" allow="autoplay" width="100%" height="700" [src]="radio  | keepHtml" frameborder="0"></iframe>
+
+<!--
+<iframe  width="250" height="800" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/342461012&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+-->
+
+
+</div>
+
+
+</div>
+
+<div *ngIf="movingGain && purchasedUpgrades.includes('gains') && this.portfolio[1]!==0" class="dropdown" style="position:absolute;margin-left:10px;margin-top:-2px;padding-top:0px" >
+<ion-badge [hidden]="movingGain[0]==0" [style.background]="movingGain[0]>0?'rgba(25, 255, 25, .7)':'red'" style="margin-top:2px">{{movingGain[0]>0?'+':''}}{{movingGain[0] | number: '1.2-2'}}% (<b>${{movingGain[1] | thousands: 2}}</b>)</ion-badge>
+  <div class="dropdown-content hoverFix" style="margin-top:2px" *ngIf="config && movingGain[0]!==0">
+    <a style="opacity:1"> <span style="float:left"> Gains Over Last &nbsp;<span style="float:right"><b>{{movingGainPeriod}}</b> day<span [hidden]="movingGainPeriod==1">s</span></span></span> <br><div style="font-size:9px;text-align:left"><i>Your Gains/Losses Within the Defined Interval</i></div><ion-range style="padding:0px !important" (ngModelChange)="calcMovingGain()" [max]="statsData.riseFall.length-1<90?statsData.riseFall.length-1:90" [min]="2" [(ngModel)]="movingGainPeriod"><!---->
+  </ion-range></a>
+  </div>
+</div>
+
+
+
+<!--<span style="margin-left:15px">Gains: <ion-badge [hidden]="false" color="danger">2</ion-badge></span>-->
+</div>
+
+
+<div class="lowerThird" [style.padding-left]="manual==3?'0px':'30px'" [style.padding-top]="manual==3?'0px':'20px'">
+  <div *ngIf="manual<2" style="text-align:left;margin-top:2px">
+  <!--
+<button ion-button (click)="toggleBuyVSell()" [style.background]="buyvssell?'green':'red'">{{buyvssell?'buy':'sell'}}</button>
+-->
+<!---->
+<!--
+  <div class="switch-button2" [ngClass]="{'shortSwitch':!buyvssell}" style="display:inline-block;vertical-align:middle">
+    <input [(ngModel)]="chkbox" (ngModelChange)="toggleBuyVSell()" class="switch-button2-checkbox" type="checkbox">
+    <label [ngClass]="{'shortSwitchLabel':!buyvssell}" class="switch-button2-label"><b><span class="switch-button2-label-span">LONG</span></b></label>
+  </div>
+-->
+
+  <div [tooltip]="tutorialState[0]==155?'ⓘ &nbsp;Toggle To Cover Your Short Position':(tutorialState[0]==150?'ⓘ &nbsp;When You Have No Holdings in a Stock, the Sell Toggle is Replaced With &ldquo;Short&rdquo;':(longShortShow && portfolio[1]>0?'ⓘ &nbsp;Sell All Stock to View &ldquo;Short&rdquo; Toggle':(longShortShow?'ⓘ &nbsp;Toggle Long vs Short Mode':'ⓘ &nbsp;Toggle Buy vs Sell Mode')))" [event]="(warnings.tooltips || (warnings.tooltips && longShortShow))?'hover':'press'" tooltipClass="leftArrow" [alwaysShow]="tutorialState[0]==150 || tutorialState[0]==155" duration="0" arrow="true" positionV="top" positionH="center" class="switch-button mono" [ngClass]="{'sellSwitch':!buyvssell,'short-button':(longShortShow && !(this.limitStops[0] && !this.limitStops[0].short) && cashVsInvested[1]<0.01) || !longVsShort,'animated pulse infinite':tutorialState[0]==150 || tutorialState[0]==155}" style="display:inline-block;vertical-align:middle">
+ <input [ngClass]="{'halfopac':tutorialState[0]!==-1 && tutorialState[0]!==150 && tutorialState[0]!==155}" [(ngModel)]="chkbox" (ngModelChange)="toggleBuyVSell();playSFX('toggle')" class="switch-button-checkbox" type="checkbox">
+    <label [ngClass]="{'sellSwitchLabel':!buyvssell}" class="switch-button-label" style="line-height:12px"><b><span class="switch-button-label-span">{{!longVsShort || (this.limitStops[0] && this.limitStops[0].short)?'COV':'BUY'}}</span></b></label>
+  </div>
+
+<!--
+  <div class="switch-button2" style="position:absolute;top:5px;left:10px">
+    <input [(ngModel)]="chkbox2" (ngModelChange)="togglePercPrice()" class="switch-button2-checkbox" type="checkbox">
+    <label class="switch-button2-label" for=""><b><span class="switch-button2-label-span">%</span></b></label>
+  </div>
+-->
+
+<!---->
+<div class="mono" style="display:inline-block;vertical-align:middle;padding-left:10px">
+  <div class="pulse" [ngClass]="{'animated infinite':tutorialState[0]==11}" style="display:inline-block">
+<span style="cursor:pointer" (click)="cashHoldingsPrecision[2]=!cashHoldingsPrecision[2]" tooltip="ⓘ &nbsp;Amount of Money to Trade. Adjust With Left Slider" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="top" positionH="center" [style.color]="(buyvssell && tradeVolume!==0)?'rgba(25, 255, 25, .7)':'red'"><b>${{cashHoldingsPrecision[2]?(tradeVolume * (buyvssell?1:(limitStop/currPrice[0])) | number: '1.2-2'):(tradeVolume * (buyvssell?1:(limitStop/currPrice[0])) | thousands:2)}}</b></span></div>
+
+
+<span *ngIf="manual==0"> of {{getActive("type") | lowercase}} @ <span style="cursor:pointer" [tooltip]="obfuscatePrice?'ⓘ &nbsp;Unlock Future Upgrades to Reveal Price of Mystery Stock':'ⓘ &nbsp;Current Stock Price'" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="top" positionH="center" >$<b>{{obfuscatePrice?"?????":(currPrice[0] | number: '1.2-2')}}</b></span></span>
+
+<span *ngIf="manual==1"> of {{getActive("type") | lowercase}} @ <input
+    [tooltip]="'ⓘ &nbsp;Specify Buy Price Less Than Market Value'" [event]="'press'" tooltipClass="middleArrow"
+    [alwaysShow]="tutorialState[0]==102" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="-120"
+    [ngModel]="limitRender" (blur)="limitStopBlur()" (input)="limitStopChange($event)" class="limitInput"
+    
+    type="text" > <span
+    [title]="limitStop!==currPrice[0]?'Set to Market':''" [ngClass]="{'setMarket':limitStop!==currPrice[0]}"
+    (click)="limitStop=currPrice[0];limitRender=limitStop.toFixed(2)">(<i>{{currPrice[0]==limitStop || limitRender==''?'market':((buyvssell || limitStop>currPrice[0])?'limit ':'stop ')}}<span [hidden]="limitStop/currPrice[0]==1 || limitRender==''" [style.color]="limitStop>currPrice[0]?'rgba(25, 255, 25, .7)':'red'"><span [hidden]="limitStop<currPrice[0]">+</span>{{(limitStop/currPrice[0]-1)*100 | number:
+        '1.0-2'}}%</span>)</i></span></span>
+<!--
+<span *ngIf="manual==1 && !buyvssell"> of {{getActive("type") | lowercase}} @ <input class="limitInput" [(ngModel)]="limitStop" type="number" [min]="(!longVsShort || portfolio[1]==0)?currPrice[0]:0.01" step="any" max="99999"> <span [title]="limitStop!==currPrice[0]?'Set to Market':''" [ngClass]="{'setMarket':limitStop!==currPrice[0]}" (click)="limitStop=currPrice[0]">(<i>{{(currPrice[0]==limitStop || limitRender=='')?'market':(limitStop>currPrice[0] && buyvs?'limit ':'stop ')}}<span [hidden]="limitStop/currPrice[0]==1" [style.color]="limitStop>currPrice[0]?'rgba(25, 255, 25, .7)':'red'">{{(limitStop/currPrice[0]-1)*100 | number: '1.0-2'}}%</span>)</i></span></span>
+
+-->
+
+  <br>
+  Transaction Fee @ {{fee*100 | number: '1.0-2'}}%: <span (click)="cashHoldingsPrecision[3]=!cashHoldingsPrecision[3]" class="ptr" tooltip="ⓘ &nbsp;Unlock Upgrades to Reduce Fees" [event]="warnings.tooltips?'hover':'press'" duration="0" arrow="true" positionV="top" positionH="center" style="color:white"><b> ${{cashHoldingsPrecision[3]?(tradeVolume*fee * (buyvssell?1:(limitStop/currPrice[0])) | number: '1.2-2'):(tradeVolume*fee * (buyvssell?1:(limitStop/currPrice[0])) | thousands:2)}}</b></span><span style="font-size:10px;letter-spacing:-1px" *ngIf="manual==1 && currPrice[0]!==limitStop"> <i>(only if triggered)</i></span>
+</div>
+<!---->
+<br>
+<!--
+  <div *ngIf="longShortShow" class="switch-button2" [ngClass]="{'shortSwitch':!buyvssell}" style="display:inline-block;vertical-align:middle">
+    <input [(ngModel)]="chkbox2" (ngModelChange)="toggleLongSort()" class="switch-button2-checkbox" type="checkbox">
+    <label [ngClass]="{'shortSwitchLabel':!buyvssell}" class="switch-button2-label"><b><span class="switch-button2-label-span">LONG</span></b></label>
+  </div>
+  'sliderMargin':!longShortShow,
+-->
+ <ion-range [ngClass]="{'halfopac':(tradeVolume<0.02) || (tutorialState[0]!==11 && tutorialState[0]!==-1 && tutorialState[0]!==103 && tutorialState[0]!==151 && tutorialState[0]!==156)}" class="sliderMargin" [tooltip]="tutorialState[0]==156?'ⓘ &nbsp;Set Full Amount':'ⓘ &nbsp;Trade Amount'" [event]="'press'" [alwaysShow]="tutorialState[0]==11 || tutorialState[0]==103 || tutorialState[0]==151 || tutorialState[0]==156" duration="0" leftOffset="-20" topOffset="27" arrow="true" positionV="top" positionH="center" tooltipClass="superrightArrow" style="width:120px;display:inline-block;padding-left:20px;vertical-align:middle;margin-right:-30px;" [color]="buyvssell?'secondary':'danger'" [max]="100*maxTradeRange" [(ngModel)]="100*tradeDefault*tradeVolume" (ngModelChange)="amtSlider($event)">
+  </ion-range>
+
+<img *ngIf="config && config.candlestick && config.candlestick.trades && config.candlestick.trades.length>0" src="assets/imgs/history.png" class="histBtn" (click)="tradeHist()">
+
+  <button class="pulse" [tooltip]="'ⓘ&nbsp;Cover Entire Position to Zero Out Holdings and Be Able to Invest Long Again'" [event]="'press'" [alwaysShow]="tutorialState[0]==157" duration="0" leftOffset="0" topOffset="0" arrow="true" positionV="top" positionH="center" [ngClass]="{'animated infinite':(cashVsInvested[1]<=0 && tradeVolume>=0.0099 && portfolio[0]<50 && tutorialState[0]==-1) || tutorialState[0]==11 || tutorialState[0]==103 || tutorialState[0]==151 || tutorialState[0]==157,'halfopac':limitRender=='' || tradeVolume<0.01 || (tradeVolume==0 && cashVsInvested[0]<.5) || (tutorialState[0]!==11 && tutorialState[0]!==-1 && tutorialState[0]!==103 && tutorialState[0]!==151 && tutorialState[0]!==157)}" style="height:3rem;margin-top:0px;display:inline-block;vertical-align:middle;margin-left:50px" ion-button [style.background]="buyvssell?'rgba(25, 255, 25, .7)':'red'" (click)="trade()"> {{buyvssell && !longVsShort || (this.limitStops[0] && this.limitStops[0].short)?'Cover Short':(!buyvssell && !(this.limitStops[0] && !this.limitStops[0].short) && ((longShortShow && cashVsInvested[1]<0.01) || !longVsShort)?'Process Short':'Process Trade')}}</button>
+
+
+
+<div *ngIf="manual==1" [tooltip]="'ⓘ &nbsp;Up to 4 Orders Will Trigger if Price Threshold is Met During Sim. Cancel the Pending Order.'" [event]="'press'" [alwaysShow]="tutorialState[0]==104" duration="0" arrow="true" positionV="top" positionH="center"  leftOffset="-145" topOffset="0" tooltipClass="middleArrow" class="limitOrders">
+  <div style="display:inline-block;text-align:center;margin-top:10px" *ngIf="limitStops.length==0"><i>You have no open orders</i><br><div style="font-size:9px;display:inline-block;line-height:1.1;margin-top:5px">You can have a maximum of 4 <br>open orders at a time</div></div>
+  <div *ngFor="let open of limitStops; let i=index">
+    <span [style.color]="open.buyvssell?'green':'red'"><b>{{open.buyvssell?(open.short?'COV':'BUY'):(open.short?'SHORT':'SELL')}}</b>&nbsp;</span>&nbsp;<b><span (click)="cashHoldingsPrecision[4]=!cashHoldingsPrecision[4]" style="cursor:pointer">${{cashHoldingsPrecision[4]?(open.volume-(open.volume*fee) | number: '1.2-2'):(open.volume-(open.volume*fee) | thousands:2)}}</span></b>&nbsp;<b>@ ${{open.price | number: '1.2-2'}}</b> &nbsp;<ion-icon class="pulse hov2" [ngClass]="{'animated infinite':tutorialState[0]==104}" (click)="rmLimitStop(i)" style="cursor:pointer" name="md-trash"></ion-icon>
+  </div>
+</div>
+</div>
+
+<div *ngIf="manual==2" style="margin-top:-90px !important">
+
+<div style="position:absolute;left:400px;bottom:35px;font-size:20px">
+<b>Status</b>:
+  <select (click)="stopSim()" [ngClass]="{'blinkingLED2':activeBot=='_none_' && simSpeed[0]!==0}" [tooltip]="'ⓘ &nbsp;Make Your Bot Active to End Tutorial'" [event]="'press'" [alwaysShow]="tutorialState[0]==214" duration="0" arrow="true" positionV="top" positionH="center"  leftOffset="0" topOffset="0" style="background:#444;width:120px;margin-right:-50px" [(ngModel)]="activeBot" [disabled]="simpleBot.exit.length==0 || simpleBot.entry.length==0" (ngModelChange)="tutClick(214)">
+    <option value="_none_">Inactive</option>
+     <option value="$SIMPLEBOT">Active</option>
+  </select><div class="led-box" [ngClass]="{'blinkingLED':activeBot=='_none_' && simSpeed[0]!==0}" style="margin-left:205px !important">
+    <div [ngClass]="{'led-green':activeBot=='$SIMPLEBOT','led-yellow':activeBot=='_none_'}"></div>
+</div><br><span style="font-size:10px"><i>Engage <b>automated logic</b> to buy (entry) and sell (exit)</i></span>
+</div>
+<!--<button>See in Advanced Bot</button>-->
+<div>
+
+  <button class="pulse" [tooltip]="(tutorialState[0]==250 || tutorialState[0]==300)?'ⓘ &nbsp;You Now Have Additional Tools in Defining Your Bot':'ⓘ &nbsp;Define Conditions for an Automatic Stock Purchase'" [event]="'press'" [alwaysShow]="tutorialState[0]==202 || tutorialState[0]==250 || tutorialState[0]==300" duration="0" arrow="true" positionV="top" positionH="center"  leftOffset="0" topOffset="0" [ngClass]="{'animated infinite':simpleBot.entry.length==0 && tutorialState[0]==-1 || tutorialState[0]==202 || tutorialState[0]==250 || tutorialState[0]==300,'halfopac':tutorialState[0]!==-1 && tutorialState[0]!==202 && tutorialState[0]!==250 && tutorialState[0]!==300}" ion-button style="background:rgba(25, 255, 25, .7)" (click)="
+defineSimpleBot(true)"><ion-icon name="md-trending-up"></ion-icon>&nbsp;&nbsp;Entry</button>
+  <button class="pulse" [tooltip]="'ⓘ &nbsp;Define Rules for an Automatic Sale of Shares'" [event]="'press'" [alwaysShow]="tutorialState[0]==208" duration="0" arrow="true" positionV="top" positionH="center"  leftOffset="0" topOffset="0" [ngClass]="{'animated infinite':simpleBot.exit.length==0 && tutorialState[0]==-1 || tutorialState[0]==208,'halfopac':tutorialState[0]!==-1 && tutorialState[0]!==208}" ion-button style="background:rgba(255, 25, 25, 1);margin-left:10px" (click)="
+defineSimpleBot(false)"><ion-icon name="md-trending-down"></ion-icon>&nbsp;&nbsp;Exit</button>
+
+
+<!---->
+<ion-badge *ngIf="advancedBots['$SIMPLEBOT'] && advancedBots['$SIMPLEBOT'].logs.length>0 && advancedBots['$SIMPLEBOT'].logs.length-(advancedBots['$SIMPLEBOT'].read?advancedBots['$SIMPLEBOT'].read:0)>0" [style.background]="advancedBots['$SIMPLEBOT'].logs[advancedBots['$SIMPLEBOT'].logs.length-1].type==2?'red':'gray'" style="margin-left:89px;margin-top:-2px;position:absolute;z-index:99">{{advancedBots['$SIMPLEBOT'].logs.length-(advancedBots['$SIMPLEBOT'].read?advancedBots['$SIMPLEBOT'].read:0) | thousands}}</ion-badge>
+    <button [tooltip]="'ⓘ &nbsp;See Logs For When Your Bot Has Acted'" [event]="'press'" [alwaysShow]="tutorialState[0]==211" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="0" topOffset="0" [ngClass]="{'halfopac':!advancedBots['$SIMPLEBOT'] || advancedBots['$SIMPLEBOT'].logs.length==0 && tutorialState[0]!==211}" style="margin-left:10px" color="light" ion-button (click)="
+openLog('$SIMPLEBOT')"><ion-icon name="md-bug"></ion-icon>&nbsp;&nbsp;Logs</button>
+
+<div style="font-size:16px;padding-top:10px" (click)="tutClick(213)">Halt Simulation if Losses Exceed <select [(ngModel)]="simpleBot.stopThresh" [tooltip]="'ⓘ &nbsp;Sim Will End if Losses Exceed This Threshold'" [event]="'press'" [alwaysShow]="tutorialState[0]==213" duration="0" arrow="true" positionV="top" positionH="center"  leftOffset="0" topOffset="0"
+        ><option value="5">5%</option>
+        <option value="10">10%</option>
+        <option value="20">20%</option>
+        <option value="30">30%</option>
+        <option value="50">50%</option>
+        <option value="70">70%</option>
+        <option value="95">95%</option>
+        </select>
+  &nbsp;&nbsp;&nbsp;<img [tooltip]="'ⓘ &nbsp;Click to Convert Simple Bot to Advanced'" [event]="'press'" [alwaysShow]="tutorialState[0]==350" duration="0" arrow="true" positionV="top" positionH="center" leftOffset="-10" *ngIf="(purchasedUpgrades.includes('vizBots') && simpleBot.exit.length>0 && simpleBot.entry.length>0) || tutorialState[0]==350" (click)="upgradeSimpleBot()" src="assets/imgs/2488826.png" class="hov animated infinite" style="margin-top:-1px;opacity:.5;width:20px;position:absolute" [ngClass]="{'pulse':tutorialState[0]==350}">
+      </div>
+
+</div>
+
+
+
+</div>
+
+<div *ngIf="manual==3">
+
+
+<div style="position:absolute;left:50px;bottom:5px;font-size:18px">
+<div style="margin-bottom:5px">
+<b>Active Bot</b>:
+  <select [disabled]="advancedBotNames.length==0" style="background:#444;width:120px;cursor:pointer" [(ngModel)]="activeBot">
+    <option value="_none_">None</option>
+    <option *ngFor="let bot of advancedBotNames | slice:((advancedBotNames.includes('$SIMPLEBOT') && !debug)?1:0)" [value]="bot">{{bot}}</option>
+  </select><div class="led-box">
+    <div [ngClass]="{'led-green':activeBot!=='_none_' && advancedBots[activeBot] && !advancedBots[activeBot].error,'led-red':activeBot!=='_none_' && advancedBots[activeBot] && advancedBots[activeBot].error,'led-yellow':activeBot=='_none_'}"></div>
+</div>  
+<!---->
+<span *ngIf="advancedBots[activeBot] && advancedBots[activeBot].logs.length && advancedBots[activeBot].logs.length>0" style="padding-left:55px;font-size:13px;opacity:.7;position:absolute;margin-top:3px;width:600px">
+<span style="opacity:.5"><i>{{advancedBots[activeBot].logs[advancedBots[activeBot].logs.length-1].timestamp | date:'H:mm:ss'}}</i>&nbsp;&nbsp;<ion-icon [style.color]="advancedBots[activeBot].logs[advancedBots[activeBot].logs.length-1].type==0?'gray':(advancedBots[activeBot].logs[advancedBots[activeBot].logs.length-1].type==1?'yellow':'red')" [name]="advancedBots[activeBot].logs[advancedBots[activeBot].logs.length-1].type==0?'md-information-circle':(advancedBots[activeBot].logs[advancedBots[activeBot].logs.length-1].type==1?'md-warning':'md-alert')"></ion-icon>&nbsp;</span> <div style="display:inline-block" [innerHTML]="advancedBots[activeBot].logs[advancedBots[activeBot].logs.length-1].message"></div><!--<span *ngIf="advancedBots[activeBot].logs[advancedBots[activeBot].logs.length-1].message" [hidden]="advancedBots[activeBot].logs[advancedBots[activeBot].logs.length-1].message.length<40">...</span>-->
+
+
+
+</span>
+
+<div style="padding-top:7px">
+
+  <button ion-button class="pulse" style="background-color:#077ccc" [ngClass]="{'animated infinite':advancedBotNames.length==0}" (click)="
+openBot(true)"><ion-icon name="md-add-circle"></ion-icon>&nbsp;New Bot</button><!--rgba(25, 255, 25, .7)-->
+<button [ngClass]="{'halfopac':activeBot=='_none_'}" ion-button color="light" (click)="
+openBot()" style="background:rgba(255, 25, 25, .7);color:white"><ion-icon name="md-construct"></ion-icon>&nbsp;Edit</button>
+<ion-badge *ngIf="advancedBots[activeBot] && advancedBots[activeBot].logs.length>0 && advancedBots[activeBot].logs.length-(advancedBots[activeBot].read?advancedBots[activeBot].read:0)>0" [style.background]="advancedBots[activeBot].logs[advancedBots[activeBot].logs.length-1].type==2?'red':'gray'" style="margin-left:72px;margin-top:-2px;position:absolute;z-index:99">{{advancedBots[activeBot].logs.length-(advancedBots[activeBot].read?advancedBots[activeBot].read:0) | thousands}}</ion-badge>
+    <button [ngClass]="{'halfopac':!advancedBots[activeBot] || advancedBots[activeBot].logs.length==0}" style="margin-left:2px;width" color="light" ion-button (click)="
+openLog(activeBot)"><ion-icon name="md-bug"></ion-icon>&nbsp;Logs</button>
+<button class="opachov" style="margin-left:5px" [ngClass]="{'halfopac':activeBot=='_none_'}" ion-button color="light" (click)="
+duplicateBot()"><ion-icon name="md-copy"></ion-icon>&nbsp;Copy</button><button class="opachov" style="margin-left:10px" [ngClass]="{'halfopac':activeBot=='_none_'}" ion-button color="light" (click)="
+deleteBot()"><ion-icon name="md-trash"></ion-icon>&nbsp;Delete</button>
+
+
+</div>
+</div>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</div>

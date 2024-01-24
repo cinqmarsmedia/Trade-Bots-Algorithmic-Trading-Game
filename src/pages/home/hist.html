@@ -1,0 +1,18 @@
+
+
+<ion-content class="dark">
+<ion-list-header> Trade History
+
+<ion-icon (click)="viewCtrl.dismiss();events.publish('sfx','close')" class="closeBtn" [ngClass]="{'animated infinite':tutState==212}" style="float:right" name="md-close"></ion-icon></ion-list-header>
+
+
+
+
+<div class="histTrades" *ngFor="let trade of trades.slice().reverse(); let i=index">
+	<div class="dateHistTrade"><i>{{trade.date | date:"MMM d"+(obfuscateYear?"":", y")}}</i></div> <b><span style="margin-left:110px;margin-right:10px" [style.color]="trade.type=='buy'?'rgba(25, 255, 25, .7)':'red'">{{trade.type=='buy'?(trade.short?'COV':'BUY'):(trade.short?'SHORT':'SELL')}}</span></b> @ <i>${{trade.price | thousands}}</i>&nbsp;&nbsp;&nbsp; for &nbsp;&nbsp;&nbsp;<b>${{trade.quantity | thousands:2}}</b> <div style="opacity:.5;float:right;margin-left:40px">{{trade.quantity / trade.price | thousands:2}} shares</div>
+</div>
+
+
+
+
+	</ion-content>

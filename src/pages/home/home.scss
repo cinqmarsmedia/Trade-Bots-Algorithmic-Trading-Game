@@ -1,0 +1,499 @@
+page-home {
+
+.modPadding{
+padding:10px 13px !important
+}
+
+  .home-container {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      margin: 0;
+      contain: strict;
+      pointer-events: none;
+    }
+  
+    .home-container * {
+      pointer-events: all;
+    }
+//@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap');
+
+.lowerThird{
+color:white;
+position:absolute;
+bottom:8px;
+width:100%;
+}
+
+.titleScreen ion-badge {
+z-index:99999999 !important;
+
+}
+
+.histBtn{
+  position:absolute;
+  margin-top:12px;
+  margin-left:12px;
+  width:20px;
+  opacity:.4
+}
+
+.histBtn:hover{
+  opacity:1;
+  cursor:pointer;
+}
+
+
+.thing{
+  top:80px;
+  position:absolute !important;
+  z-index:999999999999999999999999 !important;
+}
+
+
+.hideInfo{
+position:absolute;
+right:15px;
+bottom:128px;
+font-size:12px;
+color:white;
+opacity:.5;
+cursor:pointer;
+vertical-align:middle;
+}
+
+.hideInfo:hover{
+opacity:1;
+}
+
+.priceBarTop{
+  position:absolute;
+top:2.5vh;left:70px !important;
+}
+
+.botIcon{
+  font-size:17px;
+  opacity:.7
+}
+
+.newExtra{
+  margin-top:38px !important;
+  margin-left:4px !important;
+}
+
+.chart-js-render-monitor{
+  width:100px !important;
+}
+.botIcon:hover{
+cursor: pointer; -webkit-transform: scale(1.02);opacity:1
+
+}
+
+.anim{
+  margin-left:-10% !important;
+  position:absolute;
+  filter:blur(5px);
+  pointer-events: none !important;
+}
+
+.invis{
+  opacity:0;
+}
+
+.menuSettings{
+opacity:.4
+}
+
+.menuSettings:hover{
+cursor: pointer; -webkit-transform: scale(1.05);opacity:1
+}
+
+
+.dropbtn {
+  //background-color: #f4f4f4;
+  color: black;
+  padding: 10px;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  opacity:.3;
+}
+
+.dropdown:hover{
+  cursor:pointer
+}
+
+
+.sandUpAdjust{
+margin-top:-387px !important;
+min-width: 120px !important;
+margin-left:-38px !important;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  padding:5px;
+}
+
+.dropdown-content {
+    margin-left:-120px;
+    margin-top:-5px;
+  display: none;
+  position: absolute;
+  //color:rgba(255,255,255,.9) !important;
+  opacity:1;
+  //background-color: #f9f9f9;
+  background-color:rgba(50,100,100,.97) !important;
+  min-width: 160px;
+  cursor:pointer;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 99999 !important;
+}
+
+
+.dropdown-content a {
+  color:rgba(255,255,255,.9);
+    border:solid 1px rgba(255,255,255,.5);
+    font-weight:bold;
+  //color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  z-index:9999 !important;
+}
+
+.hoverFix span:hover{
+opacity:1;
+color:white !important;
+}
+
+
+.dropdown-content a:hover {color:white !important;opacity:1 !important;background-color: rgba(255, 255, 0,.05)}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  opacity:1;
+}
+
+.menuIcon{
+  width:35px;
+  padding:5px;
+  padding-top:3px !important;
+  opacity:.5;
+  filter:grayscale(1);
+}
+
+.menuIcon:hover{
+cursor: pointer; -webkit-transform: scale(1.02);opacity:1 !important;filter:grayscale(0) !important;
+}
+
+.menuIconOn{
+  filter:grayscale(0) !important;
+}
+
+
+.sellSwitch{
+  background: rgba(25, 255, 25, 0.2) !important; 
+   & + .switch-button-label {
+      &:before {
+        background: rgba(255, 25, 25, 1) !important;
+      }
+    } 
+}
+
+.sellSwitchLabel {
+      &:before {
+        background: rgba(255, 25, 25, 1) !important;
+      }
+    } 
+
+.shortSwitch{
+  background: rgba(0, 0, 0,.6) !important; 
+   & + .switch-button2-label {
+      &:before {
+        background: rgba(0, 100, 255, .7) !important;
+      }
+    } 
+}
+
+    .shortSwitchLabel {
+      &:before {
+        background: rgba(0, 100, 255, .7) !important;
+      }
+    } 
+
+
+.short-button{
+  &:before {
+    content: "SHORT" !important;
+    letter-spacing: 0px !important;
+}
+}
+
+.switch-button {
+  background: rgba(255, 25, 25, 0.2);
+  border-radius: 30px;
+  overflow: hidden;
+  width: 120px;
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #fff;
+  position: relative;
+  padding-right: 60px;
+  position: relative;
+
+  &:before {
+    content: "SELL";
+    position: absolute;
+    font-weight:bold;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  &-checkbox {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 2;
+
+    &:checked + .switch-button-label:before {
+      transform: translateX(60px);
+      transition: transform 300ms linear;
+    }
+
+    & + .switch-button-label {
+      position: relative;
+      padding: 10px 0;
+      display: block;
+      user-select: none;
+      pointer-events: none;
+
+      &:before {
+        content: "";
+        background: rgba(25, 255, 25, .7);
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 30px;
+        transform: translateX(0);
+        transition: transform 300ms;
+      }
+
+      .switch-button-label-span {
+        position: relative;
+      }
+    }
+  }
+}
+
+.sliderMargin{
+margin-top:-10px;
+width:128px !important;
+padding-left:5px !important;
+margin-right:0px !important;
+}
+
+.switch-button2 {
+  background: rgba(0, 0, 0,.6);
+  border-radius: 0px;
+  overflow: hidden;
+  width: 120px;
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #fff;
+  position: relative;
+  padding-right: 60px;
+  position: relative;
+
+  &:before {
+    content: "SHORT";
+    position: absolute;
+    font-weight:bold;
+    letter-spacing:0px;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  &-checkbox {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 2;
+
+    &:checked + .switch-button2-label:before {
+      transform: translateX(60px);
+      transition: transform 300ms linear;
+    }
+
+    & + .switch-button2-label {
+      position: relative;
+      padding: 5px 0;
+      display: block;
+      user-select: none;
+      pointer-events: none;
+
+      &:before {
+        content: "";
+        background: rgba(0, 100, 255, .7);
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 0px;
+        transform: translateX(0);
+        transition: transform 300ms;
+      }
+
+      .switch-button2-label-span {
+        position: relative;
+      }
+    }
+  }
+}
+
+
+text{
+fill:#fff !important;
+}
+
+.domain{
+    stroke:#fff;
+}
+
+
+
+.tick line{
+    stroke:#fff !important;
+}
+
+.tick text{
+    fill:#fff !important;
+}
+
+path.volume{
+    fill:#333 !important;
+}
+.limitInput{
+    background:rgb(39,40,34);
+    border-color:white;
+    //border:0px 0px;
+    width:74px;
+    height:20px;
+
+    //margin-bottom:-2px !important;
+}
+
+
+
+	 body {
+        font: 10px sans-serif;
+    }
+
+    text {
+        fill: #000;
+    }
+
+    path.candle {
+        stroke: #000000;
+    }
+
+    path.candle.body {
+        stroke-width: 0;
+    }
+
+    path.candle.up {
+        fill: #00AA00;
+        stroke: #00AA00;
+    }
+
+    path.candle.down {
+        fill: #FF0000;
+        stroke: #FF0000;
+    }
+
+    path.ohlc {
+        stroke: #000000;
+        stroke-width: 1;
+    }
+
+    path.ohlc.up {
+        stroke: #00AA00;
+    }
+
+    path.ohlc.down {
+        stroke: #FF0000;
+    }
+
+    path.volume {
+        fill: #EEEEEE;
+    }
+
+    path.line {
+        fill: none;
+        stroke: #aaa;
+        stroke-width: 1;
+    }
+
+    .extent {
+        stroke: #fff;
+        fill-opacity: .125;
+        shape-rendering: crispEdges;
+    }
+
+    .crosshair {
+        cursor: crosshair;
+    }
+
+    .crosshair path.wire {
+        stroke: #DDDDDD;
+        stroke-dasharray: 1, 1;
+    }
+
+    .crosshair .axisannotation path {
+        fill: #DDDDDD;
+    }
+
+
+}
+
+
+
+/*
+ion-label.label>div.huebee {
+  position:absolute;
+  height: 200px;
+}
+*/

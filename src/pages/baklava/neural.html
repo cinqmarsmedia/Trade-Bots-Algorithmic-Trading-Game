@@ -1,0 +1,103 @@
+<ion-content class="dark">
+  <div class="training-input" *ngIf="!trainingResults">
+  <ion-list-header>Neural Training &nbsp;<select style="background:transparent;cursor:pointer" [(ngModel)]="network">
+      <option value="1">Network I</option>
+      <option value="2">Network II</option>
+      <option value="3">Network III</option>
+      <option value="4">Network IV</option>
+      <option value="5">Network V</option>
+    </select>
+    <ion-icon (click)="viewCtrl.dismiss();" class="closeBtn" style="float:right" name="md-close"></ion-icon>
+  </ion-list-header>
+
+  <div style="text-align:left;padding:20px"><img style="width:30px;float:right" src="assets/imgs/3719420.png"><div style="width:90%"><i>
+ This feature is currently in beta so please excuse any bugs of lack of polish. With the new "Train Network" action node, you can specify data points on which to train a neural network. Then you may use the button below (it may take quite awhile) and then use it in your bot with the "network" operation node </i></div>
+</div>
+
+
+  <div class="training-config-option">
+    <b># of Data Points</b>: {{dataPoints | number : '1.0-0'}}
+  </div>
+
+  <div class="training-config-option">
+    <b>Iterations</b> <input class="numInput" type="number" [(ngModel)]="options.iterations">
+  </div>
+  <div class="training-config-option">
+    <b>Error Threshold</b> <input class="numInput" type="number" [(ngModel)]="options.errorThresh">
+  </div>
+  <div class="training-config-option">
+    <b>Activation Function</b> <select style="cursor:pointer" [(ngModel)]="options.activation">
+      <option value="sigmoid">Sigmoid</option>
+      <option value="relu">ReLU</option>
+      <option value="leaky-relu">Leaky ReLU</option>
+      <option value="tanh">Tanh</option>
+    </select>
+  </div>
+  <div class="training-config-option">
+    <div *ngIf="options.activation=='leaky-relu'">
+      Leaky ReLU Alpha <input class="numInput" type="number" min="0.00" [(ngModel)]="options.leakyReluAlpha">
+    </div>
+  </div>
+  <div class="training-config-option">
+    <b>Log Period</b> <input class="numInput" type="number" [(ngModel)]="options.logPeriod">
+  </div>
+  <div class="training-config-option">
+    <b>Learning Rate</b> <input class="numInput" type="number" [(ngModel)]="options.learningRate">
+  </div>
+  <div class="training-config-option">
+    <b>Momentum</b> <input class="numInput" type="number" [(ngModel)]="options.momentum">
+  </div>
+  <div class="training-config-option">
+   <b>Max Training Time</b> <input class="numInput" type="number" [(ngModel)]="options.timeout">
+  </div>
+  <div class="training-config-option">
+    <b>Number of Hidden Layers</b> <input class="numInput" type="number" min="1" [ngModel]="options.numLayers"
+      (ngModelChange)="changeNumLayers($event)">
+  </div>
+  <div *ngFor="let layer of layers; index as i;trackBy: track">
+    <div class="training-config-option">
+      <b># Neurons in Hidden Layer {{i+1}}</b>: <input class="numInput" min="1" type="number" [value]="layer"
+        (change)="changeLayerNeurons(i,+$event.target.value)">
+    </div>
+  </div>
+  <div class="input-minmax" *ngIf="numInputs>0">
+    <div class="training-config-option">
+      Number of Inputs: {{numInputs}}
+    </div>
+    <div *ngFor="let x of counter(numInputs); index as i;">
+      <div class="training-config-option">
+        Input {{i+1}} minimum value: <input class="numInput" type="number" step="0.01"
+          [ngModel]="minMax[i][0] | number : '1.2-4'">
+        Input {{i+1}} maximum value: <input class="numInput" type="number" step="0.01"
+          [ngModel]="minMax[i][1] | number : '1.2-4'">
+      </div>
+    </div>
+    <div class="training-config-option" *ngIf="minMax.length>0">
+      Output minimum value: <input class="numInput" type="number" step="0.01"
+        [ngModel]="minMax[minMax.length-1][0] | number : '1.2-4'">
+      Output maximum value: <input class="numInput" type="number" step="0.01"
+        [ngModel]="minMax[minMax.length-1][1] | number : '1.2-4'">
+    </div>
+  </div>
+
+  <div style="margin-left:auto;margin-right:auto;left:0;right:0;position:absolute;bottom:35px;text-align:center">
+    <ion-badge [hidden]="dataPoints!==0" class="training">Need Data Points</ion-badge>
+    <button (click)="trainNetwork()" [ngClass]="{'halfopac':false}"
+      style="background-color:#077ccc;width:180px;font-weight:bold;margin-right:20px" ion-button
+      [disabled]="dataPoints==0">Train Network</button>
+
+    <button (click)="clearData()" color="light" [ngClass]="{'halfopac':false}" style="width:180px;font-weight:bold"
+      ion-button [disabled]="dataPoints==0">Clear Data Points</button>
+
+  </div>
+  </div>
+  <div class="training-results" *ngIf="trainingResults">
+    Training Completed.
+    <br>
+    Results:
+    <br>
+    Error: {{trainingResults.error}}
+    <br>
+    Number of iterations: {{trainingResults.iterations}}
+  </div>
+</ion-content>

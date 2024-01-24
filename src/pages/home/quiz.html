@@ -1,0 +1,41 @@
+<!--
+<ion-list-header class="modalHeader"> Quiz Modal<ion-icon (click)="viewCtrl.dismiss();" class="closeBtn" style="float:right" name="md-close"></ion-icon></ion-list-header>
+-->
+<ion-content class="dark">
+<div style="margin-right:30px;margin-top:10px;float:right">
+<h2>
+Question <b>{{index+1}}</b> of <b>{{data.data.quiz.length}}</b>
+</h2>
+</div>
+<!--
+{{data.data.quiz[index][0]}}
+<div *ngFor="let answer of shuffledQuiz[index]; let i=index">
+
+{{answer.question}}{{answer.seccorrect}}
+-->
+
+
+      <div style="margin-left:30px;font-size:17px;margin-bottom:16px;margin-top:75px;margin-right:15px">
+       <b><i>{{data.data.quiz[index][0]}}</i></b>
+      </div>
+
+
+    <div *ngFor="let answer of shuffledQuiz[index]; let i=index" class="itm" (click)="answerQuestion(i,answer.correct)" [ngClass]="{'halfopac':state[i]==1,'pointernone':state[i]!==0}">
+     
+<div>
+<img style="margin-left:30px;width:20px;vertical-align:middle" [src]="'assets/imgs/'+(state[i]<2?'check':(state[i]==2?'right':'wrong'))+'.png'">
+ <div style="display:inline-block;vertical-align:middle;margin-left:10px;font-size:17px;margin:12px;max-width:75%"><b>{{answer.question}}</b></div>
+     </div>
+    </div>
+
+<button (click)="next()" class="animated infinite" [ngClass]="{'halfopac':state[0]==0,'pulse':state[0]!==0,'wrong':!correct}" style="position:absolute;right:30px;background-color:#077ccc;font-weight:bold;bottom:20px" ion-button><ion-icon [name]="correct?'md-arrow-round-forward':'md-sync'"></ion-icon> &nbsp;{{correct?(index==data.data.quiz.length-1?'Collect':'Next'):'Try Again'}}</button>
+
+
+<!--
+<div style="position:absolute;padding:10px;bottom:10px;right:0;font-size:16px">
+	<span class="txtbtn" style="padding-right:30px" (click)="
+back(false)">CANCEL</span>
+  <span class="txtbtn" style="padding-right:30px" (click)="
+next()">NEXT</span>
+</div>-->
+</ion-content>
