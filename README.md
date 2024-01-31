@@ -8,7 +8,7 @@ The game is created and published by the  educational non-profit <a href="https:
 
 * Download Node v10.24.1 (<a href="https://github.com/nvm-sh/nvm">NVM</a> is recommended for convenience)
 * <b>cd</b> into codebase directory and run <b>npm ci</b>
-* The command <b>./node_modules/@ionic/app-scripts/bin/ionic-app-scripts.js serve</b> should launch the project on localhost. 
+* The command <b>npm start</b> should launch the project on localhost. 
 
 
 # Adding CSV Data
