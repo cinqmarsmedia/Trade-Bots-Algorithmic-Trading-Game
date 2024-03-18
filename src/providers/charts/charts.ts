@@ -6,7 +6,7 @@ import { sanitizeLeadingIndicator } from "../../constants";
 import { Supstance } from "../supstance/supstance";
 import * as throttle from 'lodash.throttle';
 
-declare const d3: any;
+let d3: any;
 type chartType =
   | "candlestick"
   | "ohlc"
