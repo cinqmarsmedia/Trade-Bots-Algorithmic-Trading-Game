@@ -196,8 +196,8 @@ export const configDefault:ChartsConfig = {
           hideRightAxis: true,
           brushed: true,
           crossHair: true,
-          overbought: 90,
-          oversold: 10,
+          overbought: 70,
+          oversold: 30,
         },
         stochastic: {
           hide: true,
