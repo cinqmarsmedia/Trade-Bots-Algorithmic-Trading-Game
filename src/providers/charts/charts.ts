@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { Events } from "ionic-angular";
 //import { brush } from "d3-brush";
 //import * as d3 from "d3";
 import * as cloneDeep from "lodash.clonedeep";
@@ -6,7 +7,7 @@ import { sanitizeLeadingIndicator } from "../../constants";
 import { Supstance } from "../supstance/supstance";
 import * as throttle from 'lodash.throttle';
 
-let d3: any;
+declare const d3: any;
 type chartType =
   | "candlestick"
   | "ohlc"
@@ -86,6 +87,7 @@ export interface ChartsConfig {
   bollinger?: BollingerConfig;
 
   ohlc?: OhlcConfig;
+  trendlines?: TrendlineConfig;
   sequence: (chartType | string)[];
   brush?: string; //the chart on which brushing will happen, typically the portfolio chart.
   overrideBrushNumDays?: number;
@@ -106,6 +108,19 @@ interface Dims {
   height: number;
   width?: number;
   margin?: Margin;
+}
+
+// Add new trendline interfaces
+interface TrendlineConfig  {
+  data?: TrendlineData[];
+  interactive?: boolean;
+  showLabels?: boolean;
+}
+
+interface TrendlineData {
+  start: { date: Date; value: number };
+  end: { date: Date; value: number };
+  id?: string;
 }
 
 interface ChartConfig {
@@ -170,6 +185,9 @@ interface CandlestickConfig extends ChartConfig {
   atrTrailingStop?: number[];
   ichimoku?: boolean;
 
+  trendlines?: TrendlineData[];
+  showTrendlines?: boolean;
+
   //bollinger config:
   bollingerSdMultiplication?: number;
 
@@ -192,6 +210,7 @@ interface CandlestickConfig extends ChartConfig {
   Industry?: boolean;
   VIX?: boolean;
   Recessions?: boolean;
+  News?: boolean;
 
 
   supstance?: {
@@ -437,7 +456,7 @@ export class ChartsProvider {
     return answer;
   }
 
-  constructor() {
+  constructor(public events: Events) {
     this.charts = {};
     window["cp"] = this;
   }
@@ -496,6 +515,7 @@ export class ChartsProvider {
     if (!brushChart) {
       return;
     }
+
     let domain: Date[] = brushChart.xScale.domain();
     if (startDate) {
       startDate.setHours(startDate.getHours() - 12);
@@ -892,8 +912,10 @@ export class ChartsProvider {
 
   renderThrottled = throttle((el, config) => {
     this.render(el, config);
-  }, 750)
+  }, 850)
+  
   render(el: string, config: ChartsConfig) {
+
 
     //fconsole.log(JSON.stringify(config));
     this.renderBeforeCallbacks.forEach(cb => cb());
@@ -1173,6 +1195,10 @@ class Candlestick extends Chart {
   clipURL: string;
   candlestickData: CandlestickData;
   supstance: any;
+  trendline: any;
+  trendlineData: TrendlineData[] = [];
+  valueText: d3.Selection<SVGTextElement, any, HTMLElement, any>;
+
 
   constructor(public config: CandlestickConfig, public chartsProvider: ChartsProvider) {
     super(config, chartsProvider);
@@ -1184,13 +1210,190 @@ class Candlestick extends Chart {
     };
   }
 
+// Keep the original drawTrendlines method mostly intact, just fix the key issue
+drawTrendlines() {
+  if (!this.config.showTrendlines || !this.config.trendlines || this.config.trendlines.length === 0) {
+    return;
+  }
+  this.trendlineData = this.config.trendlines;
+  
+  // Create or update style element with CSS rules
+  let styleEl = document.getElementById('trendline-styles-' + this.config.internalClassName);
+  if (!styleEl) {
+    styleEl = document.createElement('style');
+    styleEl.id = 'trendline-styles-' + this.config.internalClassName;
+    document.head.appendChild(styleEl);
+  }
+  
+  // Generate CSS rules for each trendline - note the more specific selector
+  let css = '';
+  this.config.trendlines.forEach((trnd, i) => {
+    css += `
+      g.trend-${i}.${this.config.internalClassName} .trendline path {
+        stroke: var(--trend-${i}) !important;
+      }
+      g.trend-${i}.${this.config.internalClassName} .trendline circle {
+        stroke: var(--trend-${i}) !important;
+        fill: var(--trend-${i}) !important;
+      }
+      g.trend-${i}.${this.config.internalClassName} .interaction path {
+        stroke: var(--trend-${i}) !important;
+      }
+      g.trend-${i}.${this.config.internalClassName} .interaction circle {
+        fill: var(--trend-${i}) !important;
+      }
+    `;
+  });
+  styleEl.textContent = css;
+  
+  // Rest of your code remains the same...
+  this.valueText = this.svg
+    .append("text")
+    .style("text-anchor", "end")
+    .attr("class", "trendline-coords " + this.config.internalClassName)
+    .attr("x", this.config.dims.width - 5)
+    .attr("y", 15)
+    .style("display", "none");
+    
+  const enter = (d) => {
+    this.valueText.style("display", "inline");
+    this.refreshTrendlineText(d);
+  };
+  const out = (d) => {
+    this.valueText.style("display", "none");
+  };
+  const drag = (d) => {
+    this.refreshTrendlineText(d);
+  };
+  const dragend = (d) => {
+    console.log("Trendline dragend - updating config with new values:", d);
+    this.updateTrendlineInConfig(d);
+  };
+  
+  this.trendline = techan.plot
+    .trendline()
+    .xScale(this.xScale)
+    .yScale(this.yScale)
+    .on("mouseenter", enter)
+    .on("mouseout", out)
+    .on("drag", drag)
+    .on("dragend", dragend);
+  
+  // Create a separate group for each trendline
+  this.config.trendlines.forEach((trendlineData, i) => {
+    this.svg
+      .append("g")
+      .attr("class", "trendlines interaction trend-" + i + " " + this.config.internalClassName)
+      .attr("transform", "translate(0," + this.config.dims.margin.top + ")")
+      .attr("clip-path", `url(#${this.clipURL})`)
+      .datum([trendlineData]) // Keep this as is - techan might expect array
+      .call(this.trendline);
+  });
+}
+
+// The main fix is in updateTrendlineInConfig - better matching logic
+updateTrendlineInConfig(draggedTrendline) {
+  console.log("Updating trendline in config:", draggedTrendline);
+  
+  // Find which group this trendline belongs to by checking the DOM element
+  let foundIndex = -1;
+  
+  // Get the group element that contains this trendline
+  const groups:any = this.svg.selectAll("g.trendlines." + this.config.internalClassName).nodes();
+  
+  for (let i = 0; i < groups.length; i++) {
+    const group = groups[i];
+    const groupData = d3.select(group).datum();
+    
+    // Check if this group's data matches our dragged trendline
+    if (Array.isArray(groupData) && groupData.length > 0) {
+      const trendlineInGroup = groupData[0];
+      
+      // Match by ID if available
+      if (draggedTrendline.id && trendlineInGroup.id === draggedTrendline.id) {
+        foundIndex = i;
+        break;
+      }
+      
+      // Otherwise match by checking if this is the same object reference or close values
+      // Since we're dealing with the same object being modified, we can check the group index
+      if (group.classList.contains(`trend-${i}`)) {
+        foundIndex = i;
+        break;
+      }
+    }
+  }
+  
+  // If we still haven't found it, fall back to ID matching in config
+  if (foundIndex === -1 && draggedTrendline.id) {
+    foundIndex = this.config.trendlines.findIndex(t => t.id === draggedTrendline.id);
+  }
+  
+  if (foundIndex !== -1 && foundIndex < this.config.trendlines.length) {
+    console.log("Found trendline at index:", foundIndex);
+    
+    // Update the config with the new values
+    this.config.trendlines[foundIndex] = {
+      start: {
+        date: new Date(draggedTrendline.start.date),
+        value: draggedTrendline.start.value
+      },
+      end: {
+        date: new Date(draggedTrendline.end.date), 
+        value: draggedTrendline.end.value
+      },
+      id: draggedTrendline.id || this.config.trendlines[foundIndex].id
+    };
+    
+    // Update the local data to match
+    this.trendlineData[foundIndex] = this.config.trendlines[foundIndex];
+    
+    console.log("Updated config trendline:", this.config.trendlines[foundIndex]);
+    
+    // Use the event system that already exists in your codebase
+    this.chartsProvider.events.publish("trendlineChanged", this.config.trendlines, false);
+  } else {
+    console.warn("Could not find matching trendline in config for:", draggedTrendline);
+  }
+}
+
+// Keep refreshTrendlines simple and close to original
+refreshTrendlines() {
+  if (!this.config.showTrendlines || !this.trendlineData || this.trendlineData.length === 0) {
+    return;
+  }
+
+  // Update the data for all trendline groups
+  this.config.trendlines.forEach((trendlineData, i) => {
+    const selection = this.svg
+      .select("g.trend-" + i + "." + this.config.internalClassName)
+      .datum([trendlineData]); // Keep array format
+      
+    // Call trendline plot
+    selection.call(this.trendline);
+    
+    // Enable drag behavior
+    selection.call(this.trendline.drag);
+  });
+}
+
+  refreshTrendlineText(d) {
+    const dateFormat = d3.timeFormat('%Y-%m-%d');
+    const valueFormat = d3.format(',.2f');
+    
+    this.valueText.text(
+      "Start: [" + dateFormat(d.start.date) + ", " + valueFormat(d.start.value) +
+      "] End: [" + dateFormat(d.end.date) + ", " + valueFormat(d.end.value) + "]"
+    );
+  }
+
   getData(date: any) {
     super.getData(date);
     return filterByDate(this.candlestickData, date);
   }
 
   drawLeadingIndicators() {
-    ["DXY", "Unemployment", "Housing", "Yield", "SnP", "Industry", "VIX", "Recessions"].forEach(li => {
+    ["DXY", "Unemployment", "Housing", "Yield", "SnP", "Industry", "VIX", "Recessions", "News"].forEach(li => {
       if (this.config[li]) {
 
         if (li == "Recessions") {
@@ -1274,7 +1477,7 @@ class Candlestick extends Chart {
 
   refreshLeadingIndicators = () => {
     let xScale = this.xScale;
-    ["DXY", "Unemployment", "Housing", "Yield", "SnP", "Industry", "VIX", "Recessions"].forEach(li => {
+    ["DXY", "Unemployment", "Housing", "Yield", "SnP", "Industry", "VIX", "Recessions","News"].forEach(li => {
       if (this.config[li]) {
         let data = sanitizeLeadingIndicator(li);
         if (li == "Recessions") {
@@ -2187,6 +2390,7 @@ class Candlestick extends Chart {
     this.drawSupstance();
     this.drawLeadingIndicators();
 
+    this.drawTrendlines();
 
     this.update();
   }
@@ -2209,6 +2413,12 @@ class Candlestick extends Chart {
     this.refreshAxisVolume();
     this.refreshSupstance();
     this.refreshLeadingIndicators();
+
+     if (this.config.showTrendlines && this.config.trendlines) {
+      this.trendlineData = this.config.trendlines; // Use config data, not local copy
+      this.refreshTrendlines();
+    }
+
     super.postupdate();
   }
 }

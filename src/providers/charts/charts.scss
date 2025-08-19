@@ -256,6 +256,9 @@ div.dynamic-label-leading.dynamic-label-VIX{
   background: var(--vix);
 }
 
+div.dynamic-label-leading.dynamic-label-News{
+  background: var(--news);
+}
 
 
 
@@ -635,6 +638,10 @@ LEADING INDICATORS
 
 .leading-indicator.VIX path.line {
   stroke: var(--vix) !important;
+}
+
+.leading-indicator.News path.line {
+  stroke: var(--news) !important;
 }
 
 .leading-indicator.Industry path.line {

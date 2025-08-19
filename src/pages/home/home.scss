@@ -180,7 +180,7 @@ color:white !important;
 }
 
 .menuIcon{
-  width:35px;
+  width:unquote("max(3.5vh, 35px)");
   padding:5px;
   padding-top:3px !important;
   opacity:.5;

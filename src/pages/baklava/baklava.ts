@@ -19,8 +19,9 @@ import { StateMachine, TraceInfo } from "../../providers/state-machine/state-mac
 import { INeuralNetworkOptions } from "brain.js/dist/src/neural-network-types";
 import { INeuralNetworkTrainOptions } from "brain.js/dist/src/neural-network";
 import { createSimpleBot, SimpleBotDefinition } from "../../providers/baklava/simple-bots";
-import { DefaultSimpleBotName,logClamp } from "../../constants";
+import { DefaultSimpleBotName,logClamp, badwords } from "../../constants";
 import { logsModal } from "../../pages/home/modals"
+import { Storage } from "@ionic/storage";
 
 type TrainingResults = {
   error: number,
@@ -167,15 +168,40 @@ export class portModal {
     state:any
     mode:any
     name:any
+    communityBots:any=[]
+    upload:any={liked:false,voteUp:false,voteDown:false,name:'',author:'',top:false,up:0,down:0,notes:'',data:{}}
+    pData:any={}
+    ref:any
 
   constructor(
     public params: NavParams,
     public viewCtrl: ViewController,
-    public events: Events
+    public events: Events,
+    public storage: Storage,
+    public alertCtrl: AlertController
   ) {
+
+    this.upload.top=params.get("oneper")
+
+this.storage.get('tradebotsBotShare').then((val)=>{
+
+
+  if (val && val!==null){
+   this.pData=JSON.parse(val)
+   //console.log(this.pData);
+  }
+
+this.loadFB()
+
+})
+
+
+
+
 this.bot=params.get("bot")
 this.name=params.get("name");
 this.state=params.get("state")
+this.upload.name=this.name
 
 if (this.state[0]){this.mode=0}else{this.mode=1}
 
@@ -196,6 +222,226 @@ const origText = fflate.strFromU8(decompressed);
 */
 
   }
+
+save(){
+this.pData={}
+
+this.communityBots.forEach((bot)=>{
+
+if (bot.liked || bot.voteUp || bot.voteDown){
+this.pData[bot.ky]={liked:bot.liked?true:false,voteUp:bot.voteUp?true:false,voteDown:bot.voteDown?true:false}
+
+}
+
+})
+console.log(this.pData)
+
+this.storage.set('tradebotsBotShare', JSON.stringify(this.pData)).then(() => {
+      
+});
+
+
+
+}
+
+loadFB(){
+
+
+if (window['firebase'].apps.length > 0) {
+
+ var database=window['firebase'].app().database()
+
+} else {
+
+var app = window['firebase'].initializeApp({
+  apiKey: "AIzaSyC9TIkELAsejxZNaN9vxr1qzskBE2tB0dU",
+  authDomain: "trade-bots-c5bfe.firebaseapp.com",
+  projectId: "trade-bots-c5bfe",
+  databaseURL: "https://trade-bots-c5bfe-default-rtdb.firebaseio.com/",
+  storageBucket: "trade-bots-c5bfe.appspot.com",
+  messagingSenderId: "880404585690",
+  appId: "1:880404585690:web:7352971a818faff185d9e3"
+});
+
+
+ var database = app.database(); // Get a reference to the database
+
+
+
+}
+
+
+
+//console.log(window['firebase'].app())
+
+
+
+// Reference a specific location (replace 'path/to/your/data' with your actual path)
+this.ref = database.ref('/');
+
+this.communityBots=[]
+
+this.ref.once('value', (snapshot) => {
+  if (snapshot.exists()) {
+
+let obj=snapshot.val()
+
+console.log(obj);
+Object.keys(obj).forEach((ky)=>{
+  let sub=obj[ky]
+  sub.ky=ky
+  this.communityBots.push(sub)
+})
+
+
+this.communityBots.forEach((bot)=>{
+//console.log(this.pData,bot.ky)
+if (this.pData[bot.ky]){
+  bot.liked=this.pData[bot.ky].liked
+  bot.voteUp=this.pData[bot.ky].voteUp
+  bot.voteDown=this.pData[bot.ky].voteDown
+}
+
+
+})
+
+
+
+this.communityBots.sort(( a, b )=> {
+
+  if ( a.up-a.down + (a.liked?999999:0) < b.up-b.down + (b.liked?999999:0)){
+    return 1;
+  }
+  if (a.up-a.down + (a.liked?999999:0) > b.up-b.down + (b.liked?999999:0)){
+    return -1;
+  }
+  return 0;
+})
+
+//console.log(this.communityBots)
+
+   // console.log(snapshot.val()); // Data at the referenced location
+  } else {
+    console.log("No data available");
+  }
+}).catch((error) => {
+  console.error(error);
+});
+/*
+var newData = {
+  "bitch":"sweet"
+};
+
+ref.push(JSON.stringify(newData)).then(() => {
+  console.log('Data pushed successfully');
+}).catch((error) => {
+  console.error('Error pushing data:', error);
+});
+*/
+
+
+}
+
+
+
+uploadBot(){
+
+  function containsAny(haystack, needles) {
+  for (const needle of needles) {
+    if (haystack.includes(needle)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Example usage:
+
+
+if (containsAny(this.upload.notes,badwords) || containsAny(this.upload.author,badwords) || containsAny(this.upload.name,badwords)){
+
+   var alert = this.alertCtrl.create({
+        title: "Vulgarity",
+        message:"Please remove any vulgarities and try again",
+        buttons: [
+          {
+            text: "Ok",
+            handler: (data) => {
+            },
+          }
+
+            ]})
+  alert.present();
+
+
+return;
+}
+
+if (this.upload.name=='' || this.upload.notes==''){
+
+   var alert = this.alertCtrl.create({
+        title: "Missing Info",
+        message:"Neither name nor notes can be blank.",
+        buttons: [
+          {
+            text: "Ok",
+            handler: (data) => {
+            },
+          }
+
+            ]})
+  alert.present();
+
+  return;
+}
+
+this.upload.date=new Date();
+
+this.upload.data=JSON.stringify(this.bot)
+
+console.log(this.upload);
+
+this.ref.push(this.upload).then(() => {
+  this.viewCtrl.dismiss();
+  //console.log('Data pushed successfully');
+}).catch((error) => {
+  console.error('Error pushing data:', error);
+});
+
+
+
+
+
+
+
+}
+
+
+
+moreInfo(bot){
+console.log(bot);
+      var alert = this.alertCtrl.create({
+        title: bot.name,
+        message:bot.note,
+        buttons: [
+          {
+            text: "Back",
+            handler: (data) => {
+            },
+          },
+          {
+            text: "Load Bot",
+            handler: (data) => {
+this.events.publish("loadBotFile",JSON.parse(bot.data))
+this.viewCtrl.dismiss();
+
+
+            }
+          }
+
+            ]})
+  alert.present();
+}
 
 importFile(file){
 let reader = new FileReader();
@@ -251,6 +497,7 @@ const buf = fflate.strToU8(str);
 const compressed = fflate.compressSync(buf, { level: 4, mem: 4 });
 downloadBlob(compressed, this.name+".tradebot")
 
+this.viewCtrl.dismiss();
   }
 }
 
@@ -296,6 +543,7 @@ export class BaklavaPage implements OnInit, OnDestroy {
   maxSim:any=BaklavaState.getState("maxSim");
   year:any=BaklavaState.getState("year");
   gainShow:any=BaklavaState.getState("gains");
+  oneper:any
   //waiting:any=true; // connect
 
 
@@ -305,7 +553,7 @@ export class BaklavaPage implements OnInit, OnDestroy {
 
 
   constructor(public navCtrl: NavController, public params: NavParams, public events: Events, public alertCtrl: AlertController, public modalCtrl: ModalController, private baklava: BaklavaProvider, public stateMachine: StateMachine) {
-
+//this.port()
 //document.getElementsByClassName('background')[0].style.backgroundColor='purple !important'
 
     if (typeof this.unlockState=='undefined'){
@@ -331,7 +579,7 @@ this.currPrice=params.get("currPrice");
 this.limDeduction=params.get("limDeduction");
 this.longVsShort=params.get("longVsShort");
 this.portfolio=params.get("portfolio");
-
+this.oneper=params.get("oneper");
 
     //console.error(this.date);
     this.ticker=params.get("tick");
@@ -925,13 +1173,30 @@ train(){
     this.trainModal.present();
 }
 
+
+
+
+
 port() {
+
+
+//prompt for vote if downloaded
+
+
+
+
+//this.loadFB();
+
 this.portModal = this.modalCtrl.create(portModal, {
       bot: this.editor.save(),
       name:this.botDefinition.name,
-      state:this.portState
+      state:this.portState,
+      oneper:this.oneper
     }, { cssClass: 'learnModal' });
-    this.portModal.present();
+
+  this.portModal.present();
+
+    
   }
 
   isSame(){

@@ -1211,7 +1211,18 @@ newsletter(){
               !emailDomainBlacklist.includes(postAt[1])
             ) {
            /**/
-     //upload email
+              fetch(
+                "<signupEmail>",
+                {
+                  method: "POST",
+                  mode: "no-cors",
+                  headers: {
+                    "Content-Type":
+                      "application/x-www-form-urlencoded;charset=UTF-8",
+                  },
+                  body: "EMAIL=" + data.email,
+                }
+              );
 
 if (!this.limAds){
   this.events.publish("extraCompleted", 'email');
@@ -1377,6 +1388,8 @@ export class learnModal {
   pipUnlocked:any=false;
   tutState:any=-1;
   pipNew:any=false;
+  firstClick:any=false
+  delisted:any=[]
 
   constructor(
     public params: NavParams,
@@ -1392,7 +1405,46 @@ export class learnModal {
     this.pipUnlocked = params.get("pipUnlocked")
     this.tutState=params.get("tutState")
     this.pipNew=params.get("pipNew")
+    this.firstClick=params.get("firstClick")
 
+
+let allYT=[]
+//this.delistedYT
+Object.keys(this.learn).forEach((ky:any)=>{
+  let id = this.learn[ky]["data"]["resources"][1]["id"]
+
+  if (Array.isArray(id)){
+    allYT=allYT.concat(id)
+  }
+})
+
+this.checkMultipleYouTubeVideos(allYT).then(results => {
+
+  Object.keys(results).forEach((rez:any)=>{
+    if (results[rez] === false){
+this.delisted.push(rez)
+    }
+  })
+  //console.error(results); // { 'dQw4w9WgXcQ': true, 'invalidID123': false, 'jNQXAC9IVRw': true }
+});
+
+
+Object.keys(this.learn).forEach((ky:any)=>{
+  let id = this.learn[ky]["data"]["resources"][1]["id"]
+
+  if (Array.isArray(id)){
+    
+    for (let n=0;n<id.length;n++){
+      if (!this.delisted.includes(id[n])){
+this.learn[ky]["data"]["resources"][1]["id"]=id[n]
+break
+      }
+    }
+
+
+    
+  }
+})
  
 
 this.learn.sort((a,b)=>{
@@ -1429,6 +1481,23 @@ this.viewCtrl.dismiss();
     }, { cssClass: 'quizModal' });
     this.quizModalCtrl.present();
   }
+
+    async checkMultipleYouTubeVideos(videoIds: string[]): Promise<{[key: string]: boolean}> {
+  const results: {[key: string]: boolean} = {};
+  
+  await Promise.all(
+    videoIds.map(async (id) => {
+      try {
+        const response = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`);
+        results[id] = response.ok;
+      } catch {
+        results[id] = false;
+      }
+    })
+  );
+  
+  return results;
+}
 
 showQuestion(subject,index){
 
@@ -1532,7 +1601,7 @@ let alert = this.alertCtrl.create({
 }
 
   openLink(link){
-    window.open(link,"_blank", "frame=true,nodeIntegration=no");
+    window.open("https://translate.google.com/translate?sl=auto&tl=en&u="+link,"_blank", "frame=true,nodeIntegration=no");
   }
 
 openLinks(links){
@@ -1886,5 +1955,91 @@ this.refreshColors();
 
 
     this.events.publish("setMA", data);
+  }
+}
+
+@Component({
+  selector: "trendModal",
+  templateUrl: "trendlines.html",
+})
+export class trendModal implements AfterViewInit {
+  trnds: any=[];
+  //dateIndex:any;
+  math:any=Math;
+
+  constructor(
+    public params: NavParams,
+    public events: Events,
+    public viewCtrl: ViewController
+  ) {
+
+    //this.dateIndex = params.get("dateIndex");
+    this.trnds = params.get("trnds");
+    console.error(this.trnds)
+  }
+
+    openLink(link){
+    window.open(link,"_blank", "frame=true,nodeIntegration=no");
+  }
+
+  genColor() {
+    return "#"+String(Math.floor(Math.random()*16777215).toString(16));
+  }
+
+  ngAfterViewInit() {
+this.refreshColors();
+
+  }
+
+
+  refreshColors(){
+    /*
+        let hueb=[]
+    var elems = Array.from(document.querySelectorAll(".color-input-ma"));
+    for (let i = 0; i < elems.length; i++) {
+      var elem = elems[i];
+      hueb[i] = new Huebee(elem, {
+        notation: "hex",
+        saturations: 2,
+      });
+
+hueb[i].on( 'change', ( color, hue, sat, lum )=> {
+
+this.ma[i].color=color
+ // console.log(color);
+this.save();
+})
+
+
+    }
+    */
+  }
+
+  rm(index) {
+    if (this.trnds.length == 1) {
+      
+    } else {
+      this.trnds.splice(index, 1);
+      this.save();
+    }
+  }
+
+  add() {
+    this.trnds.push({ name: "", raw: null, color:this.genColor() });
+    setTimeout(()=>{
+this.refreshColors();
+},0)
+    this.save();
+  }
+
+  onChange() {
+    setTimeout(() => {
+      this.save();
+    }, 10);
+  }
+
+  save() {
+
+    this.events.publish("trendlineChanged", this.trnds,true);
   }
 }

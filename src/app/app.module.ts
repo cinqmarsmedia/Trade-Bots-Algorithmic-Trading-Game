@@ -43,6 +43,7 @@ import { portModal } from '../pages/baklava/baklava';
 import { neuralModal } from '../pages/baklava/baklava';
 
 import { maModal } from '../pages/home/modals';
+import { trendModal } from '../pages/home/modals';
 import { indicatorModal } from '../pages/home/modals';
 import { simpleBotModal } from '../pages/home/modals';
 //import { LitegraphPage } from '../pages/litegraph/litegraph';
@@ -89,6 +90,7 @@ enableProdMode();
     simpleBotModal,
     podcastsModal,
     maModal,
+    trendModal,
     loanModal,
     BaklavaPage,
     EscapeHtmlPipe,
@@ -126,6 +128,7 @@ enableProdMode();
     simpleBotModal,
     podcastsModal,
     maModal,
+    trendModal,
     loanModal,
     upgradesModal,
     tutorialModal,

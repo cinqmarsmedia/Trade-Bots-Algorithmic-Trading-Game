@@ -8,21 +8,47 @@
 <div style="padding:3%">
 
 <div *ngIf="mode==0">
-
-  <b>*This feature is currently in beta, please excuse bugs and lack of polish* Let us know in email and through social media what features you might like here, i.e. social media integration, an upvote system, a shortcut to email the file, etc...*</b>
+  <div style="text-align:center">
+  <b>With this tool you can import .tradebot files or try a bot shared by the community!<br><i>YOUR CURRENT BOT WILL BE OVERWRITTEN</i></b>
 
 <br><br>
  <input accept=".tradebot" type="file" (change)="importFile($event)" id="myFile" name="filename">
  <br><br>
-<i>Note that the selected file will overwrite your current bot</i>
+ <b>OR</b>
+</div>
+
+<div style="height:100%;width:90%;margin:auto;text-align:center">
+
+<ion-item style="background:transparent;color:white" *ngFor="let bot of communityBots">
+
+ <ion-label><span style="vertical-align:-6px"><ion-icon style="cursor:pointer" (click)="bot.liked=!bot.liked;save()" [name]="bot.liked?'md-star':'md-star-outline'"></ion-icon>&nbsp;&nbsp;<b>{{bot.name}}</b> - {{bot.author==''?'Anonymous':bot.author}}</span><span style="float:right"><ion-badge *ngIf="bot.top">Top 1%</ion-badge>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{bot.up + (bot.voteUp?1:0)}}&nbsp;<ion-icon style="cursor:pointer;opacity:.3" (click)="bot.voteUp=!bot.voteUp;bot.voteDown=false;save()" [ngClass]="{'full':bot.voteUp}" name="thumbs-up"></ion-icon>&nbsp;&nbsp;&nbsp;{{bot.down + (bot.voteDown?1:0)}}<ion-icon style="vertical-align:-2px;opacity:.3;cursor:pointer" (click)="bot.voteDown=!bot.voteDown;bot.voteUp=false;save()" [ngClass]="{'full':bot.voteDown}" name="thumbs-down"></ion-icon>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div style="cursor:pointer;display:inline-block" (click)="moreInfo(bot)"><ion-icon style="font-size:25px;padding-left:10px;padding-right:10px" name="md-more"></ion-icon></div></span></ion-label> 
+</ion-item>
+
+</div>
+
+
+
 </div>
 
 <div *ngIf="mode==1">
- <b>*This feature is currently in beta, please excuse bugs and lack of polish. Let us know in email and through social media what features you might like here, i.e. social media integration, an upvote system, a shortcut to email the file, etc...*</b>
+
+  <div style="text-align:center">
+  <b>With this tool you can export .tradebot files or share your bot with the community!</b>
+
 <br><br>
-
   <button  ion-button color="light" style="height:25px;margin-left:0px;margin-top:0px;width:200px" (click)="downloadBot()"><ion-icon name="md-download"></ion-icon>&nbsp;Download File</button>
-
+ <br><br>
+ <b>OR</b>
+<br><br>
+Bot Name:<input [(ngModel)]="upload.name" style="background:rgb(40,40,40)"><br>
+Author:<input [(ngModel)]="upload.author" style="background:rgb(40,40,40)"><br><br>
+Notes:<br>
+<textarea [(ngModel)]="upload.notes" style="background:rgb(40,40,40);width:100%;height:200px;resize:none"></textarea>
+<br><br>
+ <button ion-button color="light" style="height:25px;margin-left:0px;margin-top:0px;width:200px" (click)="uploadBot()"><ion-icon name="md-cloud-upload"></ion-icon>&nbsp;Upload Bot</button>
+ <br>
+ <i>By uploading, you are allowing other players to download, vote on and use your bot.</i>
+</div>
 </div>
 
 

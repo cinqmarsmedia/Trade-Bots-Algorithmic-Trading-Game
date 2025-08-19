@@ -7,7 +7,7 @@ import { BaseNode } from "../base-node";
 import { LogType } from "../../state-machine/state-machine";
 import { getLeadingIndicator, leadingIndicators } from "../../../constants";
 
-export type LeadIndicatorOption = "DXY" | "Housing" | "Industrial" | "S&P 500" | "10Y2Y" | "Unemployment" | "VIX Index";
+export type LeadIndicatorOption = "DXY" | "Housing" | "Industrial" | "S&P 500" | "10Y2Y" | "Unemployment" | "VIX Index" | "Sentiment";
 type WhenOption = "Today"| "Yesterday"| "N Day(s) Ago"| "N Week(s) Ago"| "N Month(s) Ago"| "N Year(s) Ago"| "Bot Start";
 type WithinOption = "Actual Days" | "Trading Days"
 type WhenStrategyOption = "Pause execution" | "Use specific value" | "Use closest available value"
@@ -30,7 +30,7 @@ export class LeadValNode extends BaseNode {
     //example of interface toggle:
     public interfaceToggles: InterfaceToggles = {"Output": true}
 
-    public indicatorOptions: LeadIndicatorOption[] = ["DXY", "Housing", "Industrial", "S&P 500", "10Y2Y","Unemployment","VIX Index"];
+    public indicatorOptions: LeadIndicatorOption[] = ["DXY", "Housing", "Industrial", "S&P 500", "10Y2Y","Unemployment","VIX Index","Sentiment"];
     public whenOptions: WhenOption[] = ["Today", "Yesterday", "N Day(s) Ago", "N Week(s) Ago", "N Month(s) Ago", "N Year(s) Ago", "Bot Start"];
 
     whenHideWhen: WhenHideWhen = { "Today": ["Where N is"], "Yesterday": ["Where N is"], "Bot Start": ["Where N is"] }
@@ -334,6 +334,10 @@ export class LeadValNode extends BaseNode {
             }
             case "VIX Index": {
                 output = getLeadingIndicator("VIX", dt).value;
+                break;
+            }
+        case "Sentiment": {
+                output = getLeadingIndicator("News", dt).value;
                 break;
             }
         }

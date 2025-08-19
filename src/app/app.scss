@@ -17,11 +17,94 @@
 /**/
 //7,124,204
 
+
+/* Add to app.scss - Performance optimizations */
+
+
+/* 2. Optimize heavy selectors */
+.simulating * {
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+  will-change: auto; /* Disable expensive animations during sim */
+}
+
+/* 3. Container queries for better performance */
+.main-container {
+  contain: layout style paint;
+}
+
+.chart-container {
+  contain: layout paint;
+}
+
+/* 4. Reduce paint areas */
+.dropdown-content {
+  contain: layout;
+  transform: translateZ(0);
+}
+
+/* 5. Optimize frequently changing elements */
+.simulation-speed, .portfolio-display, .price-display {
+  contain: layout;
+  will-change: contents;
+}
+
+/* 6. Disable expensive effects during simulation */
+.simulating .hov:hover {
+  transform: none !important;
+}
+
+.simulating .pulse {
+  animation: none !important;
+}
+
+/* 7. Optimize modal performance */
+.modal-wrapper {
+  contain: layout style paint;
+  transform: translateZ(0);
+}
+
 //.liveValue {visibility: hidden}
+
+
+@media (min-aspect-ratio: 2/1) {
+.bigTitle{
+font-size:20vh !important
+}
+
+.subTitle{
+font-size:4vh !important
+}
+
+.titleIcon{
+width:20vh !important
+}
+
+
+.minimap{
+height:auto !important;
+width:auto !important
+}
+
+
+}
+
+
+
+
+.simulating * {
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+}
+
 
 .botIcon{
 width:14px;
 
+}
+
+.full{
+  opacity:1 !important;
 }
 
 .brightWhite > .stat{
@@ -232,6 +315,9 @@ z-index:999999 !important;
   color:white !important;
 }
 
+.titleAd{
+  max-width:25vw
+}
 
 
 
@@ -878,6 +964,7 @@ button:hover{
    --vix:#FFA500;
    --industry:#FFC0CB;
    --sp:#cc9900;
+   --news:#fedc56;
 }
 
 .alert-title{
@@ -1093,6 +1180,10 @@ input[type="color"]::-webkit-color-swatch {
 .colorInput:hover{
 
 cursor:pointer
+}
+
+.trendList{
+  color:white;background:transparent;padding:15px;padding-bottom:15px;border-bottom: 1px solid white;font-size:18px;font-family: 'RobotoBold', monospace;
 }
 
 .maList{
@@ -1374,3 +1465,114 @@ ion-backdrop{
     z-index: 1002;
   }
 }
+
+
+.trendline {
+    stroke: #2196F3;
+    stroke-width: 1.5;
+    fill: none;
+    cursor: move;
+}
+
+.trendline circle {
+    stroke-width: 0;
+    fill: #2196F3;
+    display: none;
+    cursor: nwse-resize;
+}
+
+.mouseover .trendline path {
+    stroke-width: 2;
+    stroke: #1976D2;
+}
+
+.mouseover .trendline circle {
+    stroke-width: 1;
+    stroke: #1976D2;
+    display: inline;
+}
+
+.dragging .trendline {
+    stroke: #0D47A1;
+    stroke-width: 2;
+}
+
+.interaction .trendline path, 
+.interaction .trendline circle {
+    pointer-events: all;
+}
+
+.interaction .trendline .body {
+    cursor: move;
+}
+
+.interaction .trendline .start, 
+.interaction .trendline .end {
+    cursor: nwse-resize;
+}
+
+.trendline-coords {
+    font-size: 12px;
+    fill: #666;
+    pointer-events: none;
+}
+
+/* Support and resistance line variants */
+.trendline.support {
+    stroke: #4CAF50;
+}
+
+.trendline.resistance {
+    stroke: #F44336;
+}
+
+.trendline.support circle {
+    fill: #4CAF50;
+}
+
+.trendline.resistance circle {
+    fill: #F44336;
+}
+
+.interaction path, .interaction circle {
+    pointer-events: all;
+}
+
+.interaction .body {
+    cursor: move;
+}
+
+.interaction .start, .interaction .end {
+    cursor: nwse-resize;
+}
+
+.trendline {
+    stroke: #2196F3;
+    stroke-width: 1.5;
+    fill: none;
+}
+
+.trendline circle {
+    stroke-width: 0;
+    fill: #2196F3;
+    display: none;
+}
+
+.mouseover .trendline path {
+    stroke-width: 2;
+    stroke: #1976D2;
+}
+
+.mouseover .trendline circle {
+    stroke-width: 1;
+    stroke: #1976D2;
+    display: inline;
+}
+
+.dragging .trendline {
+    stroke: #0D47A1;
+    stroke-width: 2;
+}
+
+
+

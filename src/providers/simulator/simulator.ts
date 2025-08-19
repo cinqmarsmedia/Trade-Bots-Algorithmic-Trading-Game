@@ -107,13 +107,22 @@ export class Simulator {
     await this.majorBreak(false, true);
     this.sendEvent('stop');
   }
-
+/*
   private hideChart() {
     document.getElementById("d3el").style.opacity = "0"
   }
   private showChart() {
     document.getElementById("d3el").style.opacity = "1"
   }
+*/
+
+private hideChart() {
+  document.getElementById("d3el").style.display = "none"
+}
+private showChart() {
+  document.getElementById("d3el").style.display = "block"
+}
+
 
   //HOT
   private async step(useBot: boolean = false) {
@@ -127,17 +136,40 @@ export class Simulator {
     }
   }
 
-  private async majorBreak(render: boolean = null, force: boolean = false) {
-    if (!this._running && !force) {
-      return;
-    }
-    if ((this.targetSpeed >= this.hiSpeedThreshold && render !== false) || render === true) {
-      this.engineData.chartsProvider.render(this.el, this.config);
-    }
-    this.stateMachine.writePendingLogs();
-    await this.stateMachine.persistState();
-    await this.sendEvent("majorBreak");
+// In simulator.ts, modify the majorBreak method
+private async majorBreak(render: boolean = null, force: boolean = false) {
+  if (!this._running && !force) {
+    return;
   }
+  
+  // Store the current brush state before rendering
+  const wasBrushed = this.engineData.chartsProvider.brushed;
+  let brushInfo = null;
+  
+  if (wasBrushed) {
+    // Get current brush info to maintain the interval
+    const brushSize = this.engineData.chartsProvider.getBrushSize();
+    brushInfo = {
+      tradingDays: brushSize.tradingDays,
+      actualDays: brushSize.actualDays
+    };
+  }
+  
+  if ((this.targetSpeed >= this.hiSpeedThreshold && render !== false) || render === true) {
+    // Render the chart with new data
+    this.engineData.chartsProvider.render(this.el, this.config);
+    
+    // If brush was active, restore it to maintain the same interval
+    if (wasBrushed && brushInfo) {
+      // Move brush to end while maintaining the same size
+      this.engineData.chartsProvider.moveBrushToEnd();
+    }
+  }
+  
+  this.stateMachine.writePendingLogs();
+  await this.stateMachine.persistState();
+  await this.sendEvent("majorBreak");
+}
 
   private async break(render: boolean = null, force: boolean = false) {
     if (!this._running && !force) {

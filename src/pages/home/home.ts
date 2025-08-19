@@ -28,17 +28,17 @@ import { BaklavaPage } from "../../pages/baklava/baklava";
 //import ApexCharts from 'apexcharts'
 import {
   //kgDB,
-  stockDB,
+  mtDB,
   rawUpgrades,
   demoUpgrades,
   learning,
   mtScores,
   //kgScores,
-  activeTickers,
+  MTactiveTickers,
   //kgStartIndex,
   marketMovement,
   marketValues,
-  startIndex,
+  mtStartIndex,
   etfDB,
   cryptoDB,
   etfScores,
@@ -62,7 +62,7 @@ import {
 //import { ViewController } from "ionic-angular";
 import { ChartsConfig, ChartsProvider, DataOhlc } from "../../providers/charts/charts";
 
-import { extrasModal, histModal,logsModal, upgradesModal, learnModal, loanModal, statsModal, maModal, indicatorModal, simpleBotModal, customDataModal, idleModal, disclaimerModal, tutorialModal, podcastsModal, missionsModal } from "../../pages/home/modals"
+import { extrasModal, histModal,logsModal, upgradesModal, learnModal, loanModal, statsModal, trendModal, maModal, indicatorModal, simpleBotModal, customDataModal, idleModal, disclaimerModal, tutorialModal, podcastsModal, missionsModal } from "../../pages/home/modals"
 
 import * as tw from "trendyways";
 
@@ -82,14 +82,14 @@ const techan = window["techan"];
 const d3 = window["d3"];
 
 //const slideshowLibrary = { "tutorial": [1, 5] }
-const debugMode = true;
-const debugTools = true;
+const debugMode = false;
+const debugTools = false;
 const demoMode = false;
-const limitedAds=true;
+const limitedAds=false;
 
 
-const version = '1.3.4';
-const updateText = "<li>Trades do not reset brush</li><li>Significant reduction in save size / write performance</li><li>Auto Continue Reliability Increased</li><li>Quirks with Brushing addressed</li><li>Code Now Public On GitHub</li>";
+const version = '2.1.0';
+const updateText = "<li>Fixed an odd issue some users had with a gray screen at startup related to the Vue Library</li><li>Fixed issue with learn & earn not persisting in some cases</li><li>If affected by either of the above issues (or anything else) please contact us at info@cinqmarsmedia.org so we can make it up to you!</li><li>Various other stability improvements</li><li>Upgrade to slightly newer framework</li>";
 
 const upgradesPersistThroughRuns:any =["limitstop","simpleBots","simpleBots2","simpleBots3","vizBots","vizBots2","vizBots3","vizBots4","vizBots5"];
 
@@ -101,7 +101,6 @@ const startingLearn: any = { "basics": 10, "candlesticks": 10 };
 const stopSaving = false; // ()()() should be false
 const persist = true; 
 const debugSimpleBot = false;
-
 
 
 const startingRecords = 30;
@@ -139,6 +138,41 @@ const podcasts=[
 {name:"Breakout Trading Answered",url:"https://www.iheart.com/podcast/256-better-trader-academy-trad-30934638/?embed=true",host:"BTA Team",lvl:3},
 {name:"Mad Money",url:"https://www.iheart.com/podcast/1082-mad-money-w-jim-cra-28977600/?embed=true", host:"Jim Cramer", lvl:3},
 
+
+/*
+
+{name:"Invest Like the Best",url:"https://www.iheart.com/podcast/256-invest-like-the-best-30929543/?embed=true", host:"Patrick O'Shaughnessy"},
+
+{name:"Rich Dad Radio",url:"https://www.iheart.com/podcast/263-rich-dad-radio-show-27601730/?embed=true", host:"Robert Kiyosaki",lvl:2},
+{name:"Money For the Rest of Us",url:"https://www.iheart.com/podcast/53-money-for-the-rest-of-us-27373226/?embed=true", host:"J. David Stein",lvl:2},
+
+{name:"Focused Compounding",url:"https://www.iheart.com/podcast/256-focused-compounding-31072690/?embed=true", host:"Andrew Kuhn & Geoff Gannon",lvl:2},
+
+{name:"Peter Schiff Show",url:"https://www.iheart.com/podcast/256-the-peter-schiff-show-podc-31034452/?embed=true", host:"Peter Schiff",lvl:2},
+
+{name:"The Meb Faber Show",url:"https://www.iheart.com/podcast/256-the-meb-faber-show-30944365/?embed=true", host:"Meb Faber",lvl:2},
+{name:"Swing Trading",url:"https://www.iheart.com/podcast/269-swing-trading-the-stock-ma-63480613/?embed=true", host:"Ryan Mallory",lvl:2},
+{name:"Traders Improved",url:"https://www.iheart.com/podcast/256-traders-improved-podcast-43066515/?embed=true", host:"Rolf & Moritz",lvl:2},
+{name:"The Trading Coach",url:"https://www.iheart.com/podcast/263-the-trading-coach-p-29364993/?embed=true", host:"Akil Stokes",lvl:2},
+{name:"Better System Trader",url:"https://www.iheart.com/podcast/263-better-system-trader-27628559/?embed=true", host:"Andrew Swanscott",lvl:2},
+
+
+{name:"AlgoLab",url:"https://www.iheart.com/podcast/256-algolabs-podcast-43093239/?embed=true",host:"AlgoLab Team",lvl:1},
+{name:"Option Alpha",url:"https://www.iheart.com/podcast/263-the-option-alpha-podcast-27580461/?embed=true",host:"Kirk Du Plessis",lvl:1},
+
+{name:"Think Profit",url:"https://www.iheart.com/podcast/269-think-profit-trading-psych-70652309/?embed=true", host:"Walter Peters & Hugh Kimura",lvl:1},
+{name:"Shares for Beginners",url:"https://www.iheart.com/podcast/269-stocks-for-beginners-76818605/?embed=true",host:"Phil Muscatello",lvl:1},
+{name:"Learn To Trade Stocks & Options",url:"https://www.iheart.com/podcast/269-stocks-for-beginners-76818605/?embed=true",host:"Clay Trader",lvl:1},
+{name:"Trading The Stock Market Trends",url:"https://www.iheart.com/podcast/256-dave-landrys-trading-the-s-30984596/?embed=true",host:"Dave Landry",lvl:1},
+{name:"FinAzaad: Trade and Invest",url:"https://www.iheart.com/podcast/269-stock-markets-trade-and-in-69200217/?embed=true",host:"Aniket Choudhari",lvl:1},
+{name:"Trading Stocks Made Easy",url:"https://www.iheart.com/podcast/263-trading-stocks-made-easy-w-45876917/?embed=true",host:"Tyrone Jackson",lvl:2},
+{name:"Beginner Trading 101",url:"https://www.iheart.com/podcast/269-beginner-trading-101-with-74818809/?embed=true",host:"J.R. Calcaterra",lvl:2},
+{name:"The Investment Hub",url:"https://www.iheart.com/podcast/269-the-investment-hub-63032798/?embed=true",host:"IH Team",lvl:2},
+
+
+
+*/
+
 ]
 
 const achievements={}
@@ -147,12 +181,13 @@ const warnings = { marginCallPop: false, extraOpp: false, marginCallPop2: false,
 
 const opportunities = {
   'email': { completed: false, reward: 15, name: 'Newsletter', intro: 'Sign-Up for Our Newsletter' },
-  'copy': { adNum: 3, completed: false, reward: 10, steam: 'steam://install/1489760', name: 'Copy Editor', intro: 'A Regular Expression Puzzle Game', embed: 'PzdjtkP3NWY', info: 'https://www.cinqmarsmedia.com/copyeditor/' },
-  'devil': { adNum: 1, completed: false, reward: 10, steam: 'steam://install/1023820', name: "The Devil's Calculator", intro: 'A Math Puzzle Game Featured In The PAX10', embed: 'scJW6ufWTCg', info: 'https://www.cinqmarsmedia.com/devilscalculator/' },
-  'chess': { adNum: 2, completed: false, reward: 10, steam: 'https://store.steampowered.com/app/1558020/Lazy_Chess/', name: 'Lazy Chess', intro: 'Innovative and Addictive New Chess Game', embed: 'oE38hXKWuzQ', info: 'https://www.cinqmarsmedia.com/lazychess/' },
-  'synonymy': { adNum: 5, completed: false, reward: 10, steam: 'https://store.steampowered.com/app/342890/Synonymy/', name: 'Synonymy', intro: 'A Word Game Narrated By Richard Dawkins', embed: 'Y1cu0i-4gb8', info: 'https://www.cinqmarsmedia.com/synonymy/' },
-  'chameleon': { adNum: 6, completed: false, reward: 10, steam: 'steam://install/834170', name: 'Chameleon Video Player', intro: 'A Free Utility That Displays Video Transparently', embed: 'vhTlnjp7fdU', info: 'https://www.cinqmarsmedia.com/chameleonvideoplayer/' },
-  'anagraphs': { adNum: 4, completed: false, reward: 10, steam: 'steam://install/1654280', name: 'Anagraphs', intro: 'A Free New Word Game With A Twist', embed: 'MRJ4UACqBpo', info: 'https://www.cinqmarsmedia.com/anagraphs/' }
+  'eq': { adNum: 1, completed: false, reward: 10, steam: 'steam://install/3705390', name: 'Equate 8', intro: 'A Math Puzzle Game', embed: 'iKiZxnlcK68', info: 'https://www.cinqmarsmedia.com/crossabout/' },
+  'cross': { adNum: 2, completed: false, reward: 10, steam: 'steam://install/1489760', name: 'CrossAbout', intro: 'Crosswords in reverse!', embed: 'ouI_LztDo3E', info: 'https://www.cinqmarsmedia.com/crossabout/' },
+  'copy': { adNum: 4, completed: false, reward: 10, steam: 'steam://install/1489760', name: 'Copy Editor', intro: 'A Regular Expression Puzzle Game', embed: 'PzdjtkP3NWY', info: 'https://www.cinqmarsmedia.com/copyeditor/' },
+  'devil': { adNum: 3, completed: false, reward: 10, steam: 'steam://install/1023820', name: "The Devil's Calculator", intro: 'A Math Puzzle Game Featured In The PAX10', embed: 'scJW6ufWTCg', info: 'https://www.cinqmarsmedia.com/devilscalculator/' },
+  'chess': { adNum: 5, completed: false, reward: 10, steam: 'https://store.steampowered.com/app/1558020/Lazy_Chess/', name: 'Lazy Chess', intro: 'Innovative and Addictive New Chess Game', embed: 'oE38hXKWuzQ', info: 'https://www.cinqmarsmedia.com/lazychess/' },
+  'chameleon': { adNum: 7, completed: false, reward: 10, steam: 'steam://install/834170', name: 'Chameleon Video Player', intro: 'A Free Utility That Displays Video Transparently', embed: 'vhTlnjp7fdU', info: 'https://www.cinqmarsmedia.com/chameleonvideoplayer/' },
+  'anagraphs': { adNum: 6, completed: false, reward: 10, steam: 'steam://install/1654280', name: 'Anagraphs', intro: 'A Free New Word Game With A Twist', embed: 'MRJ4UACqBpo', info: 'https://www.cinqmarsmedia.com/anagraphs/' }
 }
 // storageIDs for copy, devil, cham and anagraphs: 
 
@@ -183,7 +218,12 @@ const milestones = {
 "extra_1": { amt: 5000, extra:["Short Selling", "NPR's Planet Money Welcomes ", "n4o40Zv2rzc", 10, 6]},
 */
 
-"botPort1": { amt: 10000000, title: "Bot Export", txt: "You have now unlocked the ability to export bots. Consult the new menu in the node bots interface." },
+"botPort1": { amt: 10000000, title: "Bot Share + Export", txt: "You have now unlocked the ability to share and export bots. Consult the new menu in the node bots interface." },
+
+"taxMode": { amt: 1000000000, title: "Tax Mode", txt: "You have now unlocked the ability to share and export bots. Consult the new menu in the node bots interface." },
+
+"oneper": { amt: 10000000000, title: "Top 1%", txt: "Very few players make it this far! Congratulations!" },
+
 
 /*
 "e12": { amt: 1000000000000, title: "A Trillion", txt: "You have reached a net worth of over a trillion dollars. Congratulations! Let us know if you can think of a cool little unlock players might like here! Maybe an exclusive discord channel?" },
@@ -207,9 +247,9 @@ const milestones = {
 const storageID = "tradebots";
 const campaignReset = ['marginCallPercent', 'marginDays', 'marginWarning', 'simSpeed', 'manual', 'currentDate', 'obfuscatePrice', 'currentData', 'dateKeyIndex', 'portfolio', 'config', 'currPrice', 'currentTicker', 'loanData', 'indiData', 'indicatorColors', 'prePaperState', 'purchasedUpgrades', 'movingGain', 'obfuscateYear'];
 
-const sharedPersist: any = ['lastReimburse','unlockedMilestones','fullscreenState', 'unlockModeState', 'advancedBots', 'simpleBot', 'finishedStocks', 'earnedLearnings', 'sandbox', 'opportunities', 'tutorialState', 'tutorialDB', 'lastSaveCampaign', 'muteSFX', 'demoState', 'preSimVisible', 'laterExtras', 'version','cashHoldingsPrecision','userHideInfo'];
+const sharedPersist: any = ['lastReimburse','unlockedMilestones','fullscreenState', 'unlockModeState', 'advancedBots', 'simpleBot', 'finishedStocks', 'earnedLearnings', 'sandbox', 'opportunities', 'tutorialState', 'tutorialDB', 'lastSaveCampaign', 'muteSFX', 'demoState', 'preSimVisible', 'laterExtras', 'version','cashHoldingsPrecision','userHideInfo','taxMode','taxDays','taxIncome'];
 
-const modePersist: any = ['longVsShort', 'lastDailyReward', 'visibleExtraGraphs', 'movingAverages', 'longShortShow', 'fee', 'idleData', 'marginCallPercent', 'displayInfo', 'statsData', 'marginWarning', 'movingGain', 'simSpeed', 'manual', 'currentDate', 'currentData', 'warnings', 'dateKeyIndex', 'portfolio', 'limitStops', 'currPrice', 'currentTicker', 'statsData', 'loanData', 'indiData', 'indicatorColors', 'prePaperState', 'purchasedUpgrades', 'bakState', 'activeBot', 'config']
+const modePersist: any = ['trendlines','longVsShort', 'lastDailyReward', 'visibleExtraGraphs', 'movingAverages', 'longShortShow', 'fee', 'idleData', 'marginCallPercent', 'displayInfo', 'statsData', 'marginWarning', 'movingGain', 'simSpeed', 'manual', 'currentDate', 'currentData', 'warnings', 'dateKeyIndex', 'portfolio', 'limitStops', 'currPrice', 'currentTicker', 'statsData', 'loanData', 'indiData', 'indicatorColors', 'prePaperState', 'purchasedUpgrades', 'bakState', 'activeBot', 'config']
 
 const allPersist:any=sharedPersist.concat(modePersist)
 
@@ -315,6 +355,7 @@ if (!(this.chartsProvider.getBrushSize().actualDays<=14 && isLeft)){
   debug: any = debugMode;
   debugTools: any = debugMode || debugTools
   tutorialState: any = [-1, null];
+  firstLearnClick:any=true
   tutorialDB: any = { 'intro': { prompt: 'Intro Tutorial Complete', start: 0, completed: false, unlocked: true, reward: 10 },'restart': { prompt: 'Restart Tutorial Complete', start: 30, completed: false, unlocked: false, reward: 15 }, [marginUpgrade]: { prompt: 'Margin Tutorial', start: 50, completed: false, unlocked: false, reward: 50 }, 'limitstop': { prompt: 'Limit/Stop Order Tutorial Complete', start: 100, completed: false, unlocked: false, reward: 100 }, 'longshort': { prompt: 'Shorting Tutorial Complete', start: 150, completed: false, unlocked: false, reward: 200 }, 'simpleBots': { prompt: 'Simple Bots Tutorial Complete', start: 200, completed: false, unlocked: false, reward: 1000 }, 'simpleBots2': { prompt: 'Simple Bots Tutorial Complete', start: 250, completed: false, unlocked: false, reward: 2000 }, 'simpleBots3': { prompt: 'Simple Bots Tutorial Complete', start: 300, completed: false, unlocked: false, reward: 3000 }, 'vizBots': { prompt: 'Advanced Bots Tutorial Complete', start: 350, completed: false, unlocked: false, reward: 10000 } };
   initedBots: string[] = [];
   demo: any = demoMode || window.location.href.split('?')[1] == 'demo';
@@ -325,6 +366,7 @@ if (!(this.chartsProvider.getBrushSize().actualDays<=14 && isLeft)){
   mode: any = "stock"//crypto, sandbox
   version: any = version;
   chartBar: any;
+  modeFundPreserve:any=[0,0,0]
   missionAvail:any=0;
   limitedAds:any=limitedAds
   opportunities: any = opportunities
@@ -364,6 +406,9 @@ if (!(this.chartsProvider.getBrushSize().actualDays<=14 && isLeft)){
   muteSFX: any = false;
   cashHoldingsPrecision:any=[false,false]
   userHideInfo:any=false;
+  taxMode:any=false
+  taxDays:any=0;
+  taxIncome:any=0;
   lastSpeed:any=15;
   marginCalled:any=false;
   lastReimburse:any=null;
@@ -386,6 +431,7 @@ if (!(this.chartsProvider.getBrushSize().actualDays<=14 && isLeft)){
   pipVid: any = false;
   tutHold: any = 0;
   newExtra: any = false;
+  tooltipStyleRule:any = null;
   //overheadInterest:any=5;
   //recordsToDate: any = { candle: [[], [], []], bar: [] };
   displayInfo: any = 0;
@@ -516,6 +562,8 @@ if (!(this.chartsProvider.getBrushSize().actualDays<=14 && isLeft)){
     smaColors: [this.docStyle.getPropertyValue('--sma1')],
     emaColors: [this.docStyle.getPropertyValue('--ema1')],
   };
+
+  trendlines:any=[]
   //indiUnlock:any={volume:0,ichimoku:0,atrTrailingStop:0,bollinger:0,movingavg:0,rsi:0,aroon:0,atr:0,macd:0,stochastic:0,williams:0};
   //this.statsData.totalFeeAmt+=
   visibleExtraGraphs: any = [];
@@ -550,7 +598,7 @@ if (!(this.chartsProvider.getBrushSize().actualDays<=14 && isLeft)){
   debugParam: any = false;
   throttleFactor: any = 0;
   //firstTime: any = true;
-  indicatorColors: any = { 'close': this.docStyle.getPropertyValue('--close'), 'adj': this.docStyle.getPropertyValue('--adj'), 'gains': this.docStyle.getPropertyValue('--gains'), 'vol': this.docStyle.getPropertyValue('--vol'), 'atr': this.docStyle.getPropertyValue('--atr'), 'dxy': this.docStyle.getPropertyValue('--dxy'), 'unemployment': this.docStyle.getPropertyValue('--unemployment'), 'housing': this.docStyle.getPropertyValue('--housing'), 'yields': this.docStyle.getPropertyValue('--yields'), 'sp': this.docStyle.getPropertyValue('--sp'), 'recess': this.docStyle.getPropertyValue('--recess'), 'industry': this.docStyle.getPropertyValue('--industry'), 'vix': this.docStyle.getPropertyValue('--vix') }
+  indicatorColors: any = { 'close': this.docStyle.getPropertyValue('--close'), 'adj': this.docStyle.getPropertyValue('--adj'), 'gains': this.docStyle.getPropertyValue('--gains'), 'vol': this.docStyle.getPropertyValue('--vol'), 'atr': this.docStyle.getPropertyValue('--atr'), 'dxy': this.docStyle.getPropertyValue('--dxy'), 'unemployment': this.docStyle.getPropertyValue('--unemployment'), 'housing': this.docStyle.getPropertyValue('--housing'), 'yields': this.docStyle.getPropertyValue('--yields'), 'sp': this.docStyle.getPropertyValue('--sp'), 'recess': this.docStyle.getPropertyValue('--recess'), 'industry': this.docStyle.getPropertyValue('--industry'), 'vix': this.docStyle.getPropertyValue('--vix'), 'news': this.docStyle.getPropertyValue('--news') }
   simpleBotActive: boolean = false;
   failedLearn: any = {};
   dataProcessed: any = [0, 0]
@@ -629,8 +677,34 @@ if (!(this.chartsProvider.getBrushSize().actualDays<=14 && isLeft)){
 
     window["navctrl"] = this.navCtrl
     window["baklava"] = BaklavaPage
+/*   */
+    let missing=[]
 
+    cryptoActiveTickers.forEach((t:any)=>{
+        if (!cryptoDB[t]){
+missing.push(t)
+        }
+    })
+    console.error(missing)
+ 
+/*
+setTimeout(()=>{
     //do something with the new params }
+let z=[]
+let y=0
+this.purchasedUpgrades.forEach((id) => {
+      if ((this.demo ? demoUpgrades : this.rawUpgrades)[id] && typeof (this.demo ? demoUpgrades : this.rawUpgrades)[id].cost !== "undefined") {
+        y+=(this.demo ? demoUpgrades : this.rawUpgrades)[id].cost
+        z.push(y)
+        //console.error(z)
+      }
+})
+console.log(z)
+},2000)
+*/
+
+
+
 
 /*
 this.getActive("tickers").forEach((ticker)=>{
@@ -687,13 +761,90 @@ if (typeof this.getActive("db")[ticker] == 'undefined'){console.error(ticker+" u
     this.numActiveTickers = this.getActive("tickers").length;
 
 
+
+    //mtStartIndex
+
+    // this.furtherNarrowSlice(d3,MTactiveTickers,0,mtStartIndex,{},[])
+
+
+
+    //this.tutorial();
+
+
+    //setTimeout(()=>{this.stockDone()},1000)
+    //console.log(this.calculatedScores);
+
+    //console.log(this.calculatedScores);
+    //console.log('avg daily return', marketValues);
+
+    //this.testBrokenDates(d3,MTactiveTickers,0,{})
+    //this.testBrokenData(d3,KGactiveTickers,0,{})
+    //this.genActive(d3,0,{},cryptoScores,[],{});
+    //this.genAverages(d3,MTactiveTickers,0,{},true);
+
+
+
+    /* 
+   
+       var sortable = [];
+       for (var tick in mtScores) {
+   
+           sortable.push([tick,mtScores[tick][4]/mtScores[tick][2]]);
+       }
+       
+       sortable.sort(function(a, b) {
+           return b[1] - a[1];
+       });
+       
+       console.log(sortable);
+       */
+    /**/
     var bad: any = []
 
     for (var tick in mtScores) {
-      if (mtScores[tick][4] / mtScores[tick][2] > 2000 && activeTickers.includes(tick)) {
+      if (mtScores[tick][4] / mtScores[tick][2] > 2000 && MTactiveTickers.includes(tick)) {
         bad.push(tick)
       }
     }
+
+
+    //console.log(regression.linear([[0, 1], [32, 67], [12, 79]]));
+    //this.scoreTabulation(d3,mtDB,kgDB,mtStartIndex);
+
+    //this.scoreTabulation(d3,mtDB,kgDB,kgStartIndex);
+    //this.sliceBrokenData(d3,KGactiveTickers,0,{},kgScores)
+    //console.log(this);
+    //console.log(JSON.stringify(HomePage));
+    //console.log(Ng2IziToastModule);
+
+    // DEBUG ()()()()()
+    /*
+    setTimeout(()=>{
+      //this.learnEarn()
+    this.globalModal = this.modalCtrl.create(quizModal, {
+          data: { "intro": "Read Candlestick Charts", "description": "The Candlestick shows the open, high, low and close of the day. It is the foundation of understanding trends in the market.", "reward": 10, "data": { "resources": [ { "name": "Investopedia", "link": "https://www.investopedia.com/trading/candlestick-charting-what-is-it/" }, { "name": "YouTube", "id": "1rwVV_8uUxc" } ], "quiz": [ [ "Which of these do candlesticks NOT show?", "Volume the last of thre fds fdjkslj fkdsjkjkd fdlsk fjdks jfkdsj kfjds jkfdjsk fd", "Open", "Low", "High" ], [ "What does the candle indicate?", "Open and closing prices", "Moving average", "High and low prices", "Trading volume" ], [ "What do the candle wicks indicate?", "High and low prices", "Moving average", "Open and closing prices", "Trading volume" ], [ "What does a bearish candlestick pattern mean?", "The price is likely to fall.", "The trading volume is likely to decrease.", "The price is likely to rise.", "The trading volume is likely to increase." ], [ "If the candle has no height (is flat and black), this means:", "The open and close are the same.", "The data is corrupted.", "No trading took place that day.", "The price is likely to rise." ], [ "If the candle has no wick(s), this means:", "The high and low are equal to the open and close.", "The data is corrupted.", "No trading took place that day.", "The price is likely to rise." ] ] }, "name": "Candlestick Charts"},
+        }, { cssClass: 'quizModal' });
+        this.globalModal.present();
+    
+    },500)
+    */
+
+
+    //---------------()()()()()()()() debug
+    /*
+    setTimeout(()=>{
+      this.mainMenuButton('stock');
+      var name="Candlestick Charts";
+        this.earnedLearnings.push(name);
+          this.addCash(this.learning[name].reward);
+          this.calcLearnEarn();
+          this.setTradeVol();
+          this.learnEarn();
+    },1000)
+    */
+    //---------------
+
+
 
 
 
@@ -708,6 +859,44 @@ if (typeof this.getActive("db")[ticker] == 'undefined'){console.error(ticker+" u
         this.saveState();
       };
     }
+
+events.subscribe("trendlineChanged", (trendlines, modal) => {
+
+  if (!modal){
+    // update this.trendlines
+    console.log(trendlines)
+
+for (let n=0;n<trendlines.length;n++){
+  this.trendlines[n].raw=cloneDeep(trendlines[n])
+}
+
+    this.config.candlestick.trendlines = trendlines
+  }else{
+
+for (let n=0;n<trendlines.length;n++){
+if (!trendlines[n].raw){
+
+let rez=this.genTrend()
+
+trendlines[n].raw=[
+      {
+        start: rez[0],
+        end: rez[1],
+        id: String(Date.now())+n
+      }
+      ]
+}
+}
+
+  this.trendlines=trendlines
+  this.config.candlestick.showTrendlines=true
+// update this.trendlines
+// then update this.config.candlestick.trendlines
+
+  }
+  
+    this.saveState();
+  });
 
     events.subscribe("extraCompleted", (id) => {
       this.completeExtra(id)
@@ -1178,6 +1367,7 @@ googleTranslateElementInit() {
 }
 
 
+
   demoPopup() {
 
     var message = "We hope you are enjoying this demo of Trade Bots. Our intention with this demo was to give you a small taste of all that's available in the full version, which includes 20+ indicators and 100+ upgrades, including advanced features like neural networks, backtesting and bot export to name just a few. Please consider supporting our 501(c)3 non-profit by wishlisting the game. Much of your progress from this demo will carry over to the full version including Learn and Earn Quizzes."
@@ -1247,6 +1437,17 @@ googleTranslateElementInit() {
 
     feedbackBtn(down){
 
+if(down){
+  this.cheating[0]=setTimeout(()=>{this.cheating[1]=true;this.cheat()},5000)
+}else{
+// console.log(this.cheating[1]);
+  if (this.cheating[1]==false){
+    // console.log('fires');
+    this.feedback()
+  }
+  clearTimeout(this.cheating[0])
+  this.cheating[1]=false
+}
 
 
   }
@@ -1296,7 +1497,7 @@ googleTranslateElementInit() {
         "_self", "frame=true,nodeIntegration=no"
       );
 
-//alert(this.generateCode(100));
+console.error(this.generateCode(100));
 
           },
         },
@@ -1522,7 +1723,22 @@ return encrypt;
               postAt &&
               !emailDomainBlacklist.includes(postAt[1])
             ) {
-   // sign up to email newsletter
+
+              fetch(
+                "<signupEmail>",
+                {
+                  method: "POST",
+                  mode: "no-cors",
+                  headers: {
+                    "Content-Type":
+                      "application/x-www-form-urlencoded;charset=UTF-8",
+                  },
+                  body: "EMAIL=" + data.email,
+                }
+              );
+
+
+
             } else {
               // alert('please enter a valid email');
               this.alertPop.setMessage(
@@ -1603,9 +1819,19 @@ missionMenu(){
 
     return new Promise((resolve, reject) => {
       this.syncRemoteJSON();
-
+//console.log(storageID + (this.demo ? '_demo' : ''))
       this.storage.get(storageID + (this.demo ? '_demo' : '')).then(async (val) => {
-   //console.error(val);
+
+        let fundRetreive=undefined
+
+  console.error(val)
+
+        if (val && typeof val=='string'){
+          fundRetreive=JSON.parse(val)
+          val=undefined
+        }
+console.error(fundRetreive)
+
         var localHost = window.location.href.includes('localhost');
 
         var param = window.location.href.split('?')[1]
@@ -1617,6 +1843,11 @@ missionMenu(){
         this.mainMenuGo(true);
         this.initDefaults();
         if (val) {
+          if (val.indicatorColors && !val.indicatorColors.news){
+            val.indicatorColors.news='#fedc56'
+          }
+
+
           await this.initState(val)
         } else {
 
@@ -1677,6 +1908,19 @@ missionMenu(){
           // console.log('NEW GAME');
         }
 
+if (fundRetreive){
+        if (fundRetreive[0] && fundRetreive[0]>0){
+        this.modeFundPreserve[0]=fundRetreive[0]
+        }
+
+        if (fundRetreive[1] && fundRetreive[1]>0){
+        this.modeFundPreserve[1]=fundRetreive[1]
+        }
+
+        if (fundRetreive[2] && fundRetreive[2]>0){
+        this.modeFundPreserve[2]=fundRetreive[2]
+        }
+  }
         resolve(true);
         setTimeout(()=>{ this.loaded=true;},50)
        
@@ -1741,6 +1985,7 @@ missionMenu(){
   }
 
 
+
   async unwrapPaper(botname: any = false) {
 
     if (this.paperState.mode == 0) {
@@ -1775,8 +2020,82 @@ updateCash(amt){
   syncRemoteJSON() {
     // sync remote JSON
     console.log("sync to remote server")
+    /**/
+    var modified
+    fetch("https://q.jitinluthra.com/learn.json")
+      .then((response) => {modified=response.headers.get("Last-Modified");return response.json()})
+      .then((data) => { console.error(modified);if (Object.keys(data).length > 0) {
+        this.learning = data;console.warn("copying from remote learn server")
+let allIds:any=[]
+        Object.keys(this.learning).forEach((ky:any)=>{
+  let id = this.learning[ky]["data"]["resources"][1]["id"]
+
+  if (!Array.isArray(id)){
+
+    //console.log(id)
+    allIds.push(id)
+    let newID:any=[] //id
+
+let oldID=learning[ky]["data"]["resources"][1]["id"]
+
+if (Array.isArray(oldID)){
+
+oldID.forEach((d:any)=>{
+if (!newID.includes(d)){
+  newID.push(d)
+}
+})
+
+//newID=["fjdklsjkfds","fjkdlsjkfldjskfds"]
+this.learning[ky]["data"]["resources"][1]["id"]=newID
+
+}
 
   }
+
+
+
+
+})
+        
+this.checkMultipleYouTubeVideos(allIds).then(results => {
+console.error(results); // { 'dQw4w9WgXcQ': true, 'invalidID123': false, 'jNQXAC9IVRw': true }
+});
+
+      } else { console.log('remote learn server empty') } })
+      .catch(console.error);
+
+    fetch("https://q.jitinluthra.com/upgrades.json")
+      .then((response) => response.json())
+      .then((data) => { if (Object.keys(data).length > 0 && !this.demo) { this.rawUpgrades = data; this.upgradeLength = Object.keys(data);console.warn("copying from remote upgrade server") } else { console.log('remote upgrades server empty') } })
+      .catch(console.error);
+
+
+   fetch("https://q.jitinluthra.com/milestones.json")
+      .then((response) => response.json())
+      .then((data) => { if (Object.keys(data).length > 0) {
+        this.milestones = data;console.warn("copying from remote learn server") 
+      } else { console.log('remote milestone server empty') } })
+      .catch(console.error);
+
+  }
+
+async checkMultipleYouTubeVideos(videoIds: string[]): Promise<{[key: string]: boolean}> {
+  const results: {[key: string]: boolean} = {};
+  
+  await Promise.all(
+    videoIds.map(async (id) => {
+      try {
+        const response = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`);
+        results[id] = response.ok;
+      } catch {
+        results[id] = false;
+      }
+    })
+  );
+  
+  return results;
+}
 
   initBotIfRequired: () => Promise<void> = () => {
     if (!this.activeBot || this.activeBot == DefaultBotName || this.initedBots.indexOf(this.activeBot) != -1) {
@@ -2516,9 +2835,20 @@ stopIT(){
 }
   mainMenuButton(type) {
 
+
+      if (type=='stock' && this.modeFundPreserve[0]>0){
+        setTimeout(()=>{
+          this.addCash(this.modeFundPreserve[0])
+          this.modeFundPreserve[0]=0
+        },0)
+      }
+
+
     // debug ()()()()
     if (this.debugParam) {
       var lowerParam = this.debugParam.toLowerCase();
+console.log(type)
+
 
       if (this.debugParam == 'intro') {
         this.startTutorial('intro');
@@ -2662,8 +2992,28 @@ stopIT(){
 
 
       this.storage.get(storageID + (this.demo ? '_demo' : '') + "_" + this.mode).then(async (val) => {
-//console.log(val);
-        if (!val || isNaN(val.portfolio[0])) {
+
+let notIntra=false
+
+if (val && this.mode=="crypto"){
+  console.log(val)
+            let sdate=val.currentData[0].rawDate
+
+          if (!isNaN(parseInt(sdate[sdate.length-1]))){
+            notIntra=true
+          }
+}
+
+        if (!val || isNaN(val.portfolio[0]) || notIntra) {
+
+          if (notIntra){
+            this.generalPopup("Intraday Overhaul","Your progress in crypto mode will be reset to accomodate all new intraday gameplay. If you wish to continue with daily data where you left off, quit the game immediately and select the 'previous' branch on steam to run version 1.5")
+ 
+            this.restart(true,true)
+            return
+          }
+
+
           var sharedMilestones = [];
 
           Object.keys(this.milestones).forEach((milestone) => {
@@ -2705,7 +3055,7 @@ stopIT(){
 //console.log('blah');
           //console.error("no storage for "+this.mode+" this breaks things?")
         } else {
- // console.log(val.currentTicker,val.currentData)        
+    
 if ((!val.currentTicker || !val.currentData) && val.config){val.config=undefined;}
           modePersist.forEach((field) => {
             if (typeof val[field] !== 'undefined'){
@@ -2718,7 +3068,12 @@ if ((!val.currentTicker || !val.currentData) && val.config){val.config=undefined
           this.proceedData();
         }
 
-
+      if (type!=='stock' && this.modeFundPreserve[(this.mode=='etf'?1:2)]>0){
+        setTimeout(()=>{
+        this.addCash(this.modeFundPreserve[(this.mode=='etf'?1:2)])
+        this.modeFundPreserve[(this.mode=='etf'?1:2)]=0
+        },200)
+      }
 
       })
     }
@@ -2974,6 +3329,30 @@ this.initStock();
     this.obfuscatePrice = !this.purchasedUpgrades.includes("price");
     this.config.hideYears = this.obfuscateYear;
 
+// --- restore colors
+
+if (!this.trendlines){
+  this.trendlines=[]
+}
+setTimeout(()=>{
+      this.trendlines.forEach((trnd:any,i:any) => {
+        document.body.style.setProperty("--trend-" + String(i), trnd.color);
+      })
+
+ this.movingAverages.smaColors.forEach((color, i) => {
+
+        document.body.style.setProperty("--sma" + String(i + 1), color);
+      })
+      this.movingAverages.emaColors.forEach((color, i) => {
+        document.body.style.setProperty("--ema" + String(i + 1), String(color));
+      })
+
+},0)
+
+
+
+
+
     //--------idleMode
 
     var currentTime = new Date().getTime();
@@ -3158,20 +3537,20 @@ if (this.mode=='stock' && this.tutRestart){
 
 
   resetStorage() {
-    if (!this.debug) {
+
 
       this.alertPop = this.alertCtrl.create({
         title: "Are You Sure?",
         message:
-          "Delete All Save Data and Restore Defaults? This cannot be undone.",
+          "Delete All Save Data and Restore Defaults? This cannot be undone. Now you can reset your game while keeping access to the money you have made in Stock mode as a way of dealing with unforseen issues / bugs.",
         buttons: [
           {
             text: "Cancel",
             handler: (data) => {
             },
-          },
+          },        
           {
-            text: "Delete",
+            text: "Yes, Delete Everything",
             handler: (data) => {
               this.storageKillSwitch = true;
 
@@ -3180,6 +3559,7 @@ if (this.demo){
      this.storage.get(storageID).then(async (mainStore) => {
 
 if (!mainStore){
+  this.storageKillSwitch=true
     this.storage.clear().then(() => {setTimeout(() => {window.location.reload()}, 0)})
 }else{
     this.generalPopup("Main Game Save Detected", "Resetting Storage would wipe main game data. Aborting.");
@@ -3188,7 +3568,7 @@ if (!mainStore){
      })
 
 }else{
-
+this.storageKillSwitch=true
   this.storage.clear().then(() => {
 
                 if (!this.demo && this.demoState){
@@ -3205,27 +3585,70 @@ this.storage.set(storageID + '_demo', this.demoState.copy).then(() => {
 }         
             },
           },
+           {
+            text: "Yes, but retain Funds",
+            handler: (data) => {
+              this.clearAndRetain()
+            },
+          },
         ],
       });
       this.alertPop.present();
 
 
-    } else {
-      this.storageKillSwitch = true;
 
-
-      this.storage.clear().then(() => {
-        setTimeout(() => {
-          window.location.reload();
-        }, 0)
-      });
-
-
-
-    }
 
   }
 
+
+clearAndRetain(crash:any=false){
+
+let mult=1.05
+
+if (crash){
+  mult=1.3
+}
+
+    function interp(x) {
+
+      if (x>0.5){
+        return 1757454640973 * Math.pow(x, 10) 
+       - 8163486972036 * Math.pow(x, 9) 
+       + 16111771586087 * Math.pow(x, 8) 
+       - 17607806209607 * Math.pow(x, 7) 
+       + 11640531813662 * Math.pow(x, 6) 
+       - 4774772177173 * Math.pow(x, 5) 
+       + 1198354509862 * Math.pow(x, 4) 
+       - 174436721799 * Math.pow(x, 3) 
+       + 13144881818 * Math.pow(x, 2) 
+       - 400866342 * x 
+       + 2316406;
+       }else{
+        return 157.43 * Math.exp(15.358 * x) 
+       }
+}
+
+let restartFunds:any = [(this.unlockModeState.stock.worth+interp(this.unlockModeState.stock.progress))*mult,0,0]
+
+if (this.unlockModeState.etf){
+  restartFunds[1]=(this.unlockModeState.etf.worth+interp(this.unlockModeState.etf.progress))*mult
+}
+
+if (this.unlockModeState.crypto){
+  restartFunds[2]=(this.unlockModeState.crypto.worth+interp(this.unlockModeState.crypto.progress))*mult
+}
+
+restartFunds=[parseInt(restartFunds[0]),parseInt(restartFunds[1]),parseInt(restartFunds[2])]
+this.storageKillSwitch=true
+ this.storage.clear().then(() => {
+
+   this.storage.set(storageID + (this.demo ? '_demo' : ''), JSON.stringify(restartFunds)).then(() => {
+       setTimeout(() => {window.location.reload()}, 100)
+   })
+
+})
+
+}
 
 
   firstTimePop() {
@@ -3311,9 +3734,7 @@ console.log(id);
       if (this.statsData.portfolioHistory.length/this.getActive("tickers").length>.95){
         rez=Math.floor(Math.random() * upper)
       }
-
-      if (rez<0){rez=0}
-
+if (rez<lower){rez=lower}
     console.warn('index generated of ' + upper, rez);
     return rez;
   }
@@ -3340,15 +3761,15 @@ console.log(id);
 
       if (type == "stock") {
       if (param == "tickers") {
-        return activeTickers
+        return MTactiveTickers
       } else if (param == "scores") {
         return mtScores
       } else if (param == "db") {
-        return stockDB
+        return mtDB
       } else if (param == "start") {
-        return startIndex
+        return mtStartIndex
       } else if (param == "path") {
-        return "stocks"
+        return "MTstocks"
       }
     } else if (type == "etf") {
 
@@ -3391,6 +3812,7 @@ console.log(id);
     var currentActive
     var activeTickers = this.getActive("tickers")
 
+console.log(activeTickers)
     //console.log(type);
 
     // Random
@@ -3404,18 +3826,24 @@ console.log(id);
     availableTickers.sort((a, b) => {
       return this.calculatedScores[type][b] - this.calculatedScores[type][a]
     })
-console.log(availableTickers)
-   //return "MSFT"; // Returns Microsoft no matter what - add csv data to src/assets/stocks with the ticker in the name and add the ticker to  and comment out
+/**/
+if (this.mode == 'crypto'){
+  return "AWX"
+}
 
+    //return "BTC"; //MSFT ()()()()
+    //console.log(activeTickers.length);
+    //console.log(this.finishedStocks.length)
+    //console.log(this.finishedStocks.length/activeTickers.length)
+    //@ts-ignore
     if (availableTickers.length==0) {
       this.statsData.restartedStocks=[];
       var rand = Math.floor(Math.random() * activeTickers.length)
       console.warn('random index generated of ' + activeTickers.length, rand);
       return activeTickers[rand]
     } else {
-      let tickerInd=this.tickerIndex(0, availableTickers.length-1)
-      console.log(tickerInd);
-      return availableTickers[tickerInd]
+      console.error('loading:'+availableTickers[this.tickerIndex(0, availableTickers.length-1)])
+      return availableTickers[this.tickerIndex(0, availableTickers.length-1)]
 
     }
 
@@ -3512,7 +3940,7 @@ percentBound=Math.pow(num,.4)*.25
 
     this.currentTicker = [dat[0]]
     this.currentTicker[5] = dat[0]
-  console.error(dat);
+  
 
     d3.csv((dat[1]), async (error, data) => {
       const parseDate = d3.timeParse("%Y%m%d");
@@ -3538,7 +3966,9 @@ percentBound=Math.pow(num,.4)*.25
       //console.log(dateAdj(data[0].sdate))
 
       //console.log(data.slice(mtStartIndex[ticker])[0].sdate)
-      this.currentData = data.slice(0).map((d) => ({
+      this.currentData = data.slice(0).map((d) => {
+
+        return {
         rawDate: formatDate(new Date(d.date)).substring(2),
         date: new Date(d.date),
         open: +d.open,
@@ -3547,7 +3977,10 @@ percentBound=Math.pow(num,.4)*.25
         close: +d.close,
         adj: +d.adj,
         volume: +d.volume,
-      }));
+      }
+
+
+});
 
 
       //console.error(data,this.currentData)
@@ -3640,7 +4073,7 @@ investmentPercentDataBrush.push({date:this.currentData[i].date,value:(this.curre
 
   }
 
-  initStock(tick: any = null, fullStock: any = false, info: any = false,emer:any=false) {
+  initStock(tick: any = null, fullStock: any = false, info: any = false,emer:any=false,nosave:any=false) {
     //console.error('this fireess');
     //this.loadGraphs();
     //this.setTradeVol();
@@ -3685,6 +4118,8 @@ this.getActive("scores")
 if (!this.getActive("db")[ticker]){
 
   console.error(ticker+" undefined!! Catastrophe.");
+
+
   /*
 if (emer){
   this.finishedStocks.push(ticker);
@@ -3725,6 +4160,8 @@ this.initStock(null,false,false,true)
 
     d3.csv(("assets/" + this.getActive("path") + "/" + ticker + ".csv"), async (error, data) => {
       const parseDate = d3.timeParse("%Y%m%d");
+      const intraDate = d3.timeParse("%Y%m%d%H");
+
 
       function dateAdj(date) {
         if (parseInt(date.slice(0, 2)) > 30) {
@@ -3745,17 +4182,72 @@ this.initStock(null,false,false,true)
       //console.log(dateAdj(data[0].sdate))
 
       //console.log(data.slice(mtStartIndex[ticker])[0].sdate)
-      this.currentData = data.slice(this.getActive("start")[ticker] || 0).map((d) => ({
+      this.currentData = data.slice(this.getActive("start")[ticker] || 0).map((d) => {
+
+
+if (!isNaN(parseInt(d.sdate.substring(0, 5)))){
+
+
+let intra=isNaN(parseInt(d.sdate[d.sdate.length-1]))
+let formatDate=parseDate(dateAdj(d.sdate))
+
+if (!intra){
+  formatDate=parseDate(dateAdj(d.sdate))
+}else{
+  let hour=d.sdate[d.sdate.length-1].toUpperCase().charCodeAt(0) - 64
+  //console.log(d.sdate.slice(0, -1))
+  //console.log(dateAdj(d.sdate.slice(0, -1)))
+  //console.log(dateAdj(d.sdate.slice(0, -1))+String(hour))
+  formatDate=intraDate(dateAdj(d.sdate.slice(0, -1))+String(hour))
+}
+//console.log(d)
+
+
+        return {
         rawDate: d.sdate,
-        date: parseDate(dateAdj(d.sdate)),
+        date: formatDate,
         open: +d.open / 1000,
         high: +d.high / 1000,
         low: +d.low / 1000,
         close: +d.close / 1000,
         adj: +d.adj / 1000,
         volume: +d.vol00 * 100,
-      }));
+      }
 
+
+
+    }
+
+
+
+}
+      ).filter(Boolean);
+
+      console.error(this.currentData)
+
+// Intraday test
+/*    
+this.currentData=this.currentData.map((item, index) => {
+    const dayGroup = Math.floor(index / 10);
+    const hourInDay = index % 10;
+    
+    const baseDate = new Date(this.currentData[0].date);
+    const newDate = new Date(baseDate);
+    newDate.setDate(baseDate.getDate() + dayGroup);
+    
+    // Set business hours: 9 AM to 6 PM (9 + hourInDay)
+    newDate.setHours(9 + hourInDay, 0, 0, 0);
+    
+    return {
+      ...item,
+      originalIndex: index,
+      dayGroup: dayGroup,
+      hourInDay: hourInDay,
+      date: newDate,
+      rawDate: `${newDate.getFullYear().toString().slice(-2)}${String(newDate.getMonth() + 1).padStart(2, '0')}${String(newDate.getDate()).padStart(2, '0')}`
+    };
+  });
+  */
 
       //console.error(data,this.currentData)
       //console.log(this.currentData)
@@ -3843,8 +4335,10 @@ investmentPercentDataBrush.push({date:this.currentData[i].date,value:(this.curre
 //console.log(this.currentDate,this.currentTicker,this.currentData,this.config,this.config.data);
 
     this.toggleBuyVSell(true);
-    this.saveState();
-
+    if (!nosave){
+this.saveState();
+    }
+    
   }
 
   toggleLeadingIndicator(id) {
@@ -4183,7 +4677,7 @@ if (this.visibleExtraGraphs.length==7){height=.0785}
     }
     var extInd: any = ["atr", "adx", "aroon", "macd", "rsi", "stochastic", "williams"]
     var ovrInd: any = ["ichimoku", "pivots", "bollinger", "atrtrailingstop"]
-    var leadingInd: any = ["marketIndex", "unemployment", "dxy", "housing", "yield", "industry", "vix", "recessions"];
+    var leadingInd: any = ["marketIndex", "unemployment", "dxy", "housing", "yield", "industry", "vix", "recessions","news"];
 
     if (extInd.includes(id)) { this.warnings.new.ext = true; } else if (ovrInd.includes(id)) { this.warnings.new.ovr = true; } else if (leadingInd.includes(id)) { this.warnings.new.leading = true; }
 
@@ -4542,6 +5036,10 @@ if (store.tutorialState && store.tutorialState[1]){
       // upgrades, extras will change? other things?
       // or we just reset everything and preserve a few things? idk. 
 
+
+if (store.version[0]=='1'){
+  this.opportunities=opportunities
+}
       this.alertPop = this.alertCtrl.create({
         cssClass: 'earlyAccessAlert',
         enableBackdropDismiss: false,
@@ -5061,6 +5559,7 @@ if (!this.advancedBots[data[0]]){
       limDeduction: this.limDeduction,
       longVsShort: this.longVsShort,
       portfolio: this.portfolio,
+      oneper:this.unlockedMilestones.includes('oneper')
      // maxSim:this.showRealSim(this.simSpeed:[2]/10);
     }
   }
@@ -5197,7 +5696,8 @@ if (!this.advancedBots[data[0]]){
 
   restartCash(){
       var learned = 0;
-        this.earnedLearnings.forEach((key) => {
+
+this.earnedLearnings.forEach((key) => {
       learned += this.getLearnReward(key);
     })
 
@@ -5207,24 +5707,25 @@ Object.keys(this.opportunities).forEach((key) => {
       }
     })
 
-
+console.error(this.statsData.startingCash,learned)
     return this.statsData.startingCash + learned;
   }
 
-  restart(forced: any = false) { // margin call trigger
+  restart(forced: any = false, reset:any = false) { // margin call trigger
   
 this.stopSim()
 
 
 var restartCash =this.restartCash();
 
+console.log(restartCash)
 //console.error(this.unlockedMilestones)
 
 
-    if (forced) {
+    if (forced && !reset) {
       this.notification(['error', 'Margin Called', "You Will Restart with $" + this.nFormat(restartCash)])
       this.playSFX('error');
-    } else {
+    } else if (!reset) {
       this.notification(['warning', 'Restart', "You Will Restart with $" + this.nFormat(restartCash)])
       this.playSFX('close');
     }
@@ -5234,67 +5735,12 @@ var restartCash =this.restartCash();
 
 
 
+
     var btns = [{
       text: "Restart",
       handler: (data) => {
-        this.playSFX('generic');
-        this.statsData.restarts++
-        this.tutorialState[0] = -1
-
-        if (this.currentTicker && this.currentTicker[5]){
-        this.statsData.restartedStocks.push(this.currentTicker[5]);
-
-if (this.statsData.restartedStocks.length==1){
-this.startTutorial('restart')
-}
-
-
-}else{
-  console.error(this.currentTicker,"ticker undefined?")
-}
-
-
-var persistUpgrades:any=this.purchasedUpgrades.filter(value => upgradesPersistThroughRuns.includes(value));
-        
-        //console.error("restart campaign with $" + restartCash);
-        //console.log(this.defaults);
-        campaignReset.forEach((field) => {
-          if (this.defaults[field]) {
-            this[field] = cloneDeep(this.defaults[field])
-          } else {
-            this[field] = this.defaults[field];
-            //console.error(field+" not defined as this.default");
-          }
-        })
-
-
-        // auto purchase all free upgrades
-        Object.keys((this.demo ? demoUpgrades : this.rawUpgrades)).forEach((upgrade) => {
-          if ((this.demo ? demoUpgrades : this.rawUpgrades)[upgrade].cost == 0 || persistUpgrades.includes(upgrade)) {
-            this.processUpgrade(upgrade, true)
-          }
-        });
-
-        this.portfolio[0] = restartCash;
-        this.statsData.stockGain = 0
-        this.statsData.stockHistory = [];
-        //this.finishedStocks.push(this.currentTicker);
-
-this.loanData = { rate: startingInterestRate, amt: 0, cycle: 0, min: 0, max: startMaxLoan, mo: 0, upgradeMinus: 0 }
-this.fee=fee
-this.obfuscatePrice=true;
-this.marginCallPercent = marginCallPercent;
-this.obfuscateYear=true
-this.longShortShow=false;
-this.marginCalled=false;
-this.marginWarning = false;
-this.manual=0;
-this.displayInfo = 0;
-
-        this.syncUpgradeModes()
-
-        this.initStock();
-
+        //console.error("fff")
+        this.reallyRestart(forced,reset,restartCash)
       }
     }]
 
@@ -5334,11 +5780,122 @@ this.displayInfo = 0;
       message: this.mode == 'sandbox' ? ("You have unlocked sandbox mode - are you sure you wish to start a new run? You will start with <b>$" + this.nFormat(restartCash) + "</b> in capital <i>(banked funds along with Learn & Earn revenue)</i>. You will need to re-purchase all upgrades including sandbox mode. This would be your <b>" + ordinal(parseInt(this.statsData.restarts + 2)) + "</b> run.") : ("In real life, restarting after massive losses isn't an option. Investing is extremely risky. By clicking 'restart' you will start a new run with <b>$" + this.nFormat(restartCash) + "</b> in capital (banked funds along with Learn & Earn revenue). You will need to re-purchase all upgrades. This " + (forced ? "will" : "would") + " be your <b>" + ordinal(parseInt(this.statsData.restarts + 2)) + "</b> run."),
       buttons: btns,
     });
-    this.alertPop.present();
 
+ if (!reset){
+    this.alertPop.present();
+}else{
+  this.initStock(null, false, false,false,true);
+  this.reallyRestart(true,true,0)
+}
   }
 
+reallyRestart(forced:any=false,reset:any=false,restartCash){
 
+console.error(restartCash)
+
+        this.playSFX('generic');
+        this.statsData.restarts++
+        this.tutorialState[0] = -1
+
+        if (this.currentTicker && this.currentTicker[5]){
+        this.statsData.restartedStocks.push(this.currentTicker[5]);
+
+if (this.statsData.restartedStocks.length==1 && !reset){
+this.startTutorial('restart')
+}
+
+
+}else{
+  console.error(this.currentTicker,"ticker undefined?")
+}
+
+
+        if (!reset){
+
+var persistUpgrades:any=this.purchasedUpgrades.filter(value => upgradesPersistThroughRuns.includes(value));
+        
+        //console.error("restart campaign with $" + restartCash);
+        //console.log(this.defaults);
+        campaignReset.forEach((field) => {
+          if (this.defaults[field]) {
+            this[field] = cloneDeep(this.defaults[field])
+          } else {
+            this[field] = this.defaults[field];
+            //console.error(field+" not defined as this.default");
+          }
+        })
+
+
+        // auto purchase all free upgrades
+        Object.keys((this.demo ? demoUpgrades : this.rawUpgrades)).forEach((upgrade) => {
+          if ((this.demo ? demoUpgrades : this.rawUpgrades)[upgrade].cost == 0 || persistUpgrades.includes(upgrade)) {
+            this.processUpgrade(upgrade, true)
+          }
+        });
+
+}else{
+
+          campaignReset.forEach((field) => {
+          if (this.defaults[field]) {
+            this[field] = cloneDeep(this.defaults[field])
+          } else {
+            this[field] = this.defaults[field];
+            //console.error(field+" not defined as this.default");
+          }
+        })
+ // console.log('should fire')
+          restartCash=0
+          this.statsData={
+    globalGain: 0,
+    stockGain: 0,
+    totalTrades: 0,
+    stockTrades: 0,
+    totalFeeAmt: 0,
+    stockFeeAmt: 0,
+    daysSimmed: 0,
+    riseFall: [],
+    portfolioHistory: [],
+    stockHistory: [],
+    dailyStockGains: [],
+    aggStockGains: [],
+    globalRecords: 0,
+    stockRecords: 0,
+    netWorth: 0,
+    netWorthBefore: 0,
+    finished: 0,
+    restarts: 0,
+    totalInterestAmt: 0,
+    stockInterestAmt: 0,
+    startingCash: 0,
+    addedMaxLoan: 0,
+    wins: 0,
+    restartedStocks: [],
+  }
+        }
+
+        this.portfolio[0] = restartCash;
+        this.statsData.stockGain = 0
+        this.statsData.stockHistory = [];
+        //this.finishedStocks.push(this.currentTicker);
+
+this.loanData = { rate: startingInterestRate, amt: 0, cycle: 0, min: 0, max: startMaxLoan, mo: 0, upgradeMinus: 0 }
+this.fee=fee
+this.obfuscatePrice=true;
+this.marginCallPercent = marginCallPercent;
+this.obfuscateYear=true
+this.longShortShow=false;
+this.marginCalled=false;
+this.marginWarning = false;
+this.manual=0;
+this.displayInfo = 0;
+
+if (!reset){
+        this.syncUpgradeModes()
+}
+        this.initStock(null, false, false,false,reset);
+
+      
+}
 
   marginCallPop(normal: any = false) {
 
@@ -5485,6 +6042,9 @@ if (this.activeBot && this.activeBot !== DefaultBotName) {
     Object.keys(this.milestones).forEach((milestone) => {
       this.processUpgrade(milestone, true);
       this.unlockedMilestones.push(milestone);
+
+      console.log(milestone);
+        if (milestone=='taxMode'){this.taxMode=true}
     })
 
 
@@ -5499,10 +6059,186 @@ if (this.activeBot && this.activeBot !== DefaultBotName) {
 
   }
 
+randomFloat(min, max) {
+  return Math.random() * (max - min) + min;
+}
 
+randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+
+genTrend(){
+  // Use current data if available, otherwise use fixed dates
+    let startDate, endDate, startValue, endValue;
+
+    if (this.currentData && this.currentData.length > 10) {
+
+let startIndex=0+this.randomInt(0,2)
+let brush=this.chartsProvider.getBrushSize().actualDays
+
+if (brush>0){
+startIndex+=this.dateKeyIndex - brush
+}
+  
+      const endIndex = this.dateKeyIndex - this.randomInt(0,2);
+      
+      startDate = new Date(this.currentData[startIndex].date);
+      endDate = new Date(this.currentData[endIndex].date);
+      startValue = this.currentData[startIndex].high * this.randomFloat(0.8,1.2);
+      endValue = this.currentData[endIndex].high * this.randomFloat(0.8,1.2);
+    }
+
+    return [{ date: startDate, value: startValue }, { date: endDate, value: endValue }]
+}
+
+
+initTrendlines(colors:any=[""]) {
+
+    
+    // Step 3: Create simple test data
+    if (!this.config.candlestick.trendlines) {
+      this.config.candlestick.trendlines = [];
+    }
+    
+    
+    let rez=this.genTrend()
+    console.log(rez)
+    // Create test trendline
+    this.config.candlestick.trendlines=[
+      {
+        start: rez[0],
+        end: rez[1],
+        id: String(Date.now())
+      }
+      ];
+
+    this.trendlines=[{raw:this.config.candlestick.trendlines,color:'#478ddd',name:""}]
+    
+    // Enable trendlines
+    this.config.candlestick.showTrendlines = true;
+    
+
+    this.reDraw();
+    
+
+  }
+
+  toggleTrend(){
+
+if (this.trendlines.length==0){
+    this.initTrendlines()
+    return
+    }
+//console.error(this.trendlines)
+//console.error(this.config.candlestick.trendlines)
+this.config.candlestick.showTrendlines=!this.config.candlestick.showTrendlines
+
+      if (this.config.candlestick.showTrendlines) {
+        this.playSFX('generic')
+        /*
+       setTimeout(()=>{
+      this.trendlines.forEach((trnd:any,i:any) => {
+        //console.log(trnd.color)
+        document.body.style.setProperty("--trend-" + String(i), trnd.color);
+      })
+      },0)
+*/
+       //console.log(this.trendlines)
+
+
+      }
+
+   
+
+
+    this.saveState();
+    this.reDraw();
+    
+  }
+
+  openTrend(){
+
+if (this.trendlines.length==0){
+    this.initTrendlines()
+    }
+
+    this.globalModal = this.modalCtrl.create(trendModal, {
+      trnds: this.trendlines
+    }, { cssClass: 'modalIndicator' });
+
+    this.globalModal.onDidDismiss((data) => {
+//console.log(this.trendlines)
+      this.config.candlestick.trendlines = this.trendlines.flatMap(obj => cloneDeep(obj.raw))
+//console.log(this.config.candlestick.trendlines)
+
+      setTimeout(()=>{
+      this.trendlines.forEach((trnd:any,i:any) => {
+        document.body.style.setProperty("--trend-" + String(i), trnd.color);
+      })
+      },0)
+    
+
+this.config.candlestick.showTrendlines = true;
+      //document.body.style.setProperty("--sma1", "#a20");
+
+      this.reDraw();
+    });
+    this.globalModal.present();
+  }
+  
 
   quickDebug(bool) {
-this.addCash(999999)
+
+
+    //this.toggleTrendlines();
+
+
+
+//this.addCash(999999)
+//console.log()
+
+/*
+if (!this.purchasedUpgrades.includes('longshort')){
+  this.processUpgrade('longshort');
+  //this.progressUpgradeTo('longshort', true);
+}else{
+  this.processUpgrade('simpleBots');
+  //this.progressUpgradeTo('simpleBots', false);
+}
+*/
+/*
+var ytVids=[];
+
+Object.keys(this.learning).forEach((learn)=>{
+  if (this.learning[learn].data.resources[1].id){
+  ytVids.push(this.learning[learn].data.resources[1].id)
+  }
+})
+
+console.error(ytVids);
+
+    let params:any = {
+      id: ytVids, //s.toString(),//'Ks-_Mh1QhMc',
+      part: "status",
+      key: "AIzaSyBJFYQOPZ2mXvfUAJ1ENmepJ0-oFlMDgig",
+    };
+
+  fetch("https://www.googleapis.com/youtube/v3/videos?"+new URLSearchParams(params))
+      .then((response) => response.json())
+      .then((data) => {
+
+        //data.items.forEach(()=>{})
+        console.log(data);
+      })
+      .catch(console.error);
+*/
+
+//this.addCash(99999999999999999999999999999);
+//console.error(this.nFormat(99999999999999999999999999999))
+//this.addCash(-200)
+
 
   }
 
@@ -5538,9 +6274,19 @@ this.addCash(999999)
   }
 
   stopSim() {
+    document.body.classList.remove('simulating');
     this.lastSpeed=this.simSpeed[0]
     this.simSpeed[0] = 0;
     this.simulator.stop();
+
+if (this.tooltipStyleRule){
+
+this.tooltipStyleRule.remove();
+this.tooltipStyleRule = null;
+
+}
+
+
 
     // this.simSpeed[1] = this.simSpeed[0];
     // this.simSpeed[0] = 0;
@@ -5877,10 +6623,17 @@ this.playSFX('close');
       //this.portfolio[1] = this.portfolio[1] - data.amt / this.portfolio[0]; // - data.amt*this.fee;
     }
 
+     let buyshort=data.buyvssell && this.longVsShort || !data.buyvssell && !this.longVsShort
+
+    if (this.taxMode && !buyshort){
+      this.taxIncome+=Math.floor(data.amt)
+      console.log(this.taxIncome);
+    }
+
 
     //QUESTION notifications... do we have to show them?
     if (this.activeBot == DefaultBotName && this.navCtrl.getActive().name == "HomePage") {
-      if (data.buyvssell && this.longVsShort || !data.buyvssell && !this.longVsShort) {
+      if (buyshort) {
         this.notification(['success', '$' + this.nFormat(Math.floor(data.amt)), (data.longvsshort ? 'Buy' : 'Short') + ' Successful'])
       } else {
         this.notification(['success', '$' + this.nFormat(Math.floor(data.amt)), (data.longvsshort ? 'Sell' : 'Cover') + ' Successful', 'red'])
@@ -6046,6 +6799,9 @@ this.fatalIssue(false);
         if (this.milestones[milestone].title){
           this.notification(['success', 'Net Worth Milestone Unlocked', this.milestones[milestone].title]);
         this.generalPopup(this.milestones[milestone].title, "Congratulations! Your Net Worth is now over $" + parseInt(this.milestones[milestone].amt).toLocaleString('en-US') + ". " + this.milestones[milestone].txt)
+
+//console.log(milestone);
+        if (milestone=='taxMode'){this.taxMode=true}
       }
       if (this.milestones[milestone].extra){
         this.checkExtra(this.milestones[milestone].extra)
@@ -6155,14 +6911,16 @@ if(this.buyvssell==this.chkbox){
 
 this.alertPop = this.alertCtrl.create({
       title: "Corrupted Data Detected",
-      message: "We have detected something seriously wrong with your saved game. To correct this, you will need to reset your storage to defaults. We're so sorry and please reach out at <b>info@cinqmarsmedia.org</b> so we can address this bug and provide you the in-game funds to get you back to your previous game state, and of course, apologize. Thank you for your understanding.",
+      message: "We have detected something seriously wrong with your saved game. To correct this, you will need to reset your storage to defaults (but we will try to preserve your funds). We're so sorry and please reach out at <b>info@cinqmarsmedia.org</b> if you feel you have lost progress so we can address this bug and provide you the in-game funds to get you back to your previous game state, and of course, apologize. Thank you for your understanding.",
 
       buttons: [
 
         {
           text: "Reset Storage",
           handler: (data) => {
-    this.storage.clear().then(() => {setTimeout(() => {window.location.reload()}, 0)})
+
+this.clearAndRetain(true)
+
           },
         },
       ],
@@ -6391,9 +7149,11 @@ this.marginCalled=true;
       availEarn: this.availEarn,
       numLearn: this.EarnLearnCount,
       tutState: this.tutorialState[0],
+      firstClick:this.firstLearnClick,
       pipUnlocked: this.unlockedMilestones.includes('pip')
     }, { enableBackdropDismiss: this.tutorialState[0] !== 5, cssClass: 'learnModal' });
     this.globalModal.present();
+    this.firstLearnClick=false
     //{ enableBackdropDismiss:this.tutorialState[0]!==51, cssClass: 'modalPortfolio' }
   }
 
@@ -6739,6 +7499,7 @@ this.globalModal.present();
     this.simulator.targetSpeed = this.adjustedSimSpeed;
     const useBot: boolean = this.activeBot && this.activeBot !== DefaultBotName;
     if (!this.stateMachine.simulating) {
+      document.body.classList.add('simulating');
       this.simulator.start(this.config, useBot);
     }
   }
@@ -6753,6 +7514,12 @@ if (!this.purchasedUpgrades.includes('step') && !this.purchasedUpgrades.includes
 
 
 this.supressLabels();
+
+
+if ((this.dateKeyIndex<0 || this.dateKeyIndex>=this.currentData.length-1) && !this.purchasedUpgrades.includes('sim')){
+this.stockDone()
+return;
+}
 
 
 if (this.dateKeyIndex<0 || this.dateKeyIndex>=this.currentData.length-1){
@@ -6782,6 +7549,11 @@ return;
       this.tutClick(154)
 
       await this.simulator.stepOnce(this.activeBot && this.activeBot != DefaultBotName);
+
+    this.YrsElapsed = this.calcYearsElapsed()
+    this.saveState();
+
+
       return;
     } else {
       this.realSpeed = [0, performance.now()]
@@ -6803,6 +7575,15 @@ return;
       this.simSpeed[1] = 15;
       this.simSpeed[0] = this.simSpeed[1];
       this.simSpeed[1] = 0;
+
+
+      if (!this.tooltipStyleRule){
+  this.tooltipStyleRule = document.createElement('style');
+  this.tooltipStyleRule.textContent = '.dynamic-label-supstance { display: none }';
+  document.head.appendChild(this.tooltipStyleRule);
+}
+
+
       this.realtimeSim();
 
     } else {
@@ -6811,7 +7592,8 @@ return;
       this.stopSim()
     }
 
-    //this.saveState();
+
+
   }
 
   newsletterPopup(){
@@ -6852,7 +7634,18 @@ return;
               !emailDomainBlacklist.includes(postAt[1])
             ) {
            /**/
-// email newsletter
+              fetch(
+                "<signupEmail>",
+                {
+                  method: "POST",
+                  mode: "no-cors",
+                  headers: {
+                    "Content-Type":
+                      "application/x-www-form-urlencoded;charset=UTF-8",
+                  },
+                  body: "EMAIL=" + data.email,
+                }
+              );
 
 this.opportunities.email.completed=true;
             } else {
@@ -7108,6 +7901,8 @@ this.openLink(link)
   }
 
   calcYearsElapsed() {
+    //console.log('hi');
+    //console.log(this.currentDate)
     var monthAdj = this.currentDate.getMonth() * 2628000000
 
     return Math.ceil(
@@ -7139,7 +7934,7 @@ this.openLink(link)
     alert("goto steam");
   }
   gitHub() {
-    this.openLink('https://github.com/cinqmarsmedia');
+    this.openLink('https://github.com/cinqmarsmedia/Trade-Bots-Algorithmic-Trading-Game');
   }
 
   quitPrompt() {
@@ -7572,6 +8367,7 @@ if (!init){
       this.dateKeyIndex = this.dateKeyIndex + 1;
     }
     this.currentDate = this.currentData[this.dateKeyIndex].date;
+
     this.refreshEngineData();
   }
 
@@ -7579,6 +8375,36 @@ if (!init){
     this.dateKeyIndex = this.dateKeyIndex - 1;
     this.currentDate = this.currentData[this.dateKeyIndex].date;
     this.refreshEngineData();
+  }
+
+  payTaxes(amt){
+
+if (amt<0){return}
+let factor
+if (amt<11600){
+  factor=.1
+}else if (amt<47150){
+  factor=.12
+}else if (amt<100525){
+  factor=.22
+}else if (amt<191950){
+  factor=.24
+}else if (amt<243725){
+  factor=.32
+}else if (amt<609350){
+  factor=.35
+}else{
+  factor=.37
+}
+
+
+let inTax=amt*factor*-1
+    this.addCash(inTax);
+
+
+this.notification(['error', factor*100+'% Income Tax Paid', "$" + this.nFormat(inTax*-1)+" paid on "+this.nFormat(amt)+" earnings."])
+
+
   }
 
 
@@ -7594,6 +8420,20 @@ if (!init){
     let yesterdaysData: DataOhlc[number] = this.currentData[this.dateKeyIndex - 1];
     let todaysData: DataOhlc[number] = this.currentData[this.dateKeyIndex];
 
+
+if (this.taxMode){
+  this.taxDays++
+  if (this.taxDays>365){
+    this.taxDays=0;
+    if (this.taxIncome>0){
+this.payTaxes(this.taxIncome);
+//console.log(this.taxIncome)
+this.taxIncome=0;
+
+    }
+    
+  }
+}
 
     var percentMult;
     if (this.longVsShort) {
